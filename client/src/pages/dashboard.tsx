@@ -54,9 +54,9 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
+    <div className="min-h-screen bg-[#121212]">
       {/* Header */}
-      <header className="surface border-b border-gray-700 px-6 py-4">
+      <header className="surface border-b border-gray-700 px-6 py-4 sticky top-0 z-10">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl font-semibold text-white">Панель управления</h2>
@@ -83,7 +83,7 @@ export default function Dashboard() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto p-6 scrollbar-thin">
+      <main className="p-6">
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {statsCards.map((card, index) => {

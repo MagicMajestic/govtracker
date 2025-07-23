@@ -2,6 +2,24 @@ import { Client, GatewayIntentBits, Events } from 'discord.js';
 import { storage } from './storage';
 
 const DISCORD_TOKEN = process.env.DISCORD_BOT_TOKEN || "";
+const CURATOR_NOTIFICATION_SERVER_ID = "805026457327108126";
+const CURATOR_NOTIFICATION_CHANNEL_ID = "974783377465036861";
+const NOTIFICATION_DELAY_MS = 5 * 60 * 1000; // 5 minutes
+
+// Map server names to Discord role IDs for curator notifications
+const CURATOR_ROLES: Record<string, string> = {
+  'Detectives': '916616528395378708',
+  'Weazel News': '1329213276587950080', 
+  'EMS': '1329212940540313644',
+  'LSCSD': '1329213185579946106',
+  'SANG': '1329213239996973116',
+  'LSPD': '1329212725921976322',
+  'FIB': '1329213307059437629',
+  'Government': '1329213001814773780'
+};
+
+// Map to track pending notifications
+const pendingNotifications = new Map();
 
 export function startDiscordBot() {
   if (!DISCORD_TOKEN) {
@@ -86,23 +104,26 @@ export function startDiscordBot() {
         console.log(`Message needs curator response - creating response tracking record`);
         
         try {
-          // Find any available curator for this server - we'll update with actual curator when they respond
-          const serverCurators = await storage.getCurators();
-          const availableCurator = serverCurators.find(c => c.isActive);
+          // Create response tracking without curator ID - will be set when curator actually responds
+          await storage.createResponseTracking({
+            serverId: server.id,
+            curatorId: null, // Will be set when actual curator responds
+            mentionMessageId: message.id,
+            mentionTimestamp: message.createdAt,
+            responseMessageId: null,
+            responseTimestamp: null,
+            responseType: null,
+            responseTimeSeconds: null
+          });
+          console.log(`✅ NEW RESPONSE TRACKING: Created record for message ${message.id} awaiting curator response (server: ${server.name})`);
           
-          if (availableCurator) {
-            await storage.createResponseTracking({
-              serverId: server.id,
-              curatorId: availableCurator.id, // Placeholder, will be updated when actual curator responds
-              mentionMessageId: message.id,
-              mentionTimestamp: message.createdAt,
-              responseMessageId: null,
-              responseTimestamp: null,
-              responseType: null,
-              responseTimeSeconds: null
-            });
-            console.log(`✅ NEW RESPONSE TRACKING: Created record for message ${message.id} awaiting curator response (server: ${server.name})`);
-          }
+          // Schedule curator notification
+          const messageInfo = {
+            guildId: message.guildId,
+            channelId: message.channelId,
+            messageId: message.id
+          };
+          scheduleCuratorNotification(messageInfo, server.name);
         } catch (error) {
           console.error('Failed to create response tracking:', error);
         }
@@ -135,49 +156,34 @@ export function startDiscordBot() {
           );
 
           if (needsResponse) {
-            console.log(`🚀 REAL-TIME RESPONSE: Checking for existing tracking or creating new one for reply by ${curator.name}`);
+            console.log(`🚀 CURATOR REPLY TO MENTION: ${curator.name} replying to message with curator mention/keywords`);
             
-            // Only create tracking if there's no existing tracking for this message
+            // Check if there's existing tracking for this message (from when original message was posted)
             const existingTracking = await storage.getResponseTrackingByMention(referencedMessage.id);
-            if (!existingTracking) {
-              // Create realistic response time based on when user might have seen the message
-              const estimatedViewTime = new Date(referencedMessage.createdTimestamp);
-              const responseTimeMs = message.createdAt.getTime() - estimatedViewTime.getTime();
-              const responseTimeSeconds = Math.max(1, Math.round(responseTimeMs / 1000)); // At least 1 second
+            if (existingTracking && !existingTracking.responseTimestamp) {
+              // Update existing tracking record with curator response
+              const responseTimeMs = message.createdAt.getTime() - new Date(existingTracking.mentionTimestamp).getTime();
+              const responseTimeSeconds = Math.max(1, Math.round(responseTimeMs / 1000));
               
-              try {
-                await storage.createResponseTracking({
-                  serverId: server.id,
-                  curatorId: curator.id,
-                  mentionMessageId: referencedMessage.id,
-                  mentionTimestamp: estimatedViewTime,
-                  responseMessageId: message.id,
-                  responseTimestamp: message.createdAt,
-                  responseType: 'reply',
-                  responseTimeSeconds: responseTimeSeconds
-                });
-                console.log(`✅ NEW RESPONSE TRACKED: ${curator.name} responded in ${responseTimeSeconds}s with reply`);
-              } catch (error) {
-                console.error('Failed to create new response tracking:', error);
-              }
+              await storage.updateResponseTracking(existingTracking.id, {
+                curatorId: curator.id,
+                responseMessageId: message.id,
+                responseTimestamp: message.createdAt,
+                responseType: 'reply',
+                responseTimeSeconds: responseTimeSeconds
+              });
+              console.log(`✅ RESPONSE TRACKED: ${curator.name} responded in ${responseTimeSeconds}s with reply`);
+              
+              // Cancel any pending curator notification for this message
+              cancelCuratorNotification(referencedMessage.id, message.guildId!);
+            } else if (!existingTracking) {
+              console.log(`No existing tracking found for message ${referencedMessage.id} - message may not have required curator response originally`);
+            } else {
+              console.log(`Message ${referencedMessage.id} already has a response from another curator`);
             }
           }
           
-          // Check if this is a response to a tracked mention
-          const tracking = await storage.getResponseTrackingByMention(message.reference?.messageId || '');
-          if (tracking && !tracking.responseTimestamp) {
-            const responseTimeMs = message.createdAt.getTime() - new Date(tracking.mentionTimestamp).getTime();
-            const responseTimeSeconds = Math.round(responseTimeMs / 1000);
-            
-            await storage.updateResponseTracking(tracking.id, {
-              curatorId: curator.id,
-              responseMessageId: message.id,
-              responseTimestamp: message.createdAt,
-              responseType: 'reply',
-              responseTimeSeconds: responseTimeSeconds
-            });
-            console.log(`✅ EXISTING RESPONSE TRACKED: ${curator.name} responded in ${responseTimeSeconds}s with reply`);
-          }
+          // This logic is now handled above in the needsResponse block
         } catch (error) {
           console.error('Failed to fetch referenced message:', error);
         }
@@ -239,48 +245,32 @@ export function startDiscordBot() {
       );
 
       if (needsResponse) {
-        console.log(`🚀 REAL-TIME RESPONSE: Checking for existing tracking or creating new one for reaction by ${curator.name}`);
+        console.log(`🚀 CURATOR REACTION TO MENTION: ${curator.name} reacting to message with curator mention/keywords`);
         
-        // Only create tracking if there's no existing tracking for this message
+        // Check if there's existing tracking for this message (from when original message was posted)
         const existingTracking = await storage.getResponseTrackingByMention(originalMessage.id);
-        if (!existingTracking) {
-          // Create realistic response time based on message creation time
-          const messageTimestamp = originalMessage.createdAt || new Date(originalMessage.createdTimestamp);
-          const responseTimeMs = Date.now() - messageTimestamp.getTime();
-          const responseTimeSeconds = Math.max(1, Math.round(responseTimeMs / 1000)); // At least 1 second
-          
-          try {
-            await storage.createResponseTracking({
-              serverId: server.id,
-              curatorId: curator.id,
-              mentionMessageId: originalMessage.id,
-              mentionTimestamp: messageTimestamp,
-              responseMessageId: `reaction_${originalMessage.id}`,
-              responseTimestamp: new Date(),
-              responseType: 'reaction',
-              responseTimeSeconds: responseTimeSeconds
-            });
-            console.log(`✅ NEW RESPONSE TRACKED: ${curator.name} responded in ${responseTimeSeconds}s with reaction`);
-          } catch (error) {
-            console.error('Failed to create new response tracking:', error);
-          }
-        }
-      }
-
-      // Also check existing tracking
-      const tracking = await storage.getResponseTrackingByMention(reaction.message.id);
-      if (tracking && !tracking.responseTimestamp) {
-        const responseTimeMs = Date.now() - new Date(tracking.mentionTimestamp).getTime();
-        const responseTimeSeconds = Math.round(responseTimeMs / 1000);
         
-        await storage.updateResponseTracking(tracking.id, {
-          curatorId: curator.id,
-          responseMessageId: `reaction_${reaction.message.id}`,
-          responseTimestamp: new Date(),
-          responseType: 'reaction',
-          responseTimeSeconds: responseTimeSeconds
-        });
-        console.log(`✅ EXISTING RESPONSE TRACKED: ${curator.name} responded in ${responseTimeSeconds}s with reaction`);
+        if (existingTracking && !existingTracking.responseTimestamp) {
+          // Update existing tracking record with curator reaction
+          const responseTimeMs = Date.now() - new Date(existingTracking.mentionTimestamp).getTime();
+          const responseTimeSeconds = Math.max(1, Math.round(responseTimeMs / 1000));
+          
+          await storage.updateResponseTracking(existingTracking.id, {
+            curatorId: curator.id,
+            responseMessageId: `reaction_${reaction.message.id}_${user.id}`,
+            responseTimestamp: new Date(),
+            responseType: 'reaction',
+            responseTimeSeconds: responseTimeSeconds
+          });
+          console.log(`✅ RESPONSE TRACKED: ${curator.name} responded in ${responseTimeSeconds}s with reaction`);
+          
+          // Cancel any pending curator notification for this message
+          cancelCuratorNotification(originalMessage.id, reaction.message.guildId!);
+        } else if (!existingTracking) {
+          console.log(`No existing tracking found for message ${originalMessage.id} - message may not have required curator response originally`);
+        } else {
+          console.log(`Message ${originalMessage.id} already has a response from another curator`);
+        }
       }
 
       let targetMessageContent = null;
@@ -311,6 +301,76 @@ export function startDiscordBot() {
       console.error('Error processing reaction:', error);
     }
   });
+
+  // Function to send notification to curator server
+  async function sendCuratorNotification(messageInfo: any, serverName: string, timeWithoutResponse: number) {
+    try {
+      const curatorServer = client.guilds.cache.get(CURATOR_NOTIFICATION_SERVER_ID);
+      if (!curatorServer) {
+        console.log(`Curator notification server ${CURATOR_NOTIFICATION_SERVER_ID} not found`);
+        return;
+      }
+
+      // Find the specific notification channel
+      const notificationChannel = curatorServer.channels.cache.get(CURATOR_NOTIFICATION_CHANNEL_ID);
+
+      if (!notificationChannel || !notificationChannel.isTextBased()) {
+        console.log(`Curator notification channel ${CURATOR_NOTIFICATION_CHANNEL_ID} not found or not text-based`);
+        return;
+      }
+
+      // Determine which curator role to mention based on server name
+      let roleMention = "@here";
+      for (const [roleName, roleId] of Object.entries(CURATOR_ROLES)) {
+        if (serverName.toLowerCase().includes(roleName.toLowerCase()) || 
+            serverName.toLowerCase().includes(roleName.toLowerCase().replace(' ', ''))) {
+          roleMention = `<@&${roleId}>`;
+          break;
+        }
+      }
+
+      const messageLink = `https://discord.com/channels/${messageInfo.guildId}/${messageInfo.channelId}/${messageInfo.messageId}`;
+      const timeStr = Math.floor(timeWithoutResponse / 60) + ' мин';
+      
+      const notificationText = `${roleMention} ${messageLink} без ответа уже ${timeStr}.`;
+      
+      await notificationChannel.send(notificationText);
+      console.log(`✅ CURATOR NOTIFICATION SENT: ${serverName} (${roleMention}) - ${timeStr} without response`);
+      
+    } catch (error) {
+      console.error('Failed to send curator notification:', error);
+    }
+  }
+
+  // Function to schedule curator notification
+  function scheduleCuratorNotification(messageInfo: any, serverName: string) {
+    const notificationKey = `${messageInfo.guildId}_${messageInfo.messageId}`;
+    
+    // Clear existing notification if any
+    if (pendingNotifications.has(notificationKey)) {
+      clearTimeout(pendingNotifications.get(notificationKey));
+    }
+    
+    // Schedule new notification
+    const timeoutId = setTimeout(() => {
+      sendCuratorNotification(messageInfo, serverName, NOTIFICATION_DELAY_MS);
+      pendingNotifications.delete(notificationKey);
+    }, NOTIFICATION_DELAY_MS);
+    
+    pendingNotifications.set(notificationKey, timeoutId);
+    console.log(`⏰ NOTIFICATION SCHEDULED: ${serverName} - will notify in ${NOTIFICATION_DELAY_MS/1000/60} minutes`);
+  }
+
+  // Function to cancel curator notification (when curator responds)
+  function cancelCuratorNotification(messageId: string, guildId: string) {
+    const notificationKey = `${guildId}_${messageId}`;
+    
+    if (pendingNotifications.has(notificationKey)) {
+      clearTimeout(pendingNotifications.get(notificationKey));
+      pendingNotifications.delete(notificationKey);
+      console.log(`❌ NOTIFICATION CANCELLED: Response received for ${messageId}`);
+    }
+  }
 
   client.on(Events.Error, (error) => {
     console.error('Discord client error:', error);

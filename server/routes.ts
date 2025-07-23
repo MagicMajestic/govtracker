@@ -199,6 +199,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch("/api/servers/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const parsed = insertDiscordServerSchema.partial().parse(req.body);
+      const server = await storage.updateDiscordServer(id, parsed);
+      if (!server) {
+        return res.status(404).json({ error: "Server not found" });
+      }
+      res.json(server);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid server data" });
+    }
+  });
+
   // Curator statistics
   app.get("/api/curator-stats", async (req, res) => {
     try {

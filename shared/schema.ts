@@ -28,7 +28,7 @@ export const curators = pgTable("curators", {
 export const responseTracking = pgTable("response_tracking", {
   id: serial("id").primaryKey(),
   serverId: integer("server_id").notNull(),
-  curatorId: integer("curator_id").notNull(),
+  curatorId: integer("curator_id"), // Nullable - set when curator responds
   mentionMessageId: text("mention_message_id").notNull(), // Сообщение с тегом роли
   mentionTimestamp: timestamp("mention_timestamp").notNull(),
   responseMessageId: text("response_message_id"), // Ответ куратора

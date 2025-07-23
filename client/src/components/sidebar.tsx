@@ -15,7 +15,7 @@ export default function Sidebar() {
   const [location] = useLocation();
 
   return (
-    <div className="w-64 surface flex-shrink-0 border-r border-gray-700">
+    <div className="w-64 surface flex-shrink-0 border-r border-gray-700 min-h-screen sticky top-0">
       <div className="p-6 border-b border-gray-700">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">

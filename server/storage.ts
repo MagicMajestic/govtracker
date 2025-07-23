@@ -47,6 +47,7 @@ export interface IStorage {
   createDiscordServer(server: InsertDiscordServer): Promise<DiscordServer>;
   getServerByServerId(serverId: string): Promise<DiscordServer | undefined>;
   updateDiscordServer(id: number, server: Partial<InsertDiscordServer>): Promise<DiscordServer | undefined>;
+  deleteDiscordServer(id: number): Promise<boolean>;
   
   // Response tracking methods
   createResponseTracking(tracking: InsertResponseTracking): Promise<ResponseTracking>;
@@ -265,6 +266,18 @@ export class DatabaseStorage implements IStorage {
     return updated || undefined;
   }
 
+  async deleteDiscordServer(id: number): Promise<boolean> {
+    try {
+      await db
+        .delete(discordServers)
+        .where(eq(discordServers.id, id));
+      return true;
+    } catch (error) {
+      console.error('Error deleting Discord server:', error);
+      return false;
+    }
+  }
+
   // Response tracking methods
   async createResponseTracking(tracking: InsertResponseTracking): Promise<ResponseTracking> {
     const [newTracking] = await db
@@ -386,7 +399,10 @@ export class DatabaseStorage implements IStorage {
         avgTime: sql<number>`AVG(${responseTracking.responseTimeSeconds})`
       })
       .from(responseTracking)
-      .where(sql`${responseTracking.responseTimeSeconds} IS NOT NULL`);
+      .where(and(
+        sql`${responseTracking.responseTimeSeconds} IS NOT NULL`,
+        sql`${responseTracking.curatorId} IS NOT NULL` // Only count responses that have actual curator assigned
+      ));
     
     if (responseStats[0]?.avgTime) {
       avgResponseTime = Math.round(responseStats[0].avgTime);
@@ -521,7 +537,7 @@ export class DatabaseStorage implements IStorage {
         const reactions = serverActivities.filter(a => a.type === 'reaction').length;
         const replies = serverActivities.filter(a => a.type === 'reply').length;
 
-        // Get average response time for this server
+        // Get average response time for this server - only for messages that were actually answered
         const serverResponseTime = await db
           .select({
             avgTime: sql<number>`AVG(${responseTracking.responseTimeSeconds})`
@@ -529,7 +545,8 @@ export class DatabaseStorage implements IStorage {
           .from(responseTracking)
           .where(and(
             eq(responseTracking.serverId, server.id),
-            sql`${responseTracking.responseTimeSeconds} IS NOT NULL`
+            sql`${responseTracking.responseTimeSeconds} IS NOT NULL`,
+            sql`${responseTracking.curatorId} IS NOT NULL` // Only count responses that have actual curator assigned
           ));
 
         const avgResponseTime = serverResponseTime[0]?.avgTime 

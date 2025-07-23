@@ -1,9 +1,12 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { 
   Clock, 
   MessageCircle, 
@@ -12,8 +15,20 @@ import {
   Users, 
   Server,
   TrendingUp,
-  Activity
+  Activity,
+  Settings,
+  Save
 } from "lucide-react";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
+
+interface ServerData {
+  id: number;
+  serverId: string;
+  name: string;
+  roleTagId: string | null;
+  isActive: boolean;
+}
 
 interface ServerStats {
   id: number;
@@ -33,17 +48,63 @@ interface ServerStats {
 }
 
 export function ServersEnhanced() {
-  const { data: servers = [], isLoading } = useQuery({
+  const [editingServer, setEditingServer] = useState<ServerData | null>(null);
+  const [roleTagId, setRoleTagId] = useState("");
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  const { data: servers = [], isLoading } = useQuery<ServerData[]>({
     queryKey: ["/api/servers"],
     staleTime: 5000,
     refetchInterval: 10000,
   });
 
-  const { data: serverStats = [], isLoading: statsLoading } = useQuery({
+  const { data: serverStats = [], isLoading: statsLoading } = useQuery<ServerStats[]>({
     queryKey: ["/api/servers/stats"],
     staleTime: 5000,
     refetchInterval: 10000,
   });
+
+  const updateServerMutation = useMutation({
+    mutationFn: async (data: { id: number; roleTagId: string }) => {
+      return await fetch(`/api/servers/${data.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ roleTagId: data.roleTagId }),
+      }).then(res => res.json());
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/servers"] });
+      toast({
+        title: "Сервер обновлён",
+        description: "ID роли кураторов успешно сохранён",
+      });
+      setEditingServer(null);
+    },
+    onError: () => {
+      toast({
+        title: "Ошибка",
+        description: "Не удалось сохранить изменения",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleEditServer = (server: ServerData) => {
+    setEditingServer(server);
+    setRoleTagId(server.roleTagId || "");
+  };
+
+  const handleSaveServer = () => {
+    if (editingServer) {
+      updateServerMutation.mutate({
+        id: editingServer.id,
+        roleTagId: roleTagId,
+      });
+    }
+  };
 
   if (isLoading || statsLoading) {
     return (
@@ -85,7 +146,7 @@ export function ServersEnhanced() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {servers.map((server: any) => {
+        {servers.map((server) => {
           const stats = statsMap.get(server.id);
           
           return (
@@ -95,15 +156,69 @@ export function ServersEnhanced() {
                   <CardTitle className="text-lg font-semibold">
                     {server.name}
                   </CardTitle>
-                  <Badge 
-                    variant={server.isActive ? "default" : "secondary"}
-                    className={server.isActive ? "bg-green-500" : "bg-gray-500"}
-                  >
-                    {server.isActive ? "Активен" : "Неактивен"}
-                  </Badge>
+                  <div className="flex items-center gap-2">
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEditServer(server)}
+                        >
+                          <Settings className="h-4 w-4" />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Настройки сервера {server.name}</DialogTitle>
+                          <DialogDescription>
+                            Настройте ID роли кураторов для автоматического мониторинга
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4 py-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="role-id">ID роли кураторов</Label>
+                            <Input
+                              id="role-id"
+                              placeholder="Например: 123456789012345678"
+                              value={roleTagId}
+                              onChange={(e) => setRoleTagId(e.target.value)}
+                            />
+                            <p className="text-sm text-gray-500">
+                              Введите ID роли Discord, которую имеют кураторы на этом сервере
+                            </p>
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Текущие данные сервера</Label>
+                            <div className="text-sm text-gray-600 space-y-1">
+                              <div>ID сервера: {server.serverId}</div>
+                              <div>Текущая роль: {server.roleTagId || "Не установлена"}</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            onClick={handleSaveServer}
+                            disabled={updateServerMutation.isPending}
+                          >
+                            <Save className="h-4 w-4 mr-2" />
+                            {updateServerMutation.isPending ? "Сохранение..." : "Сохранить"}
+                          </Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                    <Badge 
+                      variant={server.isActive ? "default" : "secondary"}
+                      className={server.isActive ? "bg-green-500" : "bg-gray-500"}
+                    >
+                      {server.isActive ? "Активен" : "Неактивен"}
+                    </Badge>
+                  </div>
                 </div>
-                <CardDescription className="text-sm text-gray-500">
-                  ID: {server.serverId}
+                <CardDescription className="text-sm text-gray-500 space-y-1">
+                  <div>ID: {server.serverId}</div>
+                  {server.roleTagId && (
+                    <div>Роль кураторов: {server.roleTagId}</div>
+                  )}
                 </CardDescription>
               </CardHeader>
 
@@ -213,13 +328,13 @@ export function ServersEnhanced() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-600">
-                {serverStats.reduce((sum: number, stat: ServerStats) => sum + stat.totalActivities, 0)}
+                {serverStats.reduce((sum, stat) => sum + stat.totalActivities, 0)}
               </div>
               <div className="text-sm text-gray-600">Всего действий</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-green-600">
-                {serverStats.reduce((sum: number, stat: ServerStats) => sum + stat.messages, 0)}
+                {serverStats.reduce((sum, stat) => sum + stat.messages, 0)}
               </div>
               <div className="text-sm text-gray-600">Сообщений</div>
             </div>

@@ -5,6 +5,8 @@ import {
   users,
   responseTracking,
   botSettings,
+  ratingSettings,
+  globalRatingConfig,
   type Curator, 
   type InsertCurator,
   type Activity,
@@ -16,7 +18,11 @@ import {
   type ResponseTracking,
   type InsertResponseTracking,
   type BotSettings,
-  type InsertBotSettings
+  type InsertBotSettings,
+  type RatingSettings,
+  type InsertRatingSettings,
+  type GlobalRatingConfig,
+  type InsertGlobalRatingConfig
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, sql, count } from "drizzle-orm";
@@ -64,6 +70,18 @@ export interface IStorage {
   getBotSettings(): Promise<Record<string, string>>;
   setBotSetting(key: string, value: string, description?: string): Promise<void>;
   getBotSetting(key: string, defaultValue?: string): Promise<string | null>;
+  
+  // Rating settings methods
+  getRatingSettings(): Promise<RatingSettings[]>;
+  createRatingSettings(settings: InsertRatingSettings): Promise<RatingSettings>;
+  updateRatingSettings(id: number, settings: Partial<InsertRatingSettings>): Promise<RatingSettings | undefined>;
+  getRatingByName(name: string): Promise<RatingSettings | undefined>;
+  initializeDefaultRatingSettings(): Promise<void>;
+  
+  // Global rating config methods
+  getGlobalRatingConfig(): Promise<GlobalRatingConfig | undefined>;
+  updateGlobalRatingConfig(config: Partial<InsertGlobalRatingConfig>): Promise<GlobalRatingConfig | undefined>;
+  initializeDefaultGlobalConfig(): Promise<void>;
   
   // Statistics methods
   getCuratorStats(curatorId?: number): Promise<any>;
@@ -377,6 +395,121 @@ export class DatabaseStorage implements IStorage {
       .where(eq(botSettings.settingKey, key));
     
     return setting?.settingValue || defaultValue || null;
+  }
+
+  // Rating settings methods
+  async getRatingSettings(): Promise<RatingSettings[]> {
+    const settings = await db.select().from(ratingSettings).orderBy(ratingSettings.minScore);
+    if (settings.length === 0) {
+      await this.initializeDefaultRatingSettings();
+      return await db.select().from(ratingSettings).orderBy(ratingSettings.minScore);
+    }
+    return settings;
+  }
+
+  async createRatingSettings(settings: InsertRatingSettings): Promise<RatingSettings> {
+    const [newSettings] = await db
+      .insert(ratingSettings)
+      .values(settings)
+      .returning();
+    return newSettings;
+  }
+
+  async updateRatingSettings(id: number, settings: Partial<InsertRatingSettings>): Promise<RatingSettings | undefined> {
+    const [updated] = await db
+      .update(ratingSettings)
+      .set(settings)
+      .where(eq(ratingSettings.id, id))
+      .returning();
+    return updated || undefined;
+  }
+
+  async getRatingByName(name: string): Promise<RatingSettings | undefined> {
+    const [setting] = await db
+      .select()
+      .from(ratingSettings)
+      .where(eq(ratingSettings.ratingName, name));
+    return setting || undefined;
+  }
+
+  async initializeDefaultRatingSettings(): Promise<void> {
+    const defaultSettings = [
+      {
+        ratingName: "excellent",
+        ratingText: "Великолепно", 
+        minScore: 50,
+        color: "bg-green-500",
+      },
+      {
+        ratingName: "good",
+        ratingText: "Хорошо",
+        minScore: 35,
+        color: "bg-blue-500",
+      },
+      {
+        ratingName: "normal",
+        ratingText: "Нормально",
+        minScore: 20,
+        color: "bg-yellow-500",
+      },
+      {
+        ratingName: "poor",
+        ratingText: "Плохо",
+        minScore: 10,
+        color: "bg-orange-500",
+      },
+      {
+        ratingName: "terrible",
+        ratingText: "Ужасно",
+        minScore: 0,
+        color: "bg-red-500",
+      }
+    ];
+
+    for (const setting of defaultSettings) {
+      await db.insert(ratingSettings).values(setting).onConflictDoNothing();
+    }
+  }
+
+  // Global rating config methods
+  async getGlobalRatingConfig(): Promise<GlobalRatingConfig | undefined> {
+    const [config] = await db.select().from(globalRatingConfig).limit(1);
+    if (!config) {
+      await this.initializeDefaultGlobalConfig();
+      const [newConfig] = await db.select().from(globalRatingConfig).limit(1);
+      return newConfig || undefined;
+    }
+    return config;
+  }
+
+  async updateGlobalRatingConfig(config: Partial<InsertGlobalRatingConfig>): Promise<GlobalRatingConfig | undefined> {
+    const existingConfig = await this.getGlobalRatingConfig();
+    if (existingConfig) {
+      const [updated] = await db
+        .update(globalRatingConfig)
+        .set(config)
+        .where(eq(globalRatingConfig.id, existingConfig.id))
+        .returning();
+      return updated || undefined;
+    } else {
+      const [created] = await db
+        .insert(globalRatingConfig)
+        .values(config as InsertGlobalRatingConfig)
+        .returning();
+      return created || undefined;
+    }
+  }
+
+  async initializeDefaultGlobalConfig(): Promise<void> {
+    const defaultConfig = {
+      activityPointsMessage: 3,
+      activityPointsReaction: 1,
+      activityPointsReply: 2,
+      responseTimeGoodSeconds: 60,
+      responseTimePoorSeconds: 300,
+    };
+
+    await db.insert(globalRatingConfig).values(defaultConfig).onConflictDoNothing();
   }
 
   // Statistics methods

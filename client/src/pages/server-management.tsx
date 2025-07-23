@@ -10,6 +10,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Server, Plus, Edit, Trash2, CheckCircle, XCircle, Activity } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { formatTimeRussian } from "@/lib/timeFormat";
 
 interface DiscordServer {
   id: number;
@@ -143,9 +144,7 @@ export default function ServerManagement() {
 
   const formatResponseTime = (seconds: number | null): string => {
     if (!seconds || isNaN(seconds)) return 'Нет данных';
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = Math.floor(seconds % 60);
-    return minutes > 0 ? `${minutes}м ${remainingSeconds}с` : `${remainingSeconds}с`;
+    return formatTimeRussian(Math.round(seconds));
   };
 
   if (serversLoading || statsLoading) {

@@ -10,6 +10,7 @@ import { ru } from "date-fns/locale";
 import { MessageSquare, Heart, Reply, ArrowLeft, TrendingUp, Clock } from "lucide-react";
 import { Link } from "wouter";
 import { getRatingText, getRatingColor } from "@/lib/rating";
+import { formatTimeRussian } from "@/lib/timeFormat";
 
 interface Curator {
   id: number;
@@ -160,7 +161,7 @@ export default function CuratorDetails() {
                 <span className="text-sm font-medium">Среднее время ответа</span>
               </div>
               <p className="text-lg font-bold">
-                {stats?.avgResponseTime ? `${stats.avgResponseTime} сек` : "Н/Д"}
+                {stats?.avgResponseTime ? formatTimeRussian(Math.round(stats.avgResponseTime)) : "Н/Д"}
               </p>
               <p className="text-sm text-muted-foreground">
                 {stats?.avgResponseTime ? "Быстрое реагирование" : "Нет данных"}

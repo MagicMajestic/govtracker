@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
+import { formatTimeRussian } from "@/lib/timeFormat";
 
 interface ServerStatus {
   id: number;
@@ -61,7 +62,7 @@ export function ServerStatus() {
     return {
       ...server,
       activityToday: isConnected ? Math.floor(totalActivities / (activeServers.length || 1)) : 0,
-      avgResponseTime: isConnected ? "~5 мин" : "0",
+      avgResponseTime: isConnected ? formatTimeRussian(300) : "Н/Д",
       statusText
     };
   }) || [];

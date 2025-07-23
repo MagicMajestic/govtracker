@@ -6,9 +6,28 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Settings, Bot, Shield, Activity, Clock, MessageSquare } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Settings, Bot, Shield, Activity, Clock, MessageSquare, Target, Star } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { formatTimeRussian } from "@/lib/timeFormat";
+
+interface RatingSettings {
+  id: number;
+  ratingName: string;
+  ratingText: string;
+  minScore: number;
+  color: string;
+}
+
+interface GlobalRatingConfig {
+  id: number;
+  activityPointsMessage: number;
+  activityPointsReaction: number;
+  activityPointsReply: number;
+  responseTimeGoodSeconds: number;
+  responseTimePoorSeconds: number;
+}
 
 export default function BotSettings() {
   const [botConfig, setBotConfig] = useState({
@@ -24,6 +43,15 @@ export default function BotSettings() {
     curatorChannelId: "974783377465036861"
   });
 
+  const [ratingSettings, setRatingSettings] = useState<RatingSettings[]>([]);
+  const [globalConfig, setGlobalConfig] = useState<GlobalRatingConfig>({
+    id: 1,
+    activityPointsMessage: 3,
+    activityPointsReaction: 1,
+    activityPointsReply: 2,
+    responseTimeGoodSeconds: 60,
+    responseTimePoorSeconds: 300,
+  });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
@@ -32,14 +60,26 @@ export default function BotSettings() {
   useEffect(() => {
     const loadSettings = async () => {
       try {
-        const response = await fetch('/api/bot-settings');
-        const settings = await response.json();
+        const [botResponse, ratingResponse, globalResponse] = await Promise.all([
+          fetch('/api/bot-settings'),
+          fetch('/api/rating-settings'),
+          fetch('/api/global-rating-config')
+        ]);
+        
+        const settings = await botResponse.json();
+        const ratings = await ratingResponse.json();
+        const global = await globalResponse.json();
         
         // Update state with loaded settings, keep defaults for missing keys
         setBotConfig(prev => ({
           ...prev,
           ...settings
         }));
+        
+        setRatingSettings(ratings);
+        if (global) {
+          setGlobalConfig(global);
+        }
       } catch (error) {
         console.error('Error loading settings:', error);
         toast({
@@ -86,9 +126,64 @@ export default function BotSettings() {
     }
   };
 
+  const handleSaveRatings = async () => {
+    setSaving(true);
+    try {
+      const [ratingResponse, globalResponse] = await Promise.all([
+        fetch('/api/rating-settings', {
+          method: 'POST',
+          body: JSON.stringify(ratingSettings),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }),
+        fetch('/api/global-rating-config', {
+          method: 'POST',
+          body: JSON.stringify(globalConfig),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+      ]);
+
+      const ratingResult = await ratingResponse.json();
+      const globalResult = await globalResponse.json();
+      
+      if (ratingResult.success || globalResult) {
+        toast({
+          title: "Сохранено",
+          description: "Настройки оценки производительности обновлены",
+        });
+      }
+    } catch (error) {
+      console.error('Error saving rating settings:', error);
+      toast({
+        title: "Ошибка",
+        description: "Не удалось сохранить настройки оценки",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const updateRatingSettings = (index: number, field: keyof RatingSettings, value: any) => {
+    const updated = [...ratingSettings];
+    updated[index] = { ...updated[index], [field]: value };
+    setRatingSettings(updated);
+  };
+
+  const updateGlobalConfig = (field: keyof GlobalRatingConfig, value: any) => {
+    if (field === 'id') return; // Don't allow changing ID
+    setGlobalConfig(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
   return (
     <div className="flex-1 overflow-y-auto p-6 bg-[#121212]">
-      <div className="max-w-4xl mx-auto space-y-6">
+      <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-white flex items-center gap-3">
@@ -105,7 +200,18 @@ export default function BotSettings() {
           </Badge>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <Tabs defaultValue="basic" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 bg-[#1a1a1a] border-gray-700">
+            <TabsTrigger value="basic" className="text-white data-[state=active]:bg-blue-600">
+              Основные настройки
+            </TabsTrigger>
+            <TabsTrigger value="performance" className="text-white data-[state=active]:bg-blue-600">
+              Оценка производительности
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="basic" className="space-y-6">
+            <div className="grid gap-6 md:grid-cols-2">
           {/* Основные настройки */}
           <Card className="bg-[#1a1a1a] border-gray-700">
             <CardHeader>
@@ -264,7 +370,7 @@ export default function BotSettings() {
                 <div className="bg-[#2a2a2a] p-3 rounded-md border border-gray-600">
                   <Label className="text-white text-sm">Пример уведомления:</Label>
                   <div className="mt-2 p-2 bg-[#1a1a1a] rounded text-sm text-gray-300 font-mono">
-                    @LSPD https://discord.com/channels/123.../456... без ответа уже {Math.floor(botConfig.notificationDelay / 60)} мин.
+                    @LSPD https://discord.com/channels/123.../456... без ответа уже {Math.floor(parseInt(botConfig.notificationDelay) / 60)} мин.
                   </div>
                   <p className="text-xs text-gray-400 mt-2">
                     Сервер: {botConfig.curatorServerId}<br/>
@@ -332,15 +438,183 @@ export default function BotSettings() {
           </Card>
         </div>
 
-        <div className="flex justify-end">
-          <Button 
-            onClick={handleSave}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
-            disabled={saving || loading}
-          >
-            {saving ? "Сохранение..." : "Сохранить настройки"}
-          </Button>
-        </div>
+            <div className="flex justify-end">
+              <Button 
+                onClick={handleSave}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+                disabled={saving || loading}
+              >
+                {saving ? "Сохранение..." : "Сохранить основные настройки"}
+              </Button>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="performance" className="space-y-6">
+            <div className="grid gap-6">
+              {/* Global Configuration */}
+              <Card className="bg-[#1a1a1a] border-gray-700">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center gap-2">
+                    <Target className="h-5 w-5 text-blue-500" />
+                    Глобальные настройки оценки
+                  </CardTitle>
+                  <CardDescription className="text-gray-400">
+                    Настройки, применимые ко всем категориям рейтинга
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="bg-[#2a2a2a] p-4 rounded-md border border-gray-600">
+                    <h4 className="font-semibold text-white mb-2">Система оценки:</h4>
+                    <ul className="text-sm text-gray-300 space-y-1">
+                      <li>• <strong>Баллы за активность:</strong> Одинаковые для всех категорий рейтинга</li>
+                      <li>• <strong>Время ответа:</strong> Глобальные пороги для всех кураторов</li>
+                      <li>• <strong>Пороги рейтингов:</strong> Только минимальные баллы различаются между категориями</li>
+                    </ul>
+                  </div>
+
+                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {/* Activity Points */}
+                    <div>
+                      <Label className="text-white text-sm">Баллы за сообщение</Label>
+                      <Input
+                        type="number"
+                        value={globalConfig.activityPointsMessage}
+                        onChange={(e) => updateGlobalConfig('activityPointsMessage', parseInt(e.target.value) || 0)}
+                        className="bg-[#1a1a1a] border-gray-600 text-white mt-1"
+                      />
+                    </div>
+
+                    <div>
+                      <Label className="text-white text-sm">Баллы за реакцию</Label>
+                      <Input
+                        type="number"
+                        value={globalConfig.activityPointsReaction}
+                        onChange={(e) => updateGlobalConfig('activityPointsReaction', parseInt(e.target.value) || 0)}
+                        className="bg-[#1a1a1a] border-gray-600 text-white mt-1"
+                      />
+                    </div>
+
+                    <div>
+                      <Label className="text-white text-sm">Баллы за ответ</Label>
+                      <Input
+                        type="number"
+                        value={globalConfig.activityPointsReply}
+                        onChange={(e) => updateGlobalConfig('activityPointsReply', parseInt(e.target.value) || 0)}
+                        className="bg-[#1a1a1a] border-gray-600 text-white mt-1"
+                      />
+                    </div>
+
+                    {/* Response Time Thresholds */}
+                    <div>
+                      <Label className="text-white text-sm">Хорошее время ответа (сек)</Label>
+                      <Input
+                        type="number"
+                        value={globalConfig.responseTimeGoodSeconds}
+                        onChange={(e) => updateGlobalConfig('responseTimeGoodSeconds', parseInt(e.target.value) || 0)}
+                        className="bg-[#1a1a1a] border-gray-600 text-white mt-1"
+                      />
+                    </div>
+
+                    <div>
+                      <Label className="text-white text-sm">Плохое время ответа (сек)</Label>
+                      <Input
+                        type="number"
+                        value={globalConfig.responseTimePoorSeconds}
+                        onChange={(e) => updateGlobalConfig('responseTimePoorSeconds', parseInt(e.target.value) || 0)}
+                        className="bg-[#1a1a1a] border-gray-600 text-white mt-1"
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Rating Thresholds */}
+              <Card className="bg-[#1a1a1a] border-gray-700">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center gap-2">
+                    <Star className="h-5 w-5 text-yellow-400" />
+                    Пороги рейтингов
+                  </CardTitle>
+                  <CardDescription className="text-gray-400">
+                    Минимальные баллы для каждого уровня рейтинга
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {ratingSettings
+                    .sort((a, b) => b.minScore - a.minScore)
+                    .map((rating, index) => (
+                      <div key={rating.id} className="flex items-center gap-4 p-4 bg-[#2a2a2a] rounded border border-gray-600">
+                        <div className={`w-4 h-4 rounded ${rating.color}`} />
+                        <div className="flex-1">
+                          <span className="text-white font-medium">{rating.ratingText}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Label className="text-white text-sm">Минимальные баллы:</Label>
+                          <Input
+                            type="number"
+                            value={rating.minScore}
+                            onChange={(e) => updateRatingSettings(index, 'minScore', parseInt(e.target.value) || 0)}
+                            className="bg-[#1a1a1a] border-gray-600 text-white w-20"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                </CardContent>
+              </Card>
+
+              {/* Performance Preview */}
+              <Card className="bg-[#1a1a1a] border-gray-700">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center gap-2">
+                    <Activity className="h-5 w-5 text-green-400" />
+                    Предварительный просмотр системы оценки
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="bg-[#2a2a2a] p-4 rounded border border-gray-600">
+                      <h4 className="font-semibold text-white mb-2">Глобальные настройки:</h4>
+                      <div className="text-sm text-gray-300 space-y-1">
+                        <div>• Сообщение: <strong>{globalConfig.activityPointsMessage} баллов</strong></div>
+                        <div>• Реакция: <strong>{globalConfig.activityPointsReaction} балл</strong></div>
+                        <div>• Ответ: <strong>{globalConfig.activityPointsReply} балла</strong></div>
+                        <div>• Хорошее время ответа: <strong>{formatTimeRussian(globalConfig.responseTimeGoodSeconds)}</strong></div>
+                        <div>• Плохое время ответа: <strong>{formatTimeRussian(globalConfig.responseTimePoorSeconds)}</strong></div>
+                      </div>
+                    </div>
+                    
+                    <div className="grid gap-3">
+                      <h4 className="font-semibold text-white">Пороги рейтингов:</h4>
+                      {ratingSettings
+                        .sort((a, b) => b.minScore - a.minScore)
+                        .map((rating) => (
+                          <div key={rating.id} className="flex items-center justify-between p-3 bg-[#2a2a2a] rounded border border-gray-600">
+                            <div className="flex items-center gap-3">
+                              <div className={`w-4 h-4 rounded ${rating.color}`} />
+                              <span className="text-white font-medium">{rating.ratingText}</span>
+                            </div>
+                            <div className="text-gray-400 text-sm">
+                              {rating.minScore}+ баллов
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="flex justify-end">
+              <Button 
+                onClick={handleSaveRatings}
+                className="bg-green-600 hover:bg-green-700 text-white"
+                disabled={saving || loading}
+              >
+                {saving ? "Сохранение..." : "Сохранить настройки оценки"}
+              </Button>
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

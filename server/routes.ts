@@ -363,6 +363,68 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Rating settings routes
+  app.get('/api/rating-settings', async (req, res) => {
+    try {
+      const settings = await storage.getRatingSettings();
+      res.json(settings);
+    } catch (error) {
+      console.error('Error getting rating settings:', error);
+      res.status(500).json({ error: 'Failed to get rating settings' });
+    }
+  });
+
+  app.post('/api/rating-settings', async (req, res) => {
+    try {
+      const settings = req.body;
+      
+      if (Array.isArray(settings)) {
+        // Update multiple settings
+        for (const setting of settings) {
+          if (setting.id) {
+            await storage.updateRatingSettings(setting.id, setting);
+          } else {
+            await storage.createRatingSettings(setting);
+          }
+        }
+      } else {
+        // Update single setting
+        if (settings.id) {
+          await storage.updateRatingSettings(settings.id, settings);
+        } else {
+          await storage.createRatingSettings(settings);
+        }
+      }
+      
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error saving rating settings:', error);
+      res.status(500).json({ error: 'Failed to save rating settings' });
+    }
+  });
+
+  // Global rating configuration routes
+  app.get('/api/global-rating-config', async (req, res) => {
+    try {
+      const config = await storage.getGlobalRatingConfig();
+      res.json(config);
+    } catch (error) {
+      console.error('Error getting global rating config:', error);
+      res.status(500).json({ error: 'Failed to get global rating config' });
+    }
+  });
+
+  app.post('/api/global-rating-config', async (req, res) => {
+    try {
+      const config = req.body;
+      const updated = await storage.updateGlobalRatingConfig(config);
+      res.json(updated);
+    } catch (error) {
+      console.error('Error saving global rating config:', error);
+      res.status(500).json({ error: 'Failed to save global rating config' });
+    }
+  });
+
   // Enhanced Discord server routes
   app.post('/api/servers', async (req, res) => {
     try {

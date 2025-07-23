@@ -12,6 +12,27 @@ export const botSettings = pgTable("bot_settings", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Performance rating thresholds - only min scores and colors
+export const ratingSettings = pgTable("rating_settings", {
+  id: serial("id").primaryKey(),
+  ratingName: text("rating_name").notNull(), // "excellent", "good", "normal", "poor", "terrible"
+  ratingText: text("rating_text").notNull(), // "Великолепно", "Хорошо", etc.
+  minScore: integer("min_score").notNull(),
+  color: text("color").notNull(), // CSS color class
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Global rating configuration - applies to all categories
+export const globalRatingConfig = pgTable("global_rating_config", {
+  id: serial("id").primaryKey(),
+  activityPointsMessage: integer("activity_points_message").notNull().default(3),
+  activityPointsReaction: integer("activity_points_reaction").notNull().default(1),
+  activityPointsReply: integer("activity_points_reply").notNull().default(2),
+  responseTimeGoodSeconds: integer("response_time_good_seconds").notNull().default(60),
+  responseTimePoorSeconds: integer("response_time_poor_seconds").notNull().default(300),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Discord servers configuration
 export const discordServers = pgTable("discord_servers", {
   id: serial("id").primaryKey(),
@@ -129,9 +150,23 @@ export const insertBotSettingsSchema = createInsertSchema(botSettings).pick({
   description: true,
 });
 
+export const insertRatingSettingsSchema = createInsertSchema(ratingSettings).omit({
+  id: true,
+  updatedAt: true,
+});
+
+export const insertGlobalRatingConfigSchema = createInsertSchema(globalRatingConfig).omit({
+  id: true,
+  updatedAt: true,
+});
+
 // Types
 export type BotSettings = typeof botSettings.$inferSelect;
 export type InsertBotSettings = z.infer<typeof insertBotSettingsSchema>;
+export type RatingSettings = typeof ratingSettings.$inferSelect;
+export type InsertRatingSettings = z.infer<typeof insertRatingSettingsSchema>;
+export type GlobalRatingConfig = typeof globalRatingConfig.$inferSelect;
+export type InsertGlobalRatingConfig = z.infer<typeof insertGlobalRatingConfigSchema>;
 export type Curator = typeof curators.$inferSelect;
 export type InsertCurator = z.infer<typeof insertCuratorSchema>;
 export type Activity = typeof activities.$inferSelect;

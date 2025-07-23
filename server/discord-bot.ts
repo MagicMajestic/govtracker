@@ -107,10 +107,18 @@ export function startDiscordBot() {
             messageId: tracking.mentionMessageId
           };
           
-          const remainingTime = Math.max(1000, NOTIFICATION_DELAY_MS - messageAge);
+          // Load current notification delay for rescheduling
+          const currentDelay = await storage.getBotSetting('notificationDelay', '30');
+          const currentDelayMs = parseInt(currentDelay || '30') * 1000;
+          const remainingTime = Math.max(1000, currentDelayMs - messageAge);
           scheduleNotificationWithDelay(messageInfo, server.name, remainingTime);
-        } else if (messageAge >= NOTIFICATION_DELAY_MS) {
-          console.log(`⏰ Message ${tracking.mentionMessageId} is overdue (age: ${Math.round(messageAge/1000)}s), sending immediate notification`);
+        } else {
+          // Load current notification delay for comparison
+          const currentDelay = await storage.getBotSetting('notificationDelay', '30');
+          const currentDelayMs = parseInt(currentDelay || '30') * 1000;
+          if (messageAge >= currentDelayMs) {
+            console.log(`⏰ Message ${tracking.mentionMessageId} is overdue (age: ${Math.round(messageAge/1000)}s), sending immediate notification`);
+          }
           
           const messageInfo = {
             guildId: server?.serverId || 'unknown',
@@ -445,9 +453,19 @@ export function startDiscordBot() {
     }
   }
 
-  // Function to schedule curator notification
-  function scheduleCuratorNotification(messageInfo: any, serverName: string) {
-    scheduleNotificationWithDelay(messageInfo, serverName, NOTIFICATION_DELAY_MS);
+  // Function to schedule curator notification with current settings
+  async function scheduleCuratorNotification(messageInfo: any, serverName: string) {
+    // Load current notification delay from settings each time
+    try {
+      const currentDelay = await storage.getBotSetting('notificationDelay', '30');
+      const currentDelayMs = parseInt(currentDelay || '30') * 1000;
+      console.log(`📋 Using current notification delay: ${currentDelayMs/1000} seconds`);
+      scheduleNotificationWithDelay(messageInfo, serverName, currentDelayMs);
+    } catch (error) {
+      console.error('Error loading current notification delay:', error);
+      console.log(`📍 Falling back to cached delay: ${NOTIFICATION_DELAY_MS/1000} seconds`);
+      scheduleNotificationWithDelay(messageInfo, serverName, NOTIFICATION_DELAY_MS);
+    }
   }
 
   // Function to schedule curator notification with custom delay

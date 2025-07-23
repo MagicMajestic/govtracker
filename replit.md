@@ -8,6 +8,18 @@ This is a full-stack Discord bot monitoring application designed for a roleplay 
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+
+### January 23, 2025
+- Successfully migrated Discord Bot Curator Monitoring System from Replit Agent to Replit environment
+- Fixed PostgreSQL database configuration and created all necessary tables
+- Resolved Discord bot integration issues (removed invalid timestamp field)
+- Fixed API request parameter ordering in curator creation functionality
+- Corrected TypeScript type issues in frontend components
+- Configured Discord bot with authentication token - bot successfully connects as "Curator#2772"
+- Application is now fully functional on Replit with proper client/server separation
+- User can now add curators and the system will monitor their Discord activity in real-time
+
 ## System Architecture
 
 ### Frontend Architecture

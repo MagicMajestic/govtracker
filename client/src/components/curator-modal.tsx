@@ -74,7 +74,12 @@ export function CuratorModal({ isOpen, onClose }: CuratorModalProps) {
       return;
     }
 
-    createCuratorMutation.mutate(formData);
+    createCuratorMutation.mutate({
+      discordId: formData.discordId,
+      name: formData.name,
+      factions: [formData.faction],
+      curatorType: "government" as const
+    });
   };
 
   return (

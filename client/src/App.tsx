@@ -7,6 +7,7 @@ import Dashboard from "@/pages/dashboard";
 import Curators from "@/pages/curators";
 import Activity from "@/pages/activity";
 import NotFound from "@/pages/not-found";
+import CuratorDetails from "@/pages/curator-details";
 import Sidebar from "@/components/sidebar";
 
 function Router() {
@@ -17,6 +18,7 @@ function Router() {
         <Switch>
           <Route path="/" component={Dashboard} />
           <Route path="/curators" component={Curators} />
+          <Route path="/curators/:id" component={CuratorDetails} />
           <Route path="/activity" component={Activity} />
           <Route component={NotFound} />
         </Switch>

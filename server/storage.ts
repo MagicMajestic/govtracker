@@ -45,6 +45,8 @@ export interface IStorage {
   // Statistics methods
   getCuratorStats(curatorId?: number): Promise<any>;
   getDashboardStats(): Promise<any>;
+  getDailyActivityStats(days: number): Promise<any>;
+  getTopCurators(limit: number): Promise<any>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -122,12 +124,43 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getActivitiesByCurator(curatorId: number, limit = 100): Promise<Activity[]> {
-    return await db
-      .select()
+    const results = await db
+      .select({
+        id: activities.id,
+        curatorId: activities.curatorId,
+        serverId: activities.serverId,
+        type: activities.type,
+        channelId: activities.channelId,
+        channelName: activities.channelName,
+        messageId: activities.messageId,
+        content: activities.content,
+        reactionEmoji: activities.reactionEmoji,
+        targetMessageId: activities.targetMessageId,
+        targetMessageContent: activities.targetMessageContent,
+        timestamp: activities.timestamp,
+        server: discordServers,
+      })
       .from(activities)
+      .leftJoin(discordServers, eq(activities.serverId, discordServers.id))
       .where(eq(activities.curatorId, curatorId))
       .orderBy(desc(activities.timestamp))
       .limit(limit);
+      
+    return results.map(r => ({
+      id: r.id,
+      curatorId: r.curatorId,
+      serverId: r.serverId,
+      type: r.type,
+      channelId: r.channelId,
+      channelName: r.channelName,
+      messageId: r.messageId,
+      content: r.content,
+      reactionEmoji: r.reactionEmoji,
+      targetMessageId: r.targetMessageId,
+      targetMessageContent: r.targetMessageContent,
+      timestamp: r.timestamp,
+      server: r.server || { id: r.serverId, name: "Unknown Server", serverId: "", isActive: false, createdAt: new Date() }
+    })) as Activity[];
   }
 
   async getActivitiesByPeriod(curatorId: number, startDate: Date, endDate: Date): Promise<Activity[]> {
@@ -237,6 +270,68 @@ export class DatabaseStorage implements IStorage {
       todayReactions: todayActivities[0]?.totalReactions || 0,
       todayReplies: todayActivities[0]?.totalReplies || 0,
     };
+  }
+
+  async getDailyActivityStats(days: number): Promise<any> {
+    const dailyStats = await db
+      .select({
+        date: sql<string>`DATE(${activities.timestamp})`,
+        messages: sql<number>`count(case when ${activities.type} = 'message' then 1 end)`,
+        reactions: sql<number>`count(case when ${activities.type} = 'reaction' then 1 end)`,
+        replies: sql<number>`count(case when ${activities.type} = 'reply' then 1 end)`,
+        total: sql<number>`count(*)`
+      })
+      .from(activities)
+      .where(sql`${activities.timestamp} >= NOW() - INTERVAL ${sql.raw(`'${days} days'`)}`)
+      .groupBy(sql`DATE(${activities.timestamp})`)
+      .orderBy(sql`DATE(${activities.timestamp}) DESC`);
+
+    return dailyStats;
+  }
+
+  async getTopCurators(limit: number): Promise<any> {
+    try {
+      const curatorStats = await db
+        .select({
+          id: curators.id,
+          discordId: curators.discordId,
+          name: curators.name,
+          factions: curators.factions,
+          curatorType: curators.curatorType,
+          isActive: curators.isActive,
+          createdAt: curators.createdAt,
+          totalActivities: sql<number>`COALESCE(count(${activities.id}), 0)`,
+          messages: sql<number>`COALESCE(count(case when ${activities.type} = 'message' then 1 end), 0)`,
+          reactions: sql<number>`COALESCE(count(case when ${activities.type} = 'reaction' then 1 end), 0)`,
+          replies: sql<number>`COALESCE(count(case when ${activities.type} = 'reply' then 1 end), 0)`
+        })
+        .from(curators)
+        .leftJoin(activities, eq(curators.id, activities.curatorId))
+        .where(eq(curators.isActive, true))
+        .groupBy(curators.id)
+        .orderBy(sql`COALESCE(count(${activities.id}), 0) DESC`)
+        .limit(limit);
+
+      const maxActivities = curatorStats[0]?.totalActivities || 1;
+      
+      return curatorStats.map((stat, index) => ({
+        id: stat.id,
+        discordId: stat.discordId,
+        name: stat.name,
+        factions: stat.factions,
+        curatorType: stat.curatorType,
+        isActive: stat.isActive,
+        createdAt: stat.createdAt,
+        score: Math.round((stat.totalActivities / Math.max(maxActivities, 1)) * 100),
+        totalActivities: stat.totalActivities,
+        messages: stat.messages,
+        reactions: stat.reactions,
+        replies: stat.replies
+      }));
+    } catch (error) {
+      console.error("Error in getTopCurators:", error);
+      return [];
+    }
   }
 }
 

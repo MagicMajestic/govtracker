@@ -4,8 +4,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { ru } from "date-fns/locale";
-import { MessageSquare, Heart, Reply, RefreshCw } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { MessageSquare, Heart, Reply } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface RecentActivity {
@@ -66,9 +65,8 @@ function getActivityText(activity: RecentActivity) {
 }
 
 export function RecentActivity() {
-  const { data: activities, isLoading, refetch } = useQuery<RecentActivity[]>({
-    queryKey: ["/api/activities/recent"],
-    refetchInterval: 30000 // Auto-refresh every 30 seconds
+  const { data: activities, isLoading } = useQuery<RecentActivity[]>({
+    queryKey: ["/api/activities/recent"]
   });
 
   if (isLoading) {
@@ -96,19 +94,14 @@ export function RecentActivity() {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <div>
-          <CardTitle>История активности</CardTitle>
-          <CardDescription>
-            {activities?.length ? 
-              `Последние ${activities.length} действий кураторов` : 
-              "Нет недавних активностей"
-            }
-          </CardDescription>
-        </div>
-        <Button onClick={() => refetch()} variant="outline" size="sm">
-          Обновить
-        </Button>
+      <CardHeader>
+        <CardTitle>История активности</CardTitle>
+        <CardDescription>
+          {activities?.length ? 
+            `Последние ${activities.length} действий кураторов` : 
+            "Нет недавних активностей"
+          }
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">

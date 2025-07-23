@@ -174,6 +174,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/activities/daily", async (req, res) => {
+    try {
+      const days = req.query.days ? parseInt(req.query.days as string) : 7;
+      const dailyStats = await storage.getDailyActivityStats(days);
+      res.json(dailyStats);
+    } catch (error) {
+      console.error("Daily stats error:", error);
+      res.status(500).json({ error: "Failed to fetch daily activity stats" });
+    }
+  });
+
+  app.get("/api/curators/top", async (req, res) => {
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+      const topCurators = await storage.getTopCurators(limit);
+      res.json(topCurators);
+    } catch (error) {
+      console.error("Top curators error:", error);
+      res.status(500).json({ error: "Failed to fetch top curators" });
+    }
+  });
+
+  // Individual curator details
+  app.get("/api/curators/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const curator = await storage.getCuratorById(id);
+      if (!curator) {
+        return res.status(404).json({ error: "Curator not found" });
+      }
+      res.json(curator);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch curator" });
+    }
+  });
+
+  // Curator activities
+  app.get("/api/activities/curator/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const activities = await storage.getActivitiesByCurator(id, 50);
+      res.json(activities);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch curator activities" });
+    }
+  });
+
+  // Curator stats
+  app.get("/api/curators/:id/stats", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const stats = await storage.getCuratorStats(id);
+      res.json(stats[0] || { totalActivities: 0, messages: 0, reactions: 0, replies: 0, score: 0 });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch curator stats" });
+    }
+  });
+
   // Start Discord bot
   startDiscordBot();
 

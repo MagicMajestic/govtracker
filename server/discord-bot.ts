@@ -94,7 +94,7 @@ export function startDiscordBot() {
         content: message.content.substring(0, 1000), // Limit content length
         targetMessageId: isReply ? message.reference!.messageId : null,
         targetMessageContent,
-        timestamp: new Date()
+
       });
 
       console.log(`Activity created successfully!`);

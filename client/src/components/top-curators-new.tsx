@@ -64,7 +64,7 @@ export function TopCurators() {
     );
   }
 
-  const displayedCurators = showAll ? (topCurators || []) : (Array.isArray(topCurators) ? topCurators.slice(0, 5) : []);
+  const displayedCurators = showAll ? (topCurators || []) : (topCurators || []).slice(0, 5);
 
   return (
     <Card>

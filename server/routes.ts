@@ -336,6 +336,78 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Bot settings routes
+  app.get('/api/bot-settings', async (req, res) => {
+    try {
+      const settings = await storage.getBotSettings();
+      res.json(settings);
+    } catch (error) {
+      console.error('Error getting bot settings:', error);
+      res.status(500).json({ error: 'Failed to get bot settings' });
+    }
+  });
+
+  app.post('/api/bot-settings', async (req, res) => {
+    try {
+      const settings = req.body;
+      
+      // Save each setting
+      for (const [key, value] of Object.entries(settings)) {
+        await storage.setBotSetting(key, String(value));
+      }
+      
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error saving bot settings:', error);
+      res.status(500).json({ error: 'Failed to save bot settings' });
+    }
+  });
+
+  // Enhanced Discord server routes
+  app.post('/api/servers', async (req, res) => {
+    try {
+      const validatedData = insertDiscordServerSchema.parse(req.body);
+      const server = await storage.createDiscordServer(validatedData);
+      res.json(server);
+    } catch (error) {
+      console.error('Error creating server:', error);
+      res.status(400).json({ error: 'Failed to create server' });
+    }
+  });
+
+  app.put('/api/servers/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const updates = req.body;
+      const server = await storage.updateDiscordServer(id, updates);
+      
+      if (!server) {
+        return res.status(404).json({ error: 'Server not found' });
+      }
+      
+      res.json(server);
+    } catch (error) {
+      console.error('Error updating server:', error);
+      res.status(500).json({ error: 'Failed to update server' });
+    }
+  });
+
+  app.delete('/api/servers/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const success = await storage.deleteDiscordServer(id);
+      
+      if (!success) {
+        return res.status(404).json({ error: 'Server not found' });
+      }
+      
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error deleting server:', error);
+      res.status(500).json({ error: 'Failed to delete server' });
+    }
+  });
+
   // Start Discord bot
   startDiscordBot();
 

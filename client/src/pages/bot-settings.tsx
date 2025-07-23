@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,27 +7,83 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Settings, Bot, Shield, Activity, Clock, MessageSquare } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function BotSettings() {
   const [botConfig, setBotConfig] = useState({
-    monitoringEnabled: true,
-    curatorNotificationEnabled: true,
-    notificationDelay: 300, // 5 минут
-    keywordDetection: true,
+    monitoringEnabled: "true",
+    curatorNotificationEnabled: "true", 
+    notificationDelay: "300", // 5 минут по умолчанию
+    keywordDetection: "true",
     logLevel: "info",
-    maxResponseTime: 300,
+    maxResponseTime: "300",
     allowedChannels: "",
     customKeywords: "куратор, curator, помощь, help, вопрос, question",
     curatorServerId: "805026457327108126",
     curatorChannelId: "974783377465036861"
   });
 
-  const [saved, setSaved] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const { toast } = useToast();
 
-  const handleSave = () => {
-    // Здесь будет API вызов для сохранения настроек
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+  // Load settings on component mount
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const response = await fetch('/api/bot-settings');
+        const settings = await response.json();
+        
+        // Update state with loaded settings, keep defaults for missing keys
+        setBotConfig(prev => ({
+          ...prev,
+          ...settings
+        }));
+      } catch (error) {
+        console.error('Error loading settings:', error);
+        toast({
+          title: "Ошибка",
+          description: "Не удалось загрузить настройки",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadSettings();
+  }, [toast]);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const response = await fetch('/api/bot-settings', {
+        method: 'POST',
+        body: JSON.stringify(botConfig),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+      
+      if (result.success) {
+        toast({
+          title: "Сохранено",
+          description: "Настройки бота успешно обновлены",
+        });
+      }
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      toast({
+        title: "Ошибка",
+        description: "Не удалось сохранить настройки",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -68,9 +124,9 @@ export default function BotSettings() {
                 </Label>
                 <Switch
                   id="monitoring"
-                  checked={botConfig.monitoringEnabled}
+                  checked={botConfig.monitoringEnabled === "true"}
                   onCheckedChange={(checked) =>
-                    setBotConfig({ ...botConfig, monitoringEnabled: checked })
+                    setBotConfig({ ...botConfig, monitoringEnabled: checked.toString() })
                   }
                 />
               </div>
@@ -81,9 +137,9 @@ export default function BotSettings() {
                 </Label>
                 <Switch
                   id="keyword-detection"
-                  checked={botConfig.keywordDetection}
+                  checked={botConfig.keywordDetection === "true"}
                   onCheckedChange={(checked) =>
-                    setBotConfig({ ...botConfig, keywordDetection: checked })
+                    setBotConfig({ ...botConfig, keywordDetection: checked.toString() })
                   }
                 />
               </div>
@@ -95,9 +151,9 @@ export default function BotSettings() {
                   </Label>
                   <Switch
                     id="curator-notification"
-                    checked={botConfig.curatorNotificationEnabled}
+                    checked={botConfig.curatorNotificationEnabled === "true"}
                     onCheckedChange={(checked) =>
-                      setBotConfig({ ...botConfig, curatorNotificationEnabled: checked })
+                      setBotConfig({ ...botConfig, curatorNotificationEnabled: checked.toString() })
                     }
                   />
                 </div>
@@ -137,7 +193,7 @@ export default function BotSettings() {
                   type="number"
                   value={botConfig.notificationDelay}
                   onChange={(e) =>
-                    setBotConfig({ ...botConfig, notificationDelay: parseInt(e.target.value) })
+                    setBotConfig({ ...botConfig, notificationDelay: e.target.value })
                   }
                   className="bg-[#2a2a2a] border-gray-600 text-white mt-1"
                 />
@@ -155,7 +211,7 @@ export default function BotSettings() {
                   type="number"
                   value={botConfig.maxResponseTime}
                   onChange={(e) =>
-                    setBotConfig({ ...botConfig, maxResponseTime: parseInt(e.target.value) })
+                    setBotConfig({ ...botConfig, maxResponseTime: e.target.value })
                   }
                   className="bg-[#2a2a2a] border-gray-600 text-white mt-1"
                 />
@@ -164,7 +220,7 @@ export default function BotSettings() {
           </Card>
 
           {/* Настройки уведомлений */}
-          {botConfig.curatorNotificationEnabled && (
+          {botConfig.curatorNotificationEnabled === "true" && (
             <Card className="bg-[#1a1a1a] border-gray-700 md:col-span-2 border-blue-500/30">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
@@ -280,9 +336,9 @@ export default function BotSettings() {
           <Button 
             onClick={handleSave}
             className="bg-blue-600 hover:bg-blue-700 text-white"
-            disabled={saved}
+            disabled={saving || loading}
           >
-            {saved ? "Сохранено!" : "Сохранить настройки"}
+            {saving ? "Сохранение..." : "Сохранить настройки"}
           </Button>
         </div>
       </div>

@@ -3,6 +3,15 @@ import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+// Bot settings configuration
+export const botSettings = pgTable("bot_settings", {
+  id: serial("id").primaryKey(),
+  settingKey: text("setting_key").notNull().unique(),
+  settingValue: text("setting_value").notNull(),
+  description: text("description"),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Discord servers configuration
 export const discordServers = pgTable("discord_servers", {
   id: serial("id").primaryKey(),
@@ -114,7 +123,15 @@ export const insertResponseTrackingSchema = createInsertSchema(responseTracking)
   id: true,
 });
 
+export const insertBotSettingsSchema = createInsertSchema(botSettings).pick({
+  settingKey: true,
+  settingValue: true,
+  description: true,
+});
+
 // Types
+export type BotSettings = typeof botSettings.$inferSelect;
+export type InsertBotSettings = z.infer<typeof insertBotSettingsSchema>;
 export type Curator = typeof curators.$inferSelect;
 export type InsertCurator = z.infer<typeof insertCuratorSchema>;
 export type Activity = typeof activities.$inferSelect;

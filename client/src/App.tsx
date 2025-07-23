@@ -9,7 +9,7 @@ import Curators from "@/pages/curators";
 import Activity from "@/pages/activity";
 import NotFound from "@/pages/not-found";
 import CuratorDetails from "@/pages/curator-details";
-import ServerSettingsPage from "@/pages/server-settings";
+import ServerManagement from "@/pages/server-management";
 import BotSettings from "@/pages/bot-settings";
 import Sidebar from "@/components/sidebar";
 
@@ -23,7 +23,7 @@ function Router() {
           <Route path="/curators" component={Curators} />
           <Route path="/curators/:id" component={CuratorDetails} />
           <Route path="/activity" component={Activity} />
-          <Route path="/servers" component={ServerSettingsPage} />
+          <Route path="/servers" component={ServerManagement} />
           <Route path="/settings" component={BotSettings} />
           <Route component={NotFound} />
         </Switch>

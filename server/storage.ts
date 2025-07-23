@@ -4,6 +4,7 @@ import {
   discordServers,
   users,
   responseTracking,
+  botSettings,
   type Curator, 
   type InsertCurator,
   type Activity,
@@ -13,7 +14,9 @@ import {
   type User,
   type InsertUser,
   type ResponseTracking,
-  type InsertResponseTracking
+  type InsertResponseTracking,
+  type BotSettings,
+  type InsertBotSettings
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, sql, count } from "drizzle-orm";
@@ -53,7 +56,13 @@ export interface IStorage {
   createResponseTracking(tracking: InsertResponseTracking): Promise<ResponseTracking>;
   updateResponseTracking(id: number, tracking: Partial<InsertResponseTracking>): Promise<ResponseTracking | undefined>;
   getResponseTrackingByMention(mentionMessageId: string): Promise<ResponseTracking | undefined>;
+  getUnrespondedMessages(): Promise<ResponseTracking[]>;
   getCuratorAvgResponseTime(curatorId: number): Promise<number | null>;
+
+  // Bot settings methods
+  getBotSettings(): Promise<Record<string, string>>;
+  setBotSetting(key: string, value: string, description?: string): Promise<void>;
+  getBotSetting(key: string, defaultValue?: string): Promise<string | null>;
   
   // Statistics methods
   getCuratorStats(curatorId?: number): Promise<any>;
@@ -304,6 +313,18 @@ export class DatabaseStorage implements IStorage {
     return tracking || undefined;
   }
 
+  async getUnrespondedMessages(): Promise<ResponseTracking[]> {
+    const unresponded = await db
+      .select()
+      .from(responseTracking)
+      .where(and(
+        sql`${responseTracking.responseTimestamp} IS NULL`,
+        sql`${responseTracking.curatorId} IS NULL`
+      ))
+      .orderBy(desc(responseTracking.mentionTimestamp));
+    return unresponded;
+  }
+
   async getCuratorAvgResponseTime(curatorId: number): Promise<number | null> {
     const result = await db
       .select({
@@ -318,6 +339,43 @@ export class DatabaseStorage implements IStorage {
     const avgTime = result[0]?.avgTime;
     console.log(`Curator ${curatorId} avg response time from DB:`, avgTime);
     return avgTime || null;
+  }
+
+  // Bot settings methods
+  async getBotSettings(): Promise<Record<string, string>> {
+    const settings = await db.select().from(botSettings);
+    const settingsMap: Record<string, string> = {};
+    for (const setting of settings) {
+      settingsMap[setting.settingKey] = setting.settingValue;
+    }
+    return settingsMap;
+  }
+
+  async setBotSetting(key: string, value: string, description?: string): Promise<void> {
+    await db
+      .insert(botSettings)
+      .values({
+        settingKey: key,
+        settingValue: value,
+        description: description || '',
+      })
+      .onConflictDoUpdate({
+        target: botSettings.settingKey,
+        set: {
+          settingValue: value,
+          description: description || botSettings.description,
+          updatedAt: sql`NOW()`,
+        },
+      });
+  }
+
+  async getBotSetting(key: string, defaultValue?: string): Promise<string | null> {
+    const [setting] = await db
+      .select()
+      .from(botSettings)
+      .where(eq(botSettings.settingKey, key));
+    
+    return setting?.settingValue || defaultValue || null;
   }
 
   // Statistics methods

@@ -50,12 +50,26 @@ users: id, discord_id, username, role
 - Bot connects as "Curator#2772"
 - Real-time monitoring of messages, reactions, replies
 
+**Curator Notification System:**
+- Notification Server: 805026457327108126
+- Notification Channel: 974783377465036861
+- Role-based notifications with specific Discord role IDs:
+  - Detectives: 916616528395378708
+  - Weazel News: 1329213276587950080
+  - EMS: 1329212940540313644
+  - LSCSD: 1329213185579946106
+  - SANG: 1329213239996973116
+  - LSPD: 1329212725921976322
+  - FIB: 1329213307059437629
+  - Government: 1329213001814773780
+
 **Bot Functionality:**
 - Message monitoring with content analysis
 - Reaction tracking for response times
 - Activity classification (message/reaction/reply)
 - Response time calculation from mentions to curator responses
 - Automatic database logging
+- Role-based curator notifications for unanswered messages
 
 ### Frontend Architecture
 
@@ -164,6 +178,22 @@ This system provides comprehensive curator monitoring with real-time performance
 
 ## Recent Changes
 
+### July 23, 2025 - ИСПРАВЛЕНА ЛОГИКА RESPONSE TRACKING
+
+**✅ КРИТИЧЕСКИЕ ИСПРАВЛЕНИЯ ЛОГИКИ ОТСЛЕЖИВАНИЯ ОТВЕТОВ**
+- **✅ ИНДИВИДУАЛЬНОЕ ОТСЛЕЖИВАНИЕ: Каждое сообщение отслеживается отдельно**
+- **✅ ПРАВИЛЬНОЕ ЗАСЧИТЫВАНИЕ: Время ответа засчитывается только тому куратору, который реально ответил**
+- **✅ СРЕДНЕЕ ВРЕМЯ ДЛЯ СЕРВЕРОВ: Показывает общее среднее время всех кураторов сервера**
+- **✅ БЕЗ PLACEHOLDER КУРАТОРОВ: Убрана логика создания записей с временными кураторами**
+- **✅ ТОЛЬКО РЕАЛЬНЫЕ ОТВЕТЫ: Статистика считает только сообщения с фактическими ответами кураторов**
+
+**ТЕХНИЧЕСКАЯ РЕАЛИЗАЦИЯ:**
+- curatorId в response_tracking теперь nullable - устанавливается только при реальном ответе
+- Система уведомлений работает независимо от статистики
+- Каждое новое сообщение создает отдельную запись отслеживания
+- Время ответа считается от момента создания сообщения до ответа конкретного куратора
+- Исключены фиктивные данные и placeholder записи
+
 ### July 23, 2025 - Система мониторинга кураторов Discord - ЗАВЕРШЕНА
 
 **✅ МИГРАЦИЯ И ОСНОВНАЯ ФУНКЦИОНАЛЬНОСТЬ ЗАВЕРШЕНЫ**
@@ -200,6 +230,20 @@ This system provides comprehensive curator monitoring with real-time performance
 - **✅ Error handling и логирование для отладки**
 
 **ГОТОВО К ИСПОЛЬЗОВАНИЮ:** Система полностью функциональна и готова для мониторинга кураторов Discord серверов в реальном времени с точными метриками производительности.
+
+### July 23, 2025 - Улучшение системы отслеживания ответов
+
+**✅ РАСШИРЕНО ОТСЛЕЖИВАНИЕ РЕАКЦИЙ КАК ОТВЕТОВ**
+- **✅ ИСПРАВЛЕНА ПРОКРУТКА: Убрано overflow-hidden, добавлено min-h-screen для правильной вертикальной прокрутки**
+- **✅ РЕАКЦИИ КАК ОТВЕТЫ: Теперь реакции на сообщения с тегами засчитываются как ответы кураторов**
+- **✅ УЛУЧШЕНА ЛОГИКА: Система проверяет содержимое сообщения на наличие тегов или ключевых слов**
+- **✅ ДВОЙНОЙ КОНТРОЛЬ: И создание новых записей отслеживания, и обновление существующих для реакций**
+
+**ТЕХНИЧЕСКАЯ РЕАЛИЗАЦИЯ:**
+- Проверка реакций на сообщения с роль-тегами и ключевыми словами
+- Создание записей response_tracking для реакций с типом 'reaction'
+- Расчет времени ответа от создания сообщения до времени реакции
+- Уникальные ID для реакций: `reaction_{messageId}_{userId}`
 
 ### July 23, 2025 - Полная миграция из Replit Agent в Replit завершена
 

@@ -59,6 +59,7 @@ export interface IStorage {
   getDashboardStats(): Promise<any>;
   getDailyActivityStats(days: number): Promise<any>;
   getTopCurators(limit: number): Promise<any>;
+  getServerStats(): Promise<any>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -501,6 +502,81 @@ export class DatabaseStorage implements IStorage {
       console.error("=== ERROR IN GET TOP CURATORS ===");
       console.error("Error:", error);
       console.error("Stack:", error?.stack);
+      return [];
+    }
+  }
+
+  async getServerStats(): Promise<any> {
+    try {
+      const servers = await this.getDiscordServers();
+      const serverStatsPromises = servers.map(async (server) => {
+        // Get activities for this server
+        const serverActivities = await db
+          .select()
+          .from(activities)
+          .where(eq(activities.serverId, server.id));
+
+        const totalActivities = serverActivities.length;
+        const messages = serverActivities.filter(a => a.type === 'message').length;
+        const reactions = serverActivities.filter(a => a.type === 'reaction').length;
+        const replies = serverActivities.filter(a => a.type === 'reply').length;
+
+        // Get average response time for this server
+        const serverResponseTime = await db
+          .select({
+            avgTime: sql<number>`AVG(${responseTracking.responseTimeSeconds})`
+          })
+          .from(responseTracking)
+          .where(and(
+            eq(responseTracking.serverId, server.id),
+            sql`${responseTracking.responseTimeSeconds} IS NOT NULL`
+          ));
+
+        const avgResponseTime = serverResponseTime[0]?.avgTime 
+          ? Math.round(serverResponseTime[0].avgTime) 
+          : null;
+
+        // Get top curators for this server (curators with most activities)
+        const curatorStats = await db
+          .select({
+            curatorId: activities.curatorId,
+            count: sql<number>`count(*)`
+          })
+          .from(activities)
+          .where(eq(activities.serverId, server.id))
+          .groupBy(activities.curatorId)
+          .orderBy(sql`count(*) DESC`)
+          .limit(3);
+
+        // Get curator names
+        const topCurators = await Promise.all(
+          curatorStats.map(async (stat) => {
+            const curator = await this.getCuratorById(stat.curatorId);
+            return {
+              name: curator?.name || 'Unknown',
+              activities: stat.count,
+              factions: curator?.factions || []
+            };
+          })
+        );
+
+        return {
+          id: server.id,
+          serverId: server.serverId,
+          name: server.name,
+          isActive: server.isActive,
+          totalActivities,
+          messages,
+          reactions,
+          replies,
+          avgResponseTime,
+          topCurators
+        };
+      });
+
+      return await Promise.all(serverStatsPromises);
+    } catch (error) {
+      console.error('Error getting server stats:', error);
       return [];
     }
   }

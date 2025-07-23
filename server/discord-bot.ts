@@ -1,7 +1,7 @@
 import { Client, GatewayIntentBits, Events } from 'discord.js';
 import { storage } from './storage';
 
-const DISCORD_TOKEN = process.env.DISCORD_BOT_TOKEN;
+const DISCORD_TOKEN = process.env.DISCORD_BOT_TOKEN || "";
 
 export function startDiscordBot() {
   if (!DISCORD_TOKEN) {

@@ -311,6 +311,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Server stats with activity details
+  app.get("/api/servers/stats", async (req, res) => {
+    try {
+      const serverStats = await storage.getServerStats();
+      res.json(serverStats);
+    } catch (error) {
+      console.error("Error getting server stats:", error);
+      res.status(500).json({ error: "Failed to fetch server stats" });
+    }
+  });
+
   // Start Discord bot
   startDiscordBot();
 

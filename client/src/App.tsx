@@ -21,6 +21,7 @@ function Router() {
           <Route path="/curators" component={Curators} />
           <Route path="/curators/:id" component={CuratorDetails} />
           <Route path="/activity" component={Activity} />
+          <Route path="/servers" component={ServerSettingsPage} />
           <Route path="/settings" component={ServerSettingsPage} />
           <Route component={NotFound} />
         </Switch>

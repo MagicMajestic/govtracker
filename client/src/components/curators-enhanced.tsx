@@ -10,6 +10,7 @@ import { queryClient, apiRequest } from "@/lib/queryClient";
 import { Link } from "wouter";
 import { Eye, Edit, Trash2, Clock, TrendingUp, Plus } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getActivityStatusText, getActivityStatusColor } from "@/lib/rating";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,33 +32,6 @@ interface CuratorWithStats extends Curator {
   score: number;
   avgResponseTime?: number;
   activityStatus: "excellent" | "good" | "normal" | "poor";
-}
-
-function getActivityStatusText(status: string): string {
-  switch (status) {
-    case "excellent": return "Отличная активность";
-    case "good": return "Хорошая активность";
-    case "normal": return "Нормальная активность";
-    case "poor": return "Низкая активность";
-    default: return "Нет данных";
-  }
-}
-
-function getActivityStatusColor(status: string): string {
-  switch (status) {
-    case "excellent": return "bg-green-500";
-    case "good": return "bg-blue-500";
-    case "normal": return "bg-yellow-500";
-    case "poor": return "bg-red-500";
-    default: return "bg-gray-500";
-  }
-}
-
-function calculateActivityStatus(totalActivities: number): string {
-  if (totalActivities >= 50) return "excellent";
-  if (totalActivities >= 25) return "good";
-  if (totalActivities >= 10) return "normal";
-  return "poor";
 }
 
 const factions = [
@@ -251,7 +225,7 @@ export function CuratorsEnhanced() {
       totalActivities,
       score: stats?.score || 0,
       avgResponseTime: stats?.avgResponseTime,
-      activityStatus: calculateActivityStatus(totalActivities) as any
+      activityStatus: "normal" as any
     };
   }) || [];
 
@@ -304,9 +278,9 @@ export function CuratorsEnhanced() {
                   {/* Activity Status */}
                   <div className="space-y-2 mb-4">
                     <div className="flex items-center space-x-2">
-                      <div className={`h-2 w-2 rounded-full ${getActivityStatusColor(curator.activityStatus)}`} />
+                      <div className={`h-2 w-2 rounded-full ${getActivityStatusColor(curator.totalActivities)}`} />
                       <span className="text-xs font-medium">
-                        {getActivityStatusText(curator.activityStatus)}
+                        {getActivityStatusText(curator.totalActivities)}
                       </span>
                     </div>
                     

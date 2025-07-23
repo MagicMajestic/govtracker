@@ -9,6 +9,7 @@ import { formatDistanceToNow } from "date-fns";
 import { ru } from "date-fns/locale";
 import { MessageSquare, Heart, Reply, ArrowLeft, TrendingUp, Clock } from "lucide-react";
 import { Link } from "wouter";
+import { getRatingText, getRatingColor } from "@/lib/rating";
 
 interface Curator {
   id: number;
@@ -57,21 +58,7 @@ function getActivityColor(type: string) {
   }
 }
 
-function getRatingText(score: number): string {
-  if (score >= 90) return "Великолепно";
-  if (score >= 70) return "Хорошо";
-  if (score >= 50) return "Нормально";
-  if (score >= 30) return "Плохо";
-  return "Ужасно";
-}
 
-function getRatingColor(score: number): string {
-  if (score >= 90) return "bg-green-500";
-  if (score >= 70) return "bg-blue-500";
-  if (score >= 50) return "bg-yellow-500";
-  if (score >= 30) return "bg-orange-500";
-  return "bg-red-500";
-}
 
 export default function CuratorDetails() {
   const { id } = useParams();

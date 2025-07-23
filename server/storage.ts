@@ -301,7 +301,9 @@ export class DatabaseStorage implements IStorage {
         sql`${responseTracking.responseTimeSeconds} IS NOT NULL`
       ));
     
-    return result[0]?.avgTime || null;
+    const avgTime = result[0]?.avgTime;
+    console.log(`Curator ${curatorId} avg response time from DB:`, avgTime);
+    return avgTime || null;
   }
 
   // Statistics methods
@@ -316,36 +318,10 @@ export class DatabaseStorage implements IStorage {
       const replies = curatorActivities.filter(a => a.type === 'reply').length;
       const score = messages * 3 + replies * 2 + reactions;
       
-      // Calculate average response time for this curator
-      const curatorReplies = curatorActivities.filter(a => a.type === 'reply');
-      let avgResponseTime = null;
-      
-      if (curatorReplies.length > 0) {
-        const responseTimes = [];
-        
-        for (const reply of curatorReplies) {
-          if (reply.targetMessageId) {
-            // Find the original message in curator's activities
-            const originalMessage = curatorActivities.find(a => 
-              a.messageId === reply.targetMessageId && a.type === 'message'
-            );
-            
-            if (originalMessage && reply.timestamp && originalMessage.timestamp) {
-              const replyTime = new Date(reply.timestamp).getTime();
-              const messageTime = new Date(originalMessage.timestamp).getTime();
-              const responseTimeMs = replyTime - messageTime;
-              
-              if (responseTimeMs > 0) {
-                responseTimes.push(responseTimeMs);
-              }
-            }
-          }
-        }
-        
-        if (responseTimes.length > 0) {
-          const avgMs = responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length;
-          avgResponseTime = Math.round(avgMs / 1000); // Convert to seconds
-        }
+      // Calculate average response time using response tracking table
+      let avgResponseTime = await this.getCuratorAvgResponseTime(curatorId);
+      if (avgResponseTime) {
+        avgResponseTime = Math.round(avgResponseTime);
       }
       
       return [{
@@ -399,48 +375,23 @@ export class DatabaseStorage implements IStorage {
     console.log("Today activities:", todayActivities.length);
     console.log("Total servers:", allServers.length);
     
-    // Calculate average response time across ALL servers and curators
-    const replies = allActivities.filter(a => a.type === 'reply');
-    console.log("Total replies found:", replies.length);
+    // Calculate average response time using response tracking table
+    console.log("Calculating global average response time from response tracking...");
     
     let avgResponseTime = 0;
     
-    if (replies.length > 0) {
-      const responseTimes = [];
-      
-      for (const reply of replies) {
-        console.log(`Processing reply: ${reply.id}, targetId: ${reply.targetMessageId}`);
-        
-        if (reply.targetMessageId) {
-          // Find the original message across all servers
-          const originalMessage = allActivities.find(a => 
-            a.messageId === reply.targetMessageId && a.type === 'message'
-          );
-          
-          console.log(`Original message found:`, !!originalMessage);
-          
-          if (originalMessage && reply.timestamp && originalMessage.timestamp) {
-            const replyTime = new Date(reply.timestamp).getTime();
-            const messageTime = new Date(originalMessage.timestamp).getTime();
-            const responseTimeMs = replyTime - messageTime;
-            
-            console.log(`Response time: ${responseTimeMs}ms (${Math.round(responseTimeMs / (1000 * 60))}min)`);
-            
-            if (responseTimeMs > 0) {
-              responseTimes.push(responseTimeMs);
-            }
-          }
-        }
-      }
-      
-      console.log("Valid response times:", responseTimes.length);
-      
-      if (responseTimes.length > 0) {
-        const avgMs = responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length;
-        // Always show in seconds for consistency 
-        avgResponseTime = Math.round(avgMs / 1000);
-        console.log(`Average response time across all servers: ${avgMs}ms = ${avgResponseTime}s`);
-      }
+    const responseStats = await db
+      .select({
+        avgTime: sql<number>`AVG(${responseTracking.responseTimeSeconds})`
+      })
+      .from(responseTracking)
+      .where(sql`${responseTracking.responseTimeSeconds} IS NOT NULL`);
+    
+    if (responseStats[0]?.avgTime) {
+      avgResponseTime = Math.round(responseStats[0].avgTime);
+      console.log(`Global average response time: ${avgResponseTime}s`);
+    } else {
+      console.log("No response time data found in tracking table");
     }
 
     const stats = {
@@ -513,50 +464,13 @@ export class DatabaseStorage implements IStorage {
         const replies = curatorActivities.filter(a => a.type === 'reply').length;
         const score = messages * 3 + replies * 2 + reactions;
         
-        // Calculate average response time
-        let avgResponseTime = null;
-        const replyActivities = curatorActivities.filter(a => a.type === 'reply');
-        
-        console.log(`${curator.name}: Found ${replyActivities.length} reply activities`);
-        
-        if (replyActivities.length > 0) {
-          const responseTimes = [];
-          
-          for (const reply of replyActivities) {
-            if (reply.targetMessageId) {
-              // Find the original message
-              const originalMessage = curatorActivities.find(a => 
-                a.messageId === reply.targetMessageId && a.type === 'message'
-              );
-              
-              if (originalMessage && reply.timestamp && originalMessage.timestamp) {
-                try {
-                  const replyTime = new Date(reply.timestamp).getTime();
-                  const messageTime = new Date(originalMessage.timestamp).getTime();
-                  const responseTimeMs = replyTime - messageTime;
-                  
-                  if (responseTimeMs > 0) {
-                    responseTimes.push(responseTimeMs);
-                  }
-                } catch (error) {
-                  console.error(`Error calculating response time for reply ${reply.id}:`, error);
-                }
-              }
-            }
-          }
-          
-          if (responseTimes.length > 0) {
-            const avgMs = responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length;
-            // Convert to seconds if less than 60 seconds, otherwise to minutes
-            if (avgMs < 60000) {
-              avgResponseTime = Math.round(avgMs / 1000); // Show in seconds
-            } else {
-              avgResponseTime = Math.round(avgMs / (1000 * 60)); // Show in minutes
-            }
-          }
+        // Calculate average response time using response tracking
+        let avgResponseTime = await this.getCuratorAvgResponseTime(curator.id);
+        if (avgResponseTime) {
+          avgResponseTime = Math.round(avgResponseTime);
         }
         
-        console.log(`${curator.name}: total=${totalActivities}, messages=${messages}, reactions=${reactions}, replies=${replies}, score=${score}, avgResponseTime=${avgResponseTime}min`);
+        console.log(`${curator.name}: total=${totalActivities}, messages=${messages}, reactions=${reactions}, replies=${replies}, score=${score}, avgResponseTime=${avgResponseTime}s`);
         
         curatorsWithStats.push({
           id: curator.id,

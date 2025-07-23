@@ -54,20 +54,54 @@ export function startDiscordBot() {
     console.log(`[BOT] Message received from ${message.author.username} (${message.author.id}) in guild ${message.guildId}`);
 
     try {
-      const curator = await storage.getCuratorByDiscordId(message.author.id);
-      if (!curator) {
-        console.log(`User ${message.author.username} is not a curator`);
-        return;
-      }
-
-      console.log(`Found curator: ${curator.name} (${curator.curatorType})`);
-
+      // First, get server info
       const server = await storage.getServerByServerId(message.guildId!);
       if (!server) {
         console.log(`Server ${message.guildId} not found in database`);
         return;
       }
 
+      // Check if author is a curator first
+      const curator = await storage.getCuratorByDiscordId(message.author.id);
+      
+      // Check if this message needs curator response (from non-curator users)
+      const needsCuratorResponse = !curator && (
+        (server.roleTagId && message.content.includes(`<@&${server.roleTagId}>`)) ||
+        message.content.toLowerCase().includes('куратор') ||
+        message.content.toLowerCase().includes('curator') ||
+        message.content.toLowerCase().includes('помощь') ||
+        message.content.toLowerCase().includes('help') ||
+        message.content.toLowerCase().includes('вопрос') ||
+        message.content.toLowerCase().includes('question')
+      );
+      
+      if (needsCuratorResponse) {
+        console.log(`Message needs curator response - creating response tracking record`);
+        
+        try {
+          await storage.createResponseTracking({
+            serverId: server.id,
+            curatorId: 0, // Will be updated when curator responds
+            mentionMessageId: message.id,
+            mentionTimestamp: message.createdAt,
+            responseMessageId: null,
+            responseTimestamp: null,
+            responseType: null,
+            responseTimeSeconds: null
+          });
+          console.log(`Response tracking record created for message ${message.id}`);
+        } catch (error) {
+          console.error('Failed to create response tracking:', error);
+        }
+      }
+
+      // Process curator activities
+      if (!curator) {
+        console.log(`User ${message.author.username} is not a curator`);
+        return;
+      }
+
+      console.log(`Found curator: ${curator.name} (${curator.curatorType})`);
       console.log(`Found server: ${server.name}`);
 
       const isReply = message.reference?.messageId;
@@ -77,6 +111,20 @@ export function startDiscordBot() {
         try {
           const referencedMessage = await message.fetchReference();
           targetMessageContent = referencedMessage.content.substring(0, 500); // Limit length
+          
+          // Check if this is a response to a tracked mention
+          const tracking = await storage.getResponseTrackingByMention(message.reference?.messageId || '');
+          if (tracking && !tracking.responseMessageId) {
+            const responseTimeMs = message.createdAt.getTime() - new Date(tracking.mentionTimestamp).getTime();
+            await storage.updateResponseTracking(tracking.id, {
+              curatorId: curator.id,
+              responseMessageId: message.id,
+              responseTimestamp: message.createdAt,
+              responseType: 'reply',
+              responseTimeSeconds: Math.round(responseTimeMs / 1000)
+            });
+            console.log(`Updated response tracking: ${Math.round(responseTimeMs / 1000)}s response time`);
+          }
         } catch (error) {
           console.error('Failed to fetch referenced message:', error);
         }
@@ -94,7 +142,6 @@ export function startDiscordBot() {
         content: message.content.substring(0, 1000), // Limit content length
         targetMessageId: isReply ? message.reference!.messageId : null,
         targetMessageContent,
-
       });
 
       console.log(`Activity created successfully!`);
@@ -103,50 +150,70 @@ export function startDiscordBot() {
     }
   });
 
-  // Monitor reactions
+  // Monitor reactions - IMPROVED to track response times
   client.on(Events.MessageReactionAdd, async (reaction, user) => {
     if (user.bot) return;
 
     console.log(`Reaction received from ${user.username} (${user.id}) in guild ${reaction.message.guildId}`);
 
-    const curator = await storage.getCuratorByDiscordId(user.id);
-    if (!curator) {
-      console.log(`User ${user.username} is not a curator`);
-      return;
-    }
-
-    console.log(`Found curator: ${curator.name}`);
-
-    const server = await storage.getServerByServerId(reaction.message.guildId!);
-    if (!server) {
-      console.log(`Server ${reaction.message.guildId} not found in database`);
-      return;
-    }
-
-    console.log(`Found server: ${server.name}`);
-
-    let targetMessageContent = null;
     try {
-      if (reaction.message.partial) {
-        await reaction.message.fetch();
+      const curator = await storage.getCuratorByDiscordId(user.id);
+      if (!curator) {
+        console.log(`User ${user.username} is not a curator`);
+        return;
       }
-      targetMessageContent = reaction.message.content?.substring(0, 500) || null;
-    } catch (error) {
-      console.error('Failed to fetch message for reaction:', error);
-    }
 
-    await storage.createActivity({
-      curatorId: curator.id,
-      serverId: server.id,
-      type: 'reaction',
-      channelId: reaction.message.channelId,
-      channelName: reaction.message.channel && 'name' in reaction.message.channel ? reaction.message.channel.name : null,
-      messageId: null,
-      content: null,
-      reactionEmoji: reaction.emoji.name || reaction.emoji.toString(),
-      targetMessageId: reaction.message.id,
-      targetMessageContent,
-    });
+      console.log(`Found curator: ${curator.name}`);
+
+      const server = await storage.getServerByServerId(reaction.message.guildId!);
+      if (!server) {
+        console.log(`Server ${reaction.message.guildId} not found in database`);
+        return;
+      }
+
+      console.log(`Found server: ${server.name}`);
+
+      // Check if this reaction is a response to a tracked mention
+      const tracking = await storage.getResponseTrackingByMention(reaction.message.id);
+      if (tracking && !tracking.responseMessageId) {
+        const responseTimeMs = Date.now() - new Date(tracking.mentionTimestamp).getTime();
+        await storage.updateResponseTracking(tracking.id, {
+          curatorId: curator.id,
+          responseMessageId: null, // Reactions don't have message IDs
+          responseTimestamp: new Date(),
+          responseType: 'reaction',
+          responseTimeSeconds: Math.round(responseTimeMs / 1000)
+        });
+        console.log(`Updated response tracking for reaction: ${Math.round(responseTimeMs / 1000)}s response time`);
+      }
+
+      let targetMessageContent = null;
+      try {
+        if (reaction.message.partial) {
+          await reaction.message.fetch();
+        }
+        targetMessageContent = reaction.message.content?.substring(0, 500) || null;
+      } catch (error) {
+        console.error('Failed to fetch message for reaction:', error);
+      }
+
+      await storage.createActivity({
+        curatorId: curator.id,
+        serverId: server.id,
+        type: 'reaction',
+        channelId: reaction.message.channelId,
+        channelName: reaction.message.channel && 'name' in reaction.message.channel ? reaction.message.channel.name : null,
+        messageId: null,
+        content: null,
+        reactionEmoji: reaction.emoji.name || reaction.emoji.toString(),
+        targetMessageId: reaction.message.id,
+        targetMessageContent,
+      });
+
+      console.log(`Reaction activity created successfully!`);
+    } catch (error) {
+      console.error('Error processing reaction:', error);
+    }
   });
 
   client.on(Events.Error, (error) => {

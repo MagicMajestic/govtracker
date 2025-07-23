@@ -47,17 +47,16 @@ export default function Sidebar() {
             </Link>
           );
         })}
-      </nav>
-
-      <div className="absolute bottom-4 left-4 right-4">
-        <div className="surface-light p-4 rounded-lg">
-          <div className="flex items-center space-x-2 mb-2">
+        
+        {/* Bot Status in Menu */}
+        <div className="mt-4 px-4 py-3 rounded-lg surface-light">
+          <div className="flex items-center space-x-2">
             <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-            <span className="text-sm font-medium text-white">Бот онлайн</span>
+            <span className="text-xs font-medium text-white">Бот онлайн</span>
+            <span className="text-xs text-gray-400">(8 серверов)</span>
           </div>
-          <p className="text-xs text-gray-400">8 серверов подключено</p>
         </div>
-      </div>
+      </nav>
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getRatingText, getRatingColor } from "@/lib/rating";
 
 interface TopCurator {
   id: number;
@@ -15,22 +16,6 @@ interface TopCurator {
   messages: number;
   reactions: number;
   replies: number;
-}
-
-function getRatingText(score: number): string {
-  if (score >= 90) return "Великолепно";
-  if (score >= 70) return "Хорошо";
-  if (score >= 50) return "Нормально";
-  if (score >= 30) return "Плохо";
-  return "Ужасно";
-}
-
-function getRatingColor(score: number): string {
-  if (score >= 90) return "bg-green-500";
-  if (score >= 70) return "bg-blue-500";
-  if (score >= 50) return "bg-yellow-500";
-  if (score >= 30) return "bg-orange-500";
-  return "bg-red-500";
 }
 
 export function TopCurators() {

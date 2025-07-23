@@ -94,8 +94,8 @@ export function CuratorsEnhanced() {
   });
 
   const { data: topCurators } = useQuery<CuratorWithStats[]>({
-    queryKey: ["/api/curators/top"],
-    queryFn: () => Promise.resolve([]) // Temporarily disabled to avoid errors
+    queryKey: ["/api/top-curators"],
+    queryFn: () => fetch("/api/top-curators?limit=50").then(res => res.json())
   });
 
   const createMutation = useMutation({
@@ -317,7 +317,7 @@ export function CuratorsEnhanced() {
                     
                     <div className="flex items-center space-x-2 text-xs text-muted-foreground">
                       <Clock className="h-3 w-3" />
-                      <span>Ответ: {curator.avgResponseTime || "Н/Д"}</span>
+                      <span>Ответ: {curator.avgResponseTime ? `${curator.avgResponseTime}с` : "Н/Д"}</span>
                     </div>
 
                     {curator.score > 0 && (

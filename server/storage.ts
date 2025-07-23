@@ -306,41 +306,100 @@ export class DatabaseStorage implements IStorage {
 
   // Statistics methods
   async getCuratorStats(curatorId?: number): Promise<any> {
-    const whereClause = curatorId ? eq(activities.curatorId, curatorId) : undefined;
-    
-    const stats = await db
-      .select({
-        curatorId: activities.curatorId,
-        totalMessages: sql<number>`count(case when ${activities.type} = 'message' then 1 end)`,
-        totalReactions: sql<number>`count(case when ${activities.type} = 'reaction' then 1 end)`,
-        totalReplies: sql<number>`count(case when ${activities.type} = 'reply' then 1 end)`,
-      })
-      .from(activities)
-      .where(whereClause)
-      .groupBy(activities.curatorId);
+    if (curatorId) {
+      // Get specific curator stats
+      const curatorActivities = await this.getActivitiesByCurator(curatorId, 1000);
+      
+      const totalActivities = curatorActivities.length;
+      const messages = curatorActivities.filter(a => a.type === 'message').length;
+      const reactions = curatorActivities.filter(a => a.type === 'reaction').length;
+      const replies = curatorActivities.filter(a => a.type === 'reply').length;
+      const score = messages * 3 + replies * 2 + reactions;
+      
+      // Calculate average response time for this curator
+      const curatorReplies = curatorActivities.filter(a => a.type === 'reply');
+      let avgResponseTime = null;
+      
+      if (curatorReplies.length > 0) {
+        const responseTimes = [];
+        
+        for (const reply of curatorReplies) {
+          if (reply.targetMessageId) {
+            // Find the original message in curator's activities
+            const originalMessage = curatorActivities.find(a => 
+              a.messageId === reply.targetMessageId && a.type === 'message'
+            );
+            
+            if (originalMessage && reply.timestamp && originalMessage.timestamp) {
+              const replyTime = new Date(reply.timestamp).getTime();
+              const messageTime = new Date(originalMessage.timestamp).getTime();
+              const responseTimeMs = replyTime - messageTime;
+              
+              if (responseTimeMs > 0) {
+                responseTimes.push(responseTimeMs);
+              }
+            }
+          }
+        }
+        
+        if (responseTimes.length > 0) {
+          const avgMs = responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length;
+          avgResponseTime = Math.round(avgMs / 1000); // Convert to seconds
+        }
+      }
+      
+      return [{
+        curatorId,
+        totalActivities,
+        totalMessages: messages,
+        totalReactions: reactions,
+        totalReplies: replies,
+        messages,
+        reactions,
+        replies,
+        score,
+        avgResponseTime
+      }];
+    } else {
+      // Get all curator stats
+      const stats = await db
+        .select({
+          curatorId: activities.curatorId,
+          totalMessages: sql<number>`count(case when ${activities.type} = 'message' then 1 end)`,
+          totalReactions: sql<number>`count(case when ${activities.type} = 'reaction' then 1 end)`,
+          totalReplies: sql<number>`count(case when ${activities.type} = 'reply' then 1 end)`,
+        })
+        .from(activities)
+        .groupBy(activities.curatorId);
 
-    return stats;
+      return stats;
+    }
   }
 
   async getDashboardStats(): Promise<any> {
     console.log("=== GET DASHBOARD STATS START ===");
     
-    const [curators, allActivities] = await Promise.all([
+    const [curators, allActivities, allServers] = await Promise.all([
       this.getCurators(),
-      this.getRecentActivities(1000)
+      this.getRecentActivities(1000),
+      this.getDiscordServers()
     ]);
     
     const today = new Date().toISOString().split('T')[0];
     const todayActivities = allActivities.filter(a => {
-      const activityDate = a.timestamp instanceof Date ? a.timestamp.toISOString().split('T')[0] : a.timestamp?.split('T')[0];
+      if (!a.timestamp) return false;
+      const activityDate = a.timestamp instanceof Date 
+        ? a.timestamp.toISOString().split('T')[0] 
+        : new Date(a.timestamp).toISOString().split('T')[0];
       return activityDate === today;
     });
     
     console.log("Today:", today);
     console.log("Total activities:", allActivities.length);
     console.log("Today activities:", todayActivities.length);
+    console.log("Total servers:", allServers.length);
     
-    // Calculate average response time for replies
+    // Calculate average response time across ALL servers and curators
     const replies = allActivities.filter(a => a.type === 'reply');
     console.log("Total replies found:", replies.length);
     
@@ -353,7 +412,7 @@ export class DatabaseStorage implements IStorage {
         console.log(`Processing reply: ${reply.id}, targetId: ${reply.targetMessageId}`);
         
         if (reply.targetMessageId) {
-          // Find the original message
+          // Find the original message across all servers
           const originalMessage = allActivities.find(a => 
             a.messageId === reply.targetMessageId && a.type === 'message'
           );
@@ -378,8 +437,9 @@ export class DatabaseStorage implements IStorage {
       
       if (responseTimes.length > 0) {
         const avgMs = responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length;
-        avgResponseTime = Math.round(avgMs / (1000 * 60)); // Convert to minutes
-        console.log(`Average response time: ${avgMs}ms = ${avgResponseTime}min`);
+        // Always show in seconds for consistency 
+        avgResponseTime = Math.round(avgMs / 1000);
+        console.log(`Average response time across all servers: ${avgMs}ms = ${avgResponseTime}s`);
       }
     }
 
@@ -418,8 +478,16 @@ export class DatabaseStorage implements IStorage {
     
     try {
       // Get all active curators
+      console.log("About to call getCurators()...");
       const allCurators = await this.getCurators();
       console.log("Found curators:", allCurators.length);
+      
+      if (allCurators.length === 0) {
+        console.log("No curators found - returning empty array");
+        return [];
+      }
+      
+      // console.log("Curators found:", allCurators.map(c => ({ id: c.id, name: c.name, isActive: c.isActive })));
       
       if (!allCurators || allCurators.length === 0) {
         console.log("No curators found");
@@ -435,7 +503,9 @@ export class DatabaseStorage implements IStorage {
         console.log(`Processing curator: ${curator.name}`);
         
         // Get activities for this curator
+        console.log(`Getting activities for curator ID: ${curator.id}`);
         const curatorActivities = await this.getActivitiesByCurator(curator.id, 1000);
+        console.log(`Found ${curatorActivities.length} activities for ${curator.name}`);
         
         const totalActivities = curatorActivities.length;
         const messages = curatorActivities.filter(a => a.type === 'message').length;
@@ -447,6 +517,8 @@ export class DatabaseStorage implements IStorage {
         let avgResponseTime = null;
         const replyActivities = curatorActivities.filter(a => a.type === 'reply');
         
+        console.log(`${curator.name}: Found ${replyActivities.length} reply activities`);
+        
         if (replyActivities.length > 0) {
           const responseTimes = [];
           
@@ -457,13 +529,17 @@ export class DatabaseStorage implements IStorage {
                 a.messageId === reply.targetMessageId && a.type === 'message'
               );
               
-              if (originalMessage) {
-                const replyTime = new Date(reply.timestamp || '').getTime();
-                const messageTime = new Date(originalMessage.timestamp || '').getTime();
-                const responseTimeMs = replyTime - messageTime;
-                
-                if (responseTimeMs > 0) {
-                  responseTimes.push(responseTimeMs);
+              if (originalMessage && reply.timestamp && originalMessage.timestamp) {
+                try {
+                  const replyTime = new Date(reply.timestamp).getTime();
+                  const messageTime = new Date(originalMessage.timestamp).getTime();
+                  const responseTimeMs = replyTime - messageTime;
+                  
+                  if (responseTimeMs > 0) {
+                    responseTimes.push(responseTimeMs);
+                  }
+                } catch (error) {
+                  console.error(`Error calculating response time for reply ${reply.id}:`, error);
                 }
               }
             }
@@ -471,7 +547,12 @@ export class DatabaseStorage implements IStorage {
           
           if (responseTimes.length > 0) {
             const avgMs = responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length;
-            avgResponseTime = Math.round(avgMs / (1000 * 60)); // Convert to minutes
+            // Convert to seconds if less than 60 seconds, otherwise to minutes
+            if (avgMs < 60000) {
+              avgResponseTime = Math.round(avgMs / 1000); // Show in seconds
+            } else {
+              avgResponseTime = Math.round(avgMs / (1000 * 60)); // Show in minutes
+            }
           }
         }
         

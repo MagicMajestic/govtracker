@@ -36,6 +36,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Curators endpoints
+  
+  // Top curators endpoint - test route
+  app.get("/api/top-curators", async (req, res) => {
+    console.log("=== TOP CURATORS ROUTE STARTED ===");
+    
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+      console.log("Limit:", limit);
+      
+      const topCurators = await storage.getTopCurators(limit);
+      console.log("=== SENDING TOP CURATORS ===");
+      console.log("Count:", topCurators.length);
+      console.log("Data:", JSON.stringify(topCurators, null, 2));
+      
+      res.json(topCurators);
+    } catch (error: any) {
+      console.error("=== ERROR IN TOP CURATORS ROUTE ===");
+      console.error("Error:", error);
+      console.error("Stack:", error?.stack);
+      res.status(500).json({ error: "Failed to fetch top curators" });
+    }
+  });
   app.get("/api/curators", async (req, res) => {
     try {
       const { type } = req.query;
@@ -199,26 +221,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/curators/top", async (req, res) => {
-    console.log("=== TOP CURATORS ROUTE STARTED ===");
-    
-    try {
-      const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
-      console.log("Limit:", limit);
-      
-      const topCurators = await storage.getTopCurators(limit);
-      console.log("=== SENDING TOP CURATORS ===");
-      console.log("Count:", topCurators.length);
-      console.log("Data:", JSON.stringify(topCurators, null, 2));
-      
-      res.json(topCurators);
-    } catch (error: any) {
-      console.error("=== ERROR IN TOP CURATORS ROUTE ===");
-      console.error("Error:", error);
-      console.error("Stack:", error?.stack);
-      res.status(500).json({ error: "Failed to fetch top curators" });
-    }
-  });
+
 
   // Server status with connection info
   app.get("/api/servers/status", async (req, res) => {
@@ -236,19 +239,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Individual curator details
-  app.get("/api/curators/:id", async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      const curator = await storage.getCuratorById(id);
-      if (!curator) {
-        return res.status(404).json({ error: "Curator not found" });
-      }
-      res.json(curator);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to fetch curator" });
-    }
-  });
+
 
   // Curator activities
   app.get("/api/activities/curator/:id", async (req, res) => {

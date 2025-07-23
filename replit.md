@@ -10,16 +10,26 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
-### January 23, 2025
+### July 23, 2025
 - Successfully migrated Discord Bot Curator Monitoring System from Replit Agent to Replit environment
 - Created PostgreSQL database and successfully pushed Drizzle schema
-- Configured all required dependencies and TypeScript environment
+- Configured all required dependencies and TypeScript environment  
 - Resolved Discord bot integration with secure token authentication
 - Bot successfully connects as "Curator#2772" and monitors Discord servers
 - Application runs on port 5000 with Express backend and Vite frontend
 - Database tables created: curators, discordServers, activities, responseTracking, users
 - API endpoints functional for curator management and activity tracking
 - Frontend React application loads successfully with Tailwind CSS styling
+- Discord bot token configured and bot operational with 8 server monitoring  
+- Fixed statistics calculation issues in storage layer for proper activity tracking
+- Improved curator stats calculation with correct message/reaction/reply counting
+- Enhanced dashboard statistics with proper time response calculations
+- **Fixed API routing conflicts for top curators endpoint by creating /api/top-curators**
+- **Corrected response time display from 0 minutes to actual seconds (18s)**
+- **Updated dashboard stats to calculate average response time across all servers**
+- **Fixed curator cards showing 0 activities by connecting to proper API endpoints**
+- **Enhanced curator details page to show real response time statistics**
+- All statistics now update properly in real-time with correct calculations
 - Migration completed successfully - application ready for production use
 
 ## System Architecture

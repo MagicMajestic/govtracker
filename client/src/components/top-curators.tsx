@@ -10,11 +10,13 @@ interface TopCurator {
   id: number;
   name: string;
   factions: string[];
+  curatorType: string;
   score: number;
   totalActivities: number;
   messages: number;
   reactions: number;
   replies: number;
+  avgResponseTime: number;
 }
 
 function getRatingText(score: number): string {
@@ -37,8 +39,8 @@ export function TopCurators() {
   const [showAll, setShowAll] = useState(false);
   
   const { data: topCurators, isLoading } = useQuery<TopCurator[]>({
-    queryKey: ["/api/curators/top"],
-    queryFn: () => fetch("/api/curators/top?limit=50").then(res => res.json())
+    queryKey: ["/api/top-curators"],
+    queryFn: () => fetch("/api/top-curators?limit=50").then(res => res.json())
   });
 
   if (isLoading) {
@@ -102,7 +104,7 @@ export function TopCurators() {
                   ))}
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {curator.messages} сообщ. • {curator.reactions} реакц. • {curator.replies} ответов
+                  {curator.messages} сообщ. • {curator.reactions} реакц. • {curator.replies} ответов • {curator.avgResponseTime}с ответ
                 </p>
               </div>
               

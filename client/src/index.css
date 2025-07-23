@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(240, 10%, 11%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 6%, 17.6%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 11%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 11%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 35.9%);
+  --input: hsl(240, 6%, 17.6%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(240, 6%, 17.6%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 6%, 17.6%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  --radius: 0.5rem;
+
+  /* Dark theme colors to match design */
+  --dark-background: hsl(240, 10%, 7.1%);
+  --surface: hsl(240, 8%, 11.8%);
+  --surface-light: hsl(240, 6%, 17.6%);
+  --accent-orange: hsl(14, 100%, 57%);
+  --success: hsl(142, 76%, 36%);
+  --warning: hsl(38, 92%, 50%);
+}
+
+.dark {
+  --background: hsl(240, 10%, 7.1%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 6%, 17.6%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 8%, 11.8%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 8%, 11.8%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 35.9%);
+  --input: hsl(240, 6%, 17.6%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(240, 6%, 17.6%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 6%, 17.6%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* Force dark theme */
+  html {
+    @apply dark;
+  }
+
+  body {
+    background-color: var(--dark-background);
+    color: hsl(0, 0%, 98%);
+  }
+}
+
+@layer components {
+  .surface {
+    background-color: var(--surface);
+  }
+
+  .surface-light {
+    background-color: var(--surface-light);
+  }
+
+  .chart-container {
+    background: linear-gradient(135deg, hsl(207, 90%, 54%) 0%, hsl(207, 90%, 48%) 100%);
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: var(--surface-light);
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: hsl(240, 5%, 64.9%);
+    border-radius: 3px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: hsl(240, 5%, 54.9%);
+  }
+}

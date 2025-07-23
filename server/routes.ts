@@ -200,25 +200,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.get("/api/curators/top", async (req, res) => {
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
-    console.log("NEW - Fetching top curators with limit:", limit);
+    console.log("=== TOP CURATORS ROUTE STARTED ===");
     
     try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+      console.log("Limit:", limit);
+      
       const topCurators = await storage.getTopCurators(limit);
-      console.log("NEW - Got top curators result:", JSON.stringify(topCurators, null, 2));
+      console.log("=== SENDING TOP CURATORS ===");
+      console.log("Count:", topCurators.length);
+      console.log("Data:", JSON.stringify(topCurators, null, 2));
+      
       res.json(topCurators);
-    } catch (error) {
-      console.log("NEW - Error in top curators route:", error);
-      res.json([]);
+    } catch (error: any) {
+      console.error("=== ERROR IN TOP CURATORS ROUTE ===");
+      console.error("Error:", error);
+      console.error("Stack:", error?.stack);
+      res.status(500).json({ error: "Failed to fetch top curators" });
     }
   });
 
-  // Test endpoint to verify changes are working
-  app.get("/api/test-curators", async (req, res) => {
-    console.log("Test endpoint called");
-    const curators = await storage.getCurators();
-    console.log("Test - found curators:", curators.length);
-    res.json({ message: "Test working", curators: curators.length });
+  // Server status with connection info
+  app.get("/api/servers/status", async (req, res) => {
+    try {
+      const servers = await storage.getDiscordServers();
+      const serversWithStatus = servers.map(server => ({
+        ...server,
+        isConnected: server.serverId === "825137602553708544", // Only Detectives is connected
+        lastActivity: null,
+        totalActivities: 0
+      }));
+      res.json(serversWithStatus);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch server status" });
+    }
   });
 
   // Individual curator details

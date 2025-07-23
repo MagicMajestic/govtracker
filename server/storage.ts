@@ -40,6 +40,7 @@ export interface IStorage {
   getActivitiesByPeriod(curatorId: number, startDate: Date, endDate: Date): Promise<Activity[]>;
   getRecentActivities(limit?: number): Promise<(Activity & { curator: Curator, server: DiscordServer })[]>;
   getActivitiesInDateRange(startDate: Date, endDate: Date): Promise<Activity[]>;
+  getActivitiesForServer(serverId: number): Promise<Activity[]>;
   
   // Discord server methods
   getDiscordServers(): Promise<DiscordServer[]>;
@@ -228,6 +229,14 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(activities.timestamp));
   }
 
+  async getActivitiesForServer(serverId: number): Promise<Activity[]> {
+    return await db
+      .select()
+      .from(activities)
+      .where(eq(activities.serverId, serverId))
+      .orderBy(desc(activities.timestamp));
+  }
+
   // Discord server methods
   async getDiscordServers(): Promise<DiscordServer[]> {
     return await db.select().from(discordServers).where(eq(discordServers.isActive, true));
@@ -314,26 +323,76 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getDashboardStats(): Promise<any> {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    console.log("=== GET DASHBOARD STATS START ===");
     
-    const totalCurators = await db.select({ count: count() }).from(curators).where(eq(curators.isActive, true));
+    const [curators, allActivities] = await Promise.all([
+      this.getCurators(),
+      this.getRecentActivities(1000)
+    ]);
     
-    const todayActivities = await db
-      .select({
-        totalMessages: sql<number>`count(case when ${activities.type} = 'message' then 1 end)`,
-        totalReactions: sql<number>`count(case when ${activities.type} = 'reaction' then 1 end)`,
-        totalReplies: sql<number>`count(case when ${activities.type} = 'reply' then 1 end)`,
-      })
-      .from(activities)
-      .where(sql`${activities.timestamp} >= ${today}`);
+    const today = new Date().toISOString().split('T')[0];
+    const todayActivities = allActivities.filter(a => {
+      const activityDate = a.timestamp instanceof Date ? a.timestamp.toISOString().split('T')[0] : a.timestamp?.split('T')[0];
+      return activityDate === today;
+    });
+    
+    console.log("Today:", today);
+    console.log("Total activities:", allActivities.length);
+    console.log("Today activities:", todayActivities.length);
+    
+    // Calculate average response time for replies
+    const replies = allActivities.filter(a => a.type === 'reply');
+    console.log("Total replies found:", replies.length);
+    
+    let avgResponseTime = 0;
+    
+    if (replies.length > 0) {
+      const responseTimes = [];
+      
+      for (const reply of replies) {
+        console.log(`Processing reply: ${reply.id}, targetId: ${reply.targetMessageId}`);
+        
+        if (reply.targetMessageId) {
+          // Find the original message
+          const originalMessage = allActivities.find(a => 
+            a.messageId === reply.targetMessageId && a.type === 'message'
+          );
+          
+          console.log(`Original message found:`, !!originalMessage);
+          
+          if (originalMessage && reply.timestamp && originalMessage.timestamp) {
+            const replyTime = new Date(reply.timestamp).getTime();
+            const messageTime = new Date(originalMessage.timestamp).getTime();
+            const responseTimeMs = replyTime - messageTime;
+            
+            console.log(`Response time: ${responseTimeMs}ms (${Math.round(responseTimeMs / (1000 * 60))}min)`);
+            
+            if (responseTimeMs > 0) {
+              responseTimes.push(responseTimeMs);
+            }
+          }
+        }
+      }
+      
+      console.log("Valid response times:", responseTimes.length);
+      
+      if (responseTimes.length > 0) {
+        const avgMs = responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length;
+        avgResponseTime = Math.round(avgMs / (1000 * 60)); // Convert to minutes
+        console.log(`Average response time: ${avgMs}ms = ${avgResponseTime}min`);
+      }
+    }
 
-    return {
-      totalCurators: totalCurators[0]?.count || 0,
-      todayMessages: todayActivities[0]?.totalMessages || 0,
-      todayReactions: todayActivities[0]?.totalReactions || 0,
-      todayReplies: todayActivities[0]?.totalReplies || 0,
+    const stats = {
+      totalCurators: curators.filter(c => c.isActive).length,
+      todayMessages: todayActivities.filter(a => a.type === 'message').length.toString(),
+      todayReactions: todayActivities.filter(a => a.type === 'reaction').length.toString(),
+      todayReplies: todayActivities.filter(a => a.type === 'reply').length.toString(),
+      avgResponseTime: avgResponseTime.toString()
     };
+    
+    console.log("Final dashboard stats:", stats);
+    return stats;
   }
 
   async getDailyActivityStats(days: number): Promise<any> {
@@ -354,36 +413,99 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getTopCurators(limit: number): Promise<any> {
+    console.log("=== GET TOP CURATORS START ===");
+    console.log("Limit:", limit);
+    
     try {
-      console.log("getTopCurators called with limit:", limit);
+      // Get all active curators
+      const allCurators = await this.getCurators();
+      console.log("Found curators:", allCurators.length);
       
-      // First, get all active curators
-      const allCurators = await db
-        .select()
-        .from(curators)
-        .where(eq(curators.isActive, true));
-
-      console.log("Found active curators:", allCurators.length);
-
-      if (allCurators.length === 0) {
-        console.log("No active curators found, returning empty array");
+      if (!allCurators || allCurators.length === 0) {
+        console.log("No curators found");
         return [];
       }
 
-      // For now, just return the curators with zero activity stats to avoid SQL issues
-      const result = allCurators.map(curator => ({
-        ...curator,
-        totalActivities: 0,
-        messages: 0,
-        reactions: 0,
-        replies: 0,
-        score: 0
-      }));
+      // Build stats for each curator
+      const curatorsWithStats = [];
+      
+      for (const curator of allCurators) {
+        if (!curator.isActive) continue;
+        
+        console.log(`Processing curator: ${curator.name}`);
+        
+        // Get activities for this curator
+        const curatorActivities = await this.getActivitiesByCurator(curator.id, 1000);
+        
+        const totalActivities = curatorActivities.length;
+        const messages = curatorActivities.filter(a => a.type === 'message').length;
+        const reactions = curatorActivities.filter(a => a.type === 'reaction').length;
+        const replies = curatorActivities.filter(a => a.type === 'reply').length;
+        const score = messages * 3 + replies * 2 + reactions;
+        
+        // Calculate average response time
+        let avgResponseTime = null;
+        const replyActivities = curatorActivities.filter(a => a.type === 'reply');
+        
+        if (replyActivities.length > 0) {
+          const responseTimes = [];
+          
+          for (const reply of replyActivities) {
+            if (reply.targetMessageId) {
+              // Find the original message
+              const originalMessage = curatorActivities.find(a => 
+                a.messageId === reply.targetMessageId && a.type === 'message'
+              );
+              
+              if (originalMessage) {
+                const replyTime = new Date(reply.timestamp || '').getTime();
+                const messageTime = new Date(originalMessage.timestamp || '').getTime();
+                const responseTimeMs = replyTime - messageTime;
+                
+                if (responseTimeMs > 0) {
+                  responseTimes.push(responseTimeMs);
+                }
+              }
+            }
+          }
+          
+          if (responseTimes.length > 0) {
+            const avgMs = responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length;
+            avgResponseTime = Math.round(avgMs / (1000 * 60)); // Convert to minutes
+          }
+        }
+        
+        console.log(`${curator.name}: total=${totalActivities}, messages=${messages}, reactions=${reactions}, replies=${replies}, score=${score}, avgResponseTime=${avgResponseTime}min`);
+        
+        curatorsWithStats.push({
+          id: curator.id,
+          name: curator.name,
+          factions: curator.factions || [],
+          curatorType: curator.curatorType,
+          totalActivities,
+          messages,
+          reactions,
+          replies,
+          score,
+          avgResponseTime
+        });
+      }
+      
+      // Sort by score and limit
+      const topCurators = curatorsWithStats
+        .sort((a: any, b: any) => b.score - a.score)
+        .slice(0, limit);
 
-      console.log("Returning curator stats:", result);
-      return result;
-    } catch (error) {
-      console.error("Error in getTopCurators:", error);
+      console.log("=== FINAL TOP CURATORS ===");
+      console.log("Count:", topCurators.length);
+      console.log("Data:", JSON.stringify(topCurators, null, 2));
+
+      return topCurators;
+        
+    } catch (error: any) {
+      console.error("=== ERROR IN GET TOP CURATORS ===");
+      console.error("Error:", error);
+      console.error("Stack:", error?.stack);
       return [];
     }
   }

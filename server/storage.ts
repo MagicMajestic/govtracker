@@ -20,6 +20,7 @@ import {
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, sql, count } from "drizzle-orm";
+import { connectedServers } from "./discord-bot";
 
 export interface IStorage {
   // User methods
@@ -639,12 +640,22 @@ export class DatabaseStorage implements IStorage {
           id: server.id,
           serverId: server.serverId,
           name: server.name,
+          roleTagId: server.roleTagId,
           isActive: server.isActive,
           totalActivities,
+          todayActivities: serverActivities.filter(a => {
+            if (!a.timestamp) return false;
+            const today = new Date().toISOString().split('T')[0];
+            const activityDate = a.timestamp instanceof Date 
+              ? a.timestamp.toISOString().split('T')[0] 
+              : new Date(a.timestamp).toISOString().split('T')[0];
+            return activityDate === today;
+          }).length,
           messages,
           reactions,
           replies,
           avgResponseTime,
+          connected: connectedServers.has(server.serverId),
           topCurators
         };
       });

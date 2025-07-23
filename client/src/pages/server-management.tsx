@@ -142,9 +142,9 @@ export default function ServerManagement() {
   };
 
   const formatResponseTime = (seconds: number | null): string => {
-    if (!seconds) return 'Нет данных';
+    if (!seconds || isNaN(seconds)) return 'Нет данных';
     const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
+    const remainingSeconds = Math.floor(seconds % 60);
     return minutes > 0 ? `${minutes}м ${remainingSeconds}с` : `${remainingSeconds}с`;
   };
 
@@ -302,7 +302,7 @@ export default function ServerManagement() {
         </Card>
       </div>
 
-      {/* Servers Table */}
+      {/* Servers Grid */}
       <Card className="bg-[#1a1a1a] border-gray-700">
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
@@ -314,59 +314,20 @@ export default function ServerManagement() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow className="border-gray-700">
-                <TableHead className="text-gray-300">Название</TableHead>
-                <TableHead className="text-gray-300">ID сервера</TableHead>
-                <TableHead className="text-gray-300">Статус</TableHead>
-                <TableHead className="text-gray-300">Активность</TableHead>
-                <TableHead className="text-gray-300">Ср. время ответа</TableHead>
-                <TableHead className="text-gray-300">Действия</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {servers.map((server) => {
-                const stats = getServerStats(server.serverId);
-                return (
-                  <TableRow key={server.id} className="border-gray-700">
-                    <TableCell className="text-white font-medium">
-                      {server.name}
-                    </TableCell>
-                    <TableCell className="text-gray-400 font-mono text-sm">
-                      {server.serverId}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center space-x-2">
-                        <Badge 
-                          className={
-                            stats?.connected 
-                              ? "bg-green-900 text-green-300 border-green-700" 
-                              : "bg-red-900 text-red-300 border-red-700"
-                          }
-                        >
-                          {stats?.connected ? "Подключен" : "Отключен"}
-                        </Badge>
-                        {server.isActive && (
-                          <Badge className="bg-blue-900 text-blue-300 border-blue-700">
-                            Активный
-                          </Badge>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-gray-400">
-                      Сегодня: {stats?.todayActivities || 0} / Всего: {stats?.totalActivities || 0}
-                    </TableCell>
-                    <TableCell className="text-gray-400">
-                      {formatResponseTime(stats?.avgResponseTime || null)}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex space-x-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {servers.map((server) => {
+              const stats = getServerStats(server.serverId);
+              return (
+                <Card key={server.id} className="bg-[#232323] border-gray-600 hover:border-gray-500 transition-colors">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-white text-lg">{server.name}</CardTitle>
+                      <div className="flex space-x-1">
                         <Button
                           size="sm"
                           variant="ghost"
                           onClick={() => handleEdit(server)}
-                          className="text-blue-400 hover:text-blue-300 hover:bg-blue-900/20"
+                          className="text-blue-400 hover:text-blue-300 hover:bg-blue-900/20 h-8 w-8 p-0"
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
@@ -376,7 +337,7 @@ export default function ServerManagement() {
                             <Button
                               size="sm"
                               variant="ghost"
-                              className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
+                              className="text-red-400 hover:text-red-300 hover:bg-red-900/20 h-8 w-8 p-0"
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -405,12 +366,75 @@ export default function ServerManagement() {
                           </AlertDialogContent>
                         </AlertDialog>
                       </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2 mt-2">
+                      <Badge 
+                        className={
+                          stats?.connected 
+                            ? "bg-green-900 text-green-300 border-green-700" 
+                            : "bg-red-900 text-red-300 border-red-700"
+                        }
+                      >
+                        {stats?.connected ? "Подключен" : "Отключен"}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  
+                  <CardContent className="pt-0">
+                    <div className="space-y-3">
+                      <div className="text-xs text-gray-500 font-mono break-all">
+                        ID: {server.serverId}
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="text-center p-2 bg-[#2a2a2a] rounded">
+                          <div className="text-xl font-bold text-blue-400">{stats?.messages || 0}</div>
+                          <div className="text-xs text-gray-400">Сообщений</div>
+                        </div>
+                        <div className="text-center p-2 bg-[#2a2a2a] rounded">
+                          <div className="text-xl font-bold text-green-400">{stats?.reactions || 0}</div>
+                          <div className="text-xs text-gray-400">Реакций</div>
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="text-center p-2 bg-[#2a2a2a] rounded">
+                          <div className="text-xl font-bold text-purple-400">{stats?.replies || 0}</div>
+                          <div className="text-xs text-gray-400">Ответов</div>
+                        </div>
+                        <div className="text-center p-2 bg-[#2a2a2a] rounded">
+                          <div className="text-xl font-bold text-orange-400">{stats?.todayActivities || 0}</div>
+                          <div className="text-xs text-gray-400">Сегодня</div>
+                        </div>
+                      </div>
+                      
+                      <div className="text-center p-2 bg-[#2a2a2a] rounded">
+                        <div className="text-sm font-semibold text-yellow-400">
+                          {formatResponseTime(stats?.avgResponseTime || null)}
+                        </div>
+                        <div className="text-xs text-gray-400">Среднее время ответа</div>
+                      </div>
+                      
+                      {stats?.topCurators && stats.topCurators.length > 0 && (
+                        <div className="pt-2 border-t border-gray-600">
+                          <div className="text-xs text-gray-400 mb-2">Топ кураторы:</div>
+                          <div className="space-y-1">
+                            {stats.topCurators.slice(0, 2).map((curator: any, idx: number) => (
+                              <div key={idx} className="flex justify-between text-xs">
+                                <span className="text-gray-300">{curator.name}</span>
+                                <span className="text-blue-400">{curator.activities}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
           
           {servers.length === 0 && (
             <div className="text-center py-8">

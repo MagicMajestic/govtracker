@@ -1,0 +1,46 @@
+[vite] connecting...
+[vite] connected.
+Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+Warning: Received NaN for the &#x60;children&#x60; attribute. If this is expected, cast the value to a string.
+    at p
+    at div
+    at div
+    at div
+    at _c9 (https://1f083c1b-e5e9-4f95-8bb6-f0d021e5554b-00-270yea76tbf96.janeway.replit.dev/src/components/ui/card.tsx:114:12)
+    at div
+    at _c (https://1f083c1b-e5e9-4f95-8bb6-f0d021e5554b-00-270yea76tbf96.janeway.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at div
+    at ServerManagement (https://1f083c1b-e5e9-4f95-8bb6-f0d021e5554b-00-270yea76tbf96.janeway.replit.dev/src/pages/server-management.tsx:32:45)
+    at Route (https://1f083c1b-e5e9-4f95-8bb6-f0d021e5554b-00-270yea76tbf96.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=15179389:323:16)
+    at Switch (https://1f083c1b-e5e9-4f95-8bb6-f0d021e5554b-00-270yea76tbf96.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=15179389:379:17)
+    at div
+    at div
+    at Router
+    at Provider (https://1f083c1b-e5e9-4f95-8bb6-f0d021e5554b-00-270yea76tbf96.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-E7IAXTU4.js?v=15179389:38:15)
+    at TooltipProvider (https://1f083c1b-e5e9-4f95-8bb6-f0d021e5554b-00-270yea76tbf96.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=15179389:61:5)
+    at QueryClientProvider (https://1f083c1b-e5e9-4f95-8bb6-f0d021e5554b-00-270yea76tbf96.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=15179389:2805:3)
+    at App
+at p
+at div
+at div
+at div
+at _c9 (https://1f083c1b-e5e9-4f95-8bb6-f0d021e5554b-00-270yea76tbf96.janeway.replit.dev/src/components/ui/card.tsx:114:12)
+at div
+at _c (https://1f083c1b-e5e9-4f95-8bb6-f0d021e5554b-00-270yea76tbf96.janeway.replit.dev/src/components/ui/card.tsx:20:11)
+at div
+at div
+at ServerManagement (https://1f083c1b-e5e9-4f95-8bb6-f0d021e5554b-00-270yea76tbf96.janeway.replit.dev/src/pages/server-management.tsx:32:45)
+at Route (https://1f083c1b-e5e9-4f95-8bb6-f0d021e5554b-00-270yea76tbf96.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=15179389:323:16)
+at Switch (https://1f083c1b-e5e9-4f95-8bb6-f0d021e5554b-00-270yea76tbf96.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=15179389:379:17)
+at div
+at div
+at Router
+at Provider (https://1f083c1b-e5e9-4f95-8bb6-f0d021e5554b-00-270yea76tbf96.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-E7IAXTU4.js?v=15179389:38:15)
+at TooltipProvider (https://1f083c1b-e5e9-4f95-8bb6-f0d021e5554b-00-270yea76tbf96.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=15179389:61:5)
+at QueryClientProvider (https://1f083c1b-e5e9-4f95-8bb6-f0d021e5554b-00-270yea76tbf96.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=15179389:2805:3)
+at App
+at t.value (https://1f083c1b-e5e9-4f95-8bb6-f0d021e5554b-00-270yea76tbf96.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://1f083c1b-e5e9-4f95-8bb6-f0d021e5554b-00-270yea76tbf96.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://1f083c1b-e5e9-4f95-8bb6-f0d021e5554b-00-270yea76tbf96.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://1f083c1b-e5e9-4f95-8bb6-f0d021e5554b-00-270yea76tbf96.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400

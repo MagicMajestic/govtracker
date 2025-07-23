@@ -21,6 +21,9 @@ const CURATOR_ROLES: Record<string, string> = {
 // Map to track pending notifications
 const pendingNotifications = new Map();
 
+// Set to track connected servers
+export const connectedServers = new Set<string>();
+
 export function startDiscordBot() {
   if (!DISCORD_TOKEN) {
     console.error('DISCORD_BOT_TOKEN environment variable is required');
@@ -39,12 +42,17 @@ export function startDiscordBot() {
   client.once(Events.ClientReady, async (readyClient) => {
     console.log(`Discord bot ready! Logged in as ${readyClient.user.tag}`);
     
-    // Verify server connections
+    // Verify server connections and update connected servers set
     const servers = await storage.getDiscordServers();
     console.log(`Monitoring ${servers.length} Discord servers:`);
+    connectedServers.clear(); // Clear previous connections
     servers.forEach(server => {
       const guild = client.guilds.cache.get(server.serverId);
-      console.log(`- ${server.name}: ${guild ? 'Connected' : 'Not Found'}`);
+      const isConnected = !!guild;
+      console.log(`- ${server.name}: ${isConnected ? 'Connected' : 'Not Found'}`);
+      if (isConnected) {
+        connectedServers.add(server.serverId);
+      }
     });
 
     // Check notification server access

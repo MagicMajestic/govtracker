@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e293b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f172a;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="cardBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#334155;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e293b;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="600" fill="url(#bg)"/>
+  
+  <!-- Title -->
+  <text x="400" y="40" text-anchor="middle" fill="#f1f5f9" font-family="Arial, sans-serif" font-size="24" font-weight="bold">
+    Система отслеживания задач куратора
+  </text>
+  <text x="400" y="65" text-anchor="middle" fill="#94a3b8" font-family="Arial, sans-serif" font-size="14">
+    Мониторинг completed-tasks каналов и верификация задач
+  </text>
+  
+  <!-- Process Flow -->
+  
+  <!-- Step 1: Leader submits task report -->
+  <rect x="50" y="120" width="160" height="80" rx="8" fill="url(#cardBg)" stroke="#3b82f6" stroke-width="2"/>
+  <text x="130" y="145" text-anchor="middle" fill="#3b82f6" font-family="Arial, sans-serif" font-size="12" font-weight="bold">
+    1. Лидер фракции
+  </text>
+  <text x="130" y="165" text-anchor="middle" fill="#e2e8f0" font-family="Arial, sans-serif" font-size="11">
+    "Выполнено 5 задач"
+  </text>
+  <text x="130" y="180" text-anchor="middle" fill="#94a3b8" font-family="Arial, sans-serif" font-size="10">
+    в канале completed-tasks
+  </text>
+  
+  <!-- Arrow 1 -->
+  <path d="M 220 160 L 270 160" stroke="#3b82f6" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Step 2: System creates record -->
+  <rect x="280" y="120" width="160" height="80" rx="8" fill="url(#cardBg)" stroke="#10b981" stroke-width="2"/>
+  <text x="360" y="145" text-anchor="middle" fill="#10b981" font-family="Arial, sans-serif" font-size="12" font-weight="bold">
+    2. Система создает
+  </text>
+  <text x="360" y="165" text-anchor="middle" fill="#e2e8f0" font-family="Arial, sans-serif" font-size="11">
+    запись в БД
+  </text>
+  <text x="360" y="180" text-anchor="middle" fill="#94a3b8" font-family="Arial, sans-serif" font-size="10">
+    статус: pending
+  </text>
+  
+  <!-- Arrow 2 -->
+  <path d="M 450 160 L 500 160" stroke="#10b981" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Step 3: Curator verifies -->
+  <rect x="510" y="120" width="160" height="80" rx="8" fill="url(#cardBg)" stroke="#f59e0b" stroke-width="2"/>
+  <text x="590" y="145" text-anchor="middle" fill="#f59e0b" font-family="Arial, sans-serif" font-size="12" font-weight="bold">
+    3. Куратор проверяет
+  </text>
+  <text x="590" y="165" text-anchor="middle" fill="#e2e8f0" font-family="Arial, sans-serif" font-size="11">
+    "одобрено 3" или ✅
+  </text>
+  <text x="590" y="180" text-anchor="middle" fill="#94a3b8" font-family="Arial, sans-serif" font-size="10">
+    реакция/сообщение
+  </text>
+  
+  <!-- Verification Methods -->
+  <text x="400" y="250" text-anchor="middle" fill="#f1f5f9" font-family="Arial, sans-serif" font-size="18" font-weight="bold">
+    Методы верификации
+  </text>
+  
+  <!-- Text Response -->
+  <rect x="100" y="280" width="200" height="120" rx="8" fill="url(#cardBg)" stroke="#8b5cf6" stroke-width="2"/>
+  <text x="200" y="305" text-anchor="middle" fill="#8b5cf6" font-family="Arial, sans-serif" font-size="14" font-weight="bold">
+    Текстовый ответ
+  </text>
+  <text x="200" y="330" text-anchor="middle" fill="#e2e8f0" font-family="Arial, sans-serif" font-size="11">
+    "одобрено 3"
+  </text>
+  <text x="200" y="345" text-anchor="middle" fill="#e2e8f0" font-family="Arial, sans-serif" font-size="11">
+    "3/5"
+  </text>
+  <text x="200" y="360" text-anchor="middle" fill="#e2e8f0" font-family="Arial, sans-serif" font-size="11">
+    "все" / "all"
+  </text>
+  <text x="200" y="375" text-anchor="middle" fill="#e2e8f0" font-family="Arial, sans-serif" font-size="11">
+    "нет" / "no"
+  </text>
+  
+  <!-- Emoji Response -->
+  <rect x="320" y="280" width="200" height="120" rx="8" fill="url(#cardBg)" stroke="#ec4899" stroke-width="2"/>
+  <text x="420" y="305" text-anchor="middle" fill="#ec4899" font-family="Arial, sans-serif" font-size="14" font-weight="bold">
+    Эмодзи реакции
+  </text>
+  <text x="420" y="330" text-anchor="middle" fill="#e2e8f0" font-family="Arial, sans-serif" font-size="11">
+    ✅ = все одобрено
+  </text>
+  <text x="420" y="345" text-anchor="middle" fill="#e2e8f0" font-family="Arial, sans-serif" font-size="11">
+    ❌ = отклонено
+  </text>
+  <text x="420" y="360" text-anchor="middle" fill="#e2e8f0" font-family="Arial, sans-serif" font-size="11">
+    1️⃣-🔟 = количество
+  </text>
+  <text x="420" y="375" text-anchor="middle" fill="#e2e8f0" font-family="Arial, sans-serif" font-size="11">
+    ⭐💯🔥 = отлично
+  </text>
+  
+  <!-- Scoring System -->
+  <rect x="500" y="280" width="200" height="120" rx="8" fill="url(#cardBg)" stroke="#06b6d4" stroke-width="2"/>
+  <text x="600" y="305" text-anchor="middle" fill="#06b6d4" font-family="Arial, sans-serif" font-size="14" font-weight="bold">
+    Система баллов
+  </text>
+  <text x="600" y="330" text-anchor="middle" fill="#e2e8f0" font-family="Arial, sans-serif" font-size="11">
+    Проверка задач: +5 баллов
+  </text>
+  <text x="600" y="345" text-anchor="middle" fill="#94a3b8" font-family="Arial, sans-serif" font-size="10">
+    (выше чем обычные активности)
+  </text>
+  <text x="600" y="365" text-anchor="middle" fill="#e2e8f0" font-family="Arial, sans-serif" font-size="11">
+    Сообщения: +3 балла
+  </text>
+  <text x="600" y="380" text-anchor="middle" fill="#e2e8f0" font-family="Arial, sans-serif" font-size="11">
+    Ответы: +2 балла
+  </text>
+  <text x="600" y="395" text-anchor="middle" fill="#e2e8f0" font-family="Arial, sans-serif" font-size="11">
+    Реакции: +1 балл
+  </text>
+  
+  <!-- API Endpoints -->
+  <text x="400" y="450" text-anchor="middle" fill="#f1f5f9" font-family="Arial, sans-serif" font-size="18" font-weight="bold">
+    API Endpoints
+  </text>
+  
+  <rect x="150" y="470" width="500" height="100" rx="8" fill="url(#cardBg)" stroke="#64748b" stroke-width="1"/>
+  <text x="400" y="495" text-anchor="middle" fill="#64748b" font-family="Arial, sans-serif" font-size="12" font-weight="bold">
+    Новые маршруты для работы с задачами
+  </text>
+  <text x="400" y="515" text-anchor="middle" fill="#e2e8f0" font-family="Arial, sans-serif" font-size="11">
+    /api/task-reports - получить отчеты о задачах
+  </text>
+  <text x="400" y="530" text-anchor="middle" fill="#e2e8f0" font-family="Arial, sans-serif" font-size="11">
+    /api/task-reports/stats - статистика по серверам
+  </text>
+  <text x="400" y="545" text-anchor="middle" fill="#e2e8f0" font-family="Arial, sans-serif" font-size="11">
+    /api/curators/:id/task-stats - статистика куратора
+  </text>
+  
+  <!-- Arrow markers -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6"/>
+    </marker>
+  </defs>
+</svg>

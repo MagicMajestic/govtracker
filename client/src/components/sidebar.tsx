@@ -1,13 +1,13 @@
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
-import { Shield, BarChart3, Users, Server, History, Download, Settings } from "lucide-react";
+import { Shield, BarChart3, Users, Server, History, Download, Settings, FileText } from "lucide-react";
 
 const navigation = [
   { name: "Панель управления", href: "/", icon: BarChart3 },
   { name: "Кураторы", href: "/curators", icon: Users },
   { name: "Серверы Discord", href: "/servers", icon: Server },
   { name: "История активности", href: "/activity", icon: History },
-  { name: "Экспорт отчетов", href: "/reports", icon: Download },
+  { name: "Отчеты о задачах", href: "/tasks", icon: FileText },
   { name: "Настройки бота", href: "/settings", icon: Settings },
 ];
 

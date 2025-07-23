@@ -28,6 +28,7 @@ export const globalRatingConfig = pgTable("global_rating_config", {
   activityPointsMessage: integer("activity_points_message").notNull().default(3),
   activityPointsReaction: integer("activity_points_reaction").notNull().default(1),
   activityPointsReply: integer("activity_points_reply").notNull().default(2),
+  activityPointsTaskVerification: integer("activity_points_task_verification").notNull().default(5),
   responseTimeGoodSeconds: integer("response_time_good_seconds").notNull().default(60),
   responseTimePoorSeconds: integer("response_time_poor_seconds").notNull().default(300),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -39,6 +40,7 @@ export const discordServers = pgTable("discord_servers", {
   serverId: text("server_id").notNull().unique(),
   name: text("name").notNull(),
   roleTagId: text("role_tag_id"), // ID роли для тегирования кураторов
+  completedTasksChannelId: text("completed_tasks_channel_id"), // ID канала completed-tasks
   isActive: boolean("is_active").default(true),
 });
 
@@ -67,6 +69,26 @@ export const responseTracking = pgTable("response_tracking", {
   responseTimeSeconds: integer("response_time_seconds"), // Время ответа в секундах
 });
 
+// Task tracking for completed-tasks channel monitoring
+export const taskReports = pgTable("task_reports", {
+  id: serial("id").primaryKey(),
+  serverId: integer("server_id").notNull(),
+  authorId: text("author_id").notNull(), // Discord ID автора отчета (лидера фракции)
+  authorName: text("author_name").notNull(), // Имя автора
+  messageId: text("message_id").notNull().unique(), // ID сообщения с отчетом
+  channelId: text("channel_id").notNull(), // ID канала completed-tasks
+  content: text("content").notNull(), // Содержимое отчета
+  taskCount: integer("task_count").notNull(), // Количество задач в отчете
+  submittedAt: timestamp("submitted_at").notNull(), // Время подачи отчета
+  curatorId: integer("curator_id"), // ID куратора, который проверил
+  curatorDiscordId: text("curator_discord_id"), // Discord ID куратора
+  curatorName: text("curator_name"), // Имя куратора
+  checkedAt: timestamp("checked_at"), // Время проверки
+  approvedTasks: integer("approved_tasks"), // Количество одобренных задач
+  status: text("status").notNull().default('pending'), // 'pending', 'checked', 'partial'
+  weekStart: timestamp("week_start").notNull(), // Начало недели для группировки
+});
+
 // Activity types: message, reaction, reply
 export const activities = pgTable("activities", {
   id: serial("id").primaryKey(),
@@ -87,11 +109,13 @@ export const activities = pgTable("activities", {
 export const curatorsRelations = relations(curators, ({ many }) => ({
   activities: many(activities),
   responseTracking: many(responseTracking),
+  taskReports: many(taskReports),
 }));
 
 export const discordServersRelations = relations(discordServers, ({ many }) => ({
   activities: many(activities),
   responseTracking: many(responseTracking),
+  taskReports: many(taskReports),
 }));
 
 export const activitiesRelations = relations(activities, ({ one }) => ({
@@ -112,6 +136,17 @@ export const responseTrackingRelations = relations(responseTracking, ({ one }) =
   }),
   server: one(discordServers, {
     fields: [responseTracking.serverId],
+    references: [discordServers.id],
+  }),
+}));
+
+export const taskReportsRelations = relations(taskReports, ({ one }) => ({
+  curator: one(curators, {
+    fields: [taskReports.curatorId],
+    references: [curators.id],
+  }),
+  server: one(discordServers, {
+    fields: [taskReports.serverId],
     references: [discordServers.id],
   }),
 }));
@@ -138,6 +173,7 @@ export const insertDiscordServerSchema = createInsertSchema(discordServers).pick
   serverId: true,
   name: true,
   roleTagId: true,
+  completedTasksChannelId: true,
 });
 
 export const insertResponseTrackingSchema = createInsertSchema(responseTracking).omit({
@@ -160,6 +196,10 @@ export const insertGlobalRatingConfigSchema = createInsertSchema(globalRatingCon
   updatedAt: true,
 });
 
+export const insertTaskReportSchema = createInsertSchema(taskReports).omit({
+  id: true,
+});
+
 // Types
 export type BotSettings = typeof botSettings.$inferSelect;
 export type InsertBotSettings = z.infer<typeof insertBotSettingsSchema>;
@@ -175,6 +215,8 @@ export type DiscordServer = typeof discordServers.$inferSelect;
 export type InsertDiscordServer = z.infer<typeof insertDiscordServerSchema>;
 export type ResponseTracking = typeof responseTracking.$inferSelect;
 export type InsertResponseTracking = z.infer<typeof insertResponseTrackingSchema>;
+export type TaskReport = typeof taskReports.$inferSelect;
+export type InsertTaskReport = z.infer<typeof insertTaskReportSchema>;
 
 // Users table (keeping original structure)
 export const users = pgTable("users", {

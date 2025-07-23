@@ -7,6 +7,7 @@ import {
   botSettings,
   ratingSettings,
   globalRatingConfig,
+  taskReports,
   type Curator, 
   type InsertCurator,
   type Activity,
@@ -22,7 +23,9 @@ import {
   type RatingSettings,
   type InsertRatingSettings,
   type GlobalRatingConfig,
-  type InsertGlobalRatingConfig
+  type InsertGlobalRatingConfig,
+  type TaskReport,
+  type InsertTaskReport
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, sql, count } from "drizzle-orm";
@@ -82,6 +85,19 @@ export interface IStorage {
   getGlobalRatingConfig(): Promise<GlobalRatingConfig | undefined>;
   updateGlobalRatingConfig(config: Partial<InsertGlobalRatingConfig>): Promise<GlobalRatingConfig | undefined>;
   initializeDefaultGlobalConfig(): Promise<void>;
+  
+  // Task report methods
+  createTaskReport(report: InsertTaskReport): Promise<TaskReport>;
+  updateTaskReport(id: number, report: Partial<InsertTaskReport>): Promise<TaskReport | undefined>;
+  getTaskReportByMessageId(messageId: string): Promise<TaskReport | undefined>;
+  getTaskReportsForServer(serverId: number): Promise<TaskReport[]>;
+  getPendingTaskReports(): Promise<TaskReport[]>;
+  getTaskReportsByWeek(weekStart: Date): Promise<TaskReport[]>;
+  getCuratorTaskStats(curatorId: number): Promise<{
+    totalChecked: number;
+    totalApproved: number;
+    averageApprovalRate: number;
+  }>;
   
   // Statistics methods
   getCuratorStats(curatorId?: number): Promise<any>;
@@ -505,6 +521,7 @@ export class DatabaseStorage implements IStorage {
       activityPointsMessage: 3,
       activityPointsReaction: 1,
       activityPointsReply: 2,
+      activityPointsTaskVerification: 5,
       responseTimeGoodSeconds: 60,
       responseTimePoorSeconds: 300,
     };
@@ -671,7 +688,17 @@ export class DatabaseStorage implements IStorage {
         const messages = curatorActivities.filter(a => a.type === 'message').length;
         const reactions = curatorActivities.filter(a => a.type === 'reaction').length;
         const replies = curatorActivities.filter(a => a.type === 'reply').length;
-        const score = messages * 3 + replies * 2 + reactions;
+        const taskVerifications = curatorActivities.filter(a => a.type === 'task_verification').length;
+        
+        // Get dynamic scoring configuration
+        const globalConfig = await this.getGlobalRatingConfig();
+        const messagePoints = globalConfig?.activityPointsMessage || 3;
+        const replyPoints = globalConfig?.activityPointsReply || 2;
+        const reactionPoints = globalConfig?.activityPointsReaction || 1;
+        const taskPoints = globalConfig?.activityPointsTaskVerification || 5;
+        
+        // Enhanced scoring with configurable points
+        const score = messages * messagePoints + replies * replyPoints + reactions * reactionPoints + taskVerifications * taskPoints;
         
         // Calculate average response time using response tracking
         let avgResponseTime = await this.getCuratorAvgResponseTime(curator.id);
@@ -679,7 +706,7 @@ export class DatabaseStorage implements IStorage {
           avgResponseTime = Math.round(avgResponseTime);
         }
         
-        console.log(`${curator.name}: total=${totalActivities}, messages=${messages}, reactions=${reactions}, replies=${replies}, score=${score}, avgResponseTime=${avgResponseTime}s`);
+        console.log(`${curator.name}: total=${totalActivities}, messages=${messages}, reactions=${reactions}, replies=${replies}, taskVerifications=${taskVerifications}, score=${score}, avgResponseTime=${avgResponseTime}s`);
         
         curatorsWithStats.push({
           id: curator.id,
@@ -690,6 +717,7 @@ export class DatabaseStorage implements IStorage {
           messages,
           reactions,
           replies,
+          taskVerifications,
           score,
           avgResponseTime
         });
@@ -798,6 +826,99 @@ export class DatabaseStorage implements IStorage {
       console.error('Error getting server stats:', error);
       return [];
     }
+  }
+
+  // Task report methods
+  async createTaskReport(report: InsertTaskReport): Promise<TaskReport> {
+    const [newReport] = await db
+      .insert(taskReports)
+      .values(report)
+      .returning();
+    return newReport;
+  }
+
+  async updateTaskReport(id: number, report: Partial<InsertTaskReport>): Promise<TaskReport | undefined> {
+    const [updated] = await db
+      .update(taskReports)
+      .set(report)
+      .where(eq(taskReports.id, id))
+      .returning();
+    return updated || undefined;
+  }
+
+  async getTaskReportByMessageId(messageId: string): Promise<TaskReport | undefined> {
+    const [report] = await db
+      .select()
+      .from(taskReports)
+      .where(eq(taskReports.messageId, messageId));
+    return report || undefined;
+  }
+
+  async getTaskReportsForServer(serverId: number): Promise<TaskReport[]> {
+    return await db
+      .select()
+      .from(taskReports)
+      .where(eq(taskReports.serverId, serverId))
+      .orderBy(desc(taskReports.submittedAt));
+  }
+
+  async getPendingTaskReports(): Promise<TaskReport[]> {
+    return await db
+      .select()
+      .from(taskReports)
+      .where(eq(taskReports.status, 'pending'))
+      .orderBy(desc(taskReports.submittedAt));
+  }
+
+  async getTaskReportsByWeek(weekStart: Date): Promise<TaskReport[]> {
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekEnd.getDate() + 7);
+    
+    return await db
+      .select()
+      .from(taskReports)
+      .where(and(
+        sql`${taskReports.weekStart} >= ${weekStart.toISOString()}`,
+        sql`${taskReports.weekStart} < ${weekEnd.toISOString()}`
+      ))
+      .orderBy(desc(taskReports.submittedAt));
+  }
+
+  async getCuratorTaskStats(curatorId: number): Promise<{
+    totalChecked: number;
+    totalApproved: number;
+    averageApprovalRate: number;
+  }> {
+    const stats = await db
+      .select({
+        totalChecked: sql<number>`count(*)`,
+        totalApproved: sql<number>`sum(${taskReports.approvedTasks})`,
+        totalTasks: sql<number>`sum(${taskReports.taskCount})`
+      })
+      .from(taskReports)
+      .where(and(
+        eq(taskReports.curatorId, curatorId),
+        sql`${taskReports.status} != 'pending'`
+      ));
+
+    const result = stats[0];
+    if (!result || result.totalChecked === 0) {
+      return {
+        totalChecked: 0,
+        totalApproved: 0,
+        averageApprovalRate: 0
+      };
+    }
+
+    const averageApprovalRate = result.totalTasks > 0 
+      ? Math.round((result.totalApproved / result.totalTasks) * 100)
+      : 0;
+
+    return {
+      totalChecked: result.totalChecked,
+      totalApproved: result.totalApproved || 0,
+      averageApprovalRate
+    };
   }
 }
 

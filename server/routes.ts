@@ -470,6 +470,81 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Task report routes
+  app.get('/api/task-reports', async (req, res) => {
+    try {
+      const { serverId, status, week } = req.query;
+      
+      let taskReports;
+      if (serverId) {
+        taskReports = await storage.getTaskReportsForServer(parseInt(serverId as string));
+      } else if (status === 'pending') {
+        taskReports = await storage.getPendingTaskReports();
+      } else if (week) {
+        const weekStart = new Date(week as string);
+        taskReports = await storage.getTaskReportsByWeek(weekStart);
+      } else {
+        // Get recent reports from all servers
+        const allServers = await storage.getDiscordServers();
+        const allReports = await Promise.all(
+          allServers.map(server => storage.getTaskReportsForServer(server.id))
+        );
+        taskReports = allReports.flat().sort((a, b) => 
+          new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()
+        ).slice(0, 50); // Limit to 50 most recent
+      }
+      
+      res.json(taskReports);
+    } catch (error) {
+      console.error('Error getting task reports:', error);
+      res.status(500).json({ error: 'Failed to get task reports' });
+    }
+  });
+
+  app.get('/api/task-reports/stats', async (req, res) => {
+    try {
+      const servers = await storage.getDiscordServers();
+      const stats = await Promise.all(
+        servers.map(async (server) => {
+          const reports = await storage.getTaskReportsForServer(server.id);
+          const pending = reports.filter(r => r.status === 'pending').length;
+          const verified = reports.filter(r => r.status === 'verified').length;
+          const totalTasks = reports.reduce((sum, r) => sum + r.taskCount, 0);
+          const approvedTasks = reports
+            .filter(r => r.approvedTasks !== null)
+            .reduce((sum, r) => sum + (r.approvedTasks || 0), 0);
+          
+          return {
+            serverId: server.id,
+            serverName: server.name,
+            pendingReports: pending,
+            verifiedReports: verified,
+            totalReports: reports.length,
+            totalTasks,
+            approvedTasks,
+            approvalRate: totalTasks > 0 ? Math.round((approvedTasks / totalTasks) * 100) : 0
+          };
+        })
+      );
+      
+      res.json(stats);
+    } catch (error) {
+      console.error('Error getting task report stats:', error);
+      res.status(500).json({ error: 'Failed to get task report stats' });
+    }
+  });
+
+  app.get('/api/curators/:id/task-stats', async (req, res) => {
+    try {
+      const curatorId = parseInt(req.params.id);
+      const stats = await storage.getCuratorTaskStats(curatorId);
+      res.json(stats);
+    } catch (error) {
+      console.error('Error getting curator task stats:', error);
+      res.status(500).json({ error: 'Failed to get curator task stats' });
+    }
+  });
+
   // Start Discord bot
   startDiscordBot();
 

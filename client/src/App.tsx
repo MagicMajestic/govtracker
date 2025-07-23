@@ -11,6 +11,7 @@ import NotFound from "@/pages/not-found";
 import CuratorDetails from "@/pages/curator-details";
 import ServerManagement from "@/pages/server-management";
 import BotSettings from "@/pages/bot-settings";
+import TaskReports from "@/pages/task-reports";
 import Sidebar from "@/components/sidebar";
 
 function Router() {
@@ -24,6 +25,7 @@ function Router() {
           <Route path="/curators/:id" component={CuratorDetails} />
           <Route path="/activity" component={Activity} />
           <Route path="/servers" component={ServerManagement} />
+          <Route path="/tasks" component={TaskReports} />
           <Route path="/settings" component={BotSettings} />
           <Route component={NotFound} />
         </Switch>

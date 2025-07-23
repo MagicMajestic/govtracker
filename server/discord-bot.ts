@@ -233,6 +233,15 @@ export function startDiscordBot() {
       console.log(`Found curator: ${curator.name} (${curator.curatorType})`);
       console.log(`Found server: ${server.name}`);
 
+      // Check if this is a completed-tasks channel (task submission)
+      const isCompletedTasksChannel = message.channel && 'name' in message.channel && 
+        message.channel.name?.toLowerCase().includes('completed-tasks');
+
+      // Handle task submissions in completed-tasks channels
+      if (isCompletedTasksChannel && !message.reference) {
+        await handleTaskSubmission(message, server, curator);
+      }
+
       const isReply = message.reference?.messageId;
       let targetMessageContent = null;
 
@@ -241,6 +250,10 @@ export function startDiscordBot() {
           const referencedMessage = await message.fetchReference();
           targetMessageContent = referencedMessage.content.substring(0, 500); // Limit length
           
+          // Check if this is a completed-tasks channel (task verification)
+          const isCompletedTasksChannel = message.channel && 'name' in message.channel && 
+            message.channel.name?.toLowerCase().includes('completed-tasks');
+
           // ENHANCED: Check if replying to message with curator mention/keywords
           const needsResponse = referencedMessage.content && (
             (server.roleTagId && referencedMessage.content.includes(`<@&${server.roleTagId}>`)) ||
@@ -249,6 +262,11 @@ export function startDiscordBot() {
             referencedMessage.content.toLowerCase().includes('помощь') ||
             referencedMessage.content.toLowerCase().includes('help')
           );
+
+          // Handle task verification in completed-tasks channels
+          if (isCompletedTasksChannel && curator) {
+            await handleTaskVerification(message, referencedMessage, server, curator);
+          }
 
           if (needsResponse) {
             console.log(`🚀 CURATOR REPLY TO MENTION: ${curator.name} replying to message with curator mention/keywords`);
@@ -326,6 +344,15 @@ export function startDiscordBot() {
       }
 
       console.log(`Found server: ${server.name}`);
+
+      // Check if this is a task verification reaction in completed-tasks channel
+      const isCompletedTasksChannel = reaction.message.channel && 
+        'name' in reaction.message.channel && 
+        reaction.message.channel.name?.toLowerCase().includes('completed-tasks');
+
+      if (isCompletedTasksChannel) {
+        await handleTaskReactionVerification(reaction, user, server, curator);
+      }
 
       // ENHANCED: Check if this reaction is a response to a message with curator mention 
       const originalMessage = reaction.message;
@@ -508,6 +535,265 @@ export function startDiscordBot() {
       pendingNotifications.delete(notificationKey);
       console.log(`❌ NOTIFICATION CANCELLED: Response received for ${messageId}`);
     }
+  }
+
+  // Handle task submission in completed-tasks channels
+  async function handleTaskSubmission(message: any, server: any, curator: any) {
+    try {
+      console.log(`📋 TASK SUBMISSION: ${curator?.name || 'Non-curator'} posting in completed-tasks channel`);
+      
+      // Only faction leaders (non-curators) can submit tasks
+      if (curator) {
+        console.log(`⚠️ Curator ${curator.name} posted in completed-tasks channel - not a task submission`);
+        return;
+      }
+
+      // Extract task information from message content
+      const content = message.content;
+      const taskCount = extractTaskCount(content);
+      
+      if (taskCount === 0) {
+        console.log(`⚠️ Could not extract task count from message: ${content}`);
+        return;
+      }
+
+      // Determine week start (Monday of current week)
+      const now = new Date();
+      const weekStart = new Date(now);
+      weekStart.setDate(now.getDate() - now.getDay() + 1); // Monday
+      weekStart.setHours(0, 0, 0, 0);
+
+      // Create task report entry
+      await storage.createTaskReport({
+        serverId: server.id,
+        submitterId: message.author.id,
+        submitterName: message.author.username,
+        messageId: message.id,
+        channelId: message.channelId,
+        content: content.substring(0, 1000),
+        taskCount: taskCount,
+        weekStart: weekStart,
+        submittedAt: message.createdAt,
+        status: 'pending',
+        curatorId: null,
+        verifiedAt: null,
+        approvedTasks: null,
+        curatorFaction: null
+      });
+
+      console.log(`✅ TASK REPORT CREATED: ${message.author.username} submitted ${taskCount} tasks for week ${weekStart.toISOString().split('T')[0]}`);
+      
+    } catch (error) {
+      console.error('Error handling task submission:', error);
+    }
+  }
+
+  // Handle task verification when curator replies to task report
+  async function handleTaskVerification(message: any, referencedMessage: any, server: any, curator: any) {
+    try {
+      console.log(`📋 TASK VERIFICATION: ${curator.name} verifying task report ${referencedMessage.id}`);
+      
+      // Find existing task report
+      const taskReport = await storage.getTaskReportByMessageId(referencedMessage.id);
+      if (!taskReport) {
+        console.log(`⚠️ No task report found for message ${referencedMessage.id}`);
+        return;
+      }
+
+      if (taskReport.status !== 'pending') {
+        console.log(`⚠️ Task report ${taskReport.id} already verified by ${taskReport.curatorFaction}`);
+        return;
+      }
+
+      // Extract approval count from curator message
+      const approvedTasks = extractApprovalCount(message.content, taskReport.taskCount);
+      
+      // Update task report with curator verification
+      await storage.updateTaskReport(taskReport.id, {
+        curatorId: curator.id,
+        verifiedAt: message.createdAt,
+        status: 'verified',
+        approvedTasks: approvedTasks,
+        curatorFaction: curator.factions?.[0] || 'unknown'
+      });
+
+      console.log(`✅ TASK VERIFIED: ${curator.name} (${curator.factions?.[0]}) approved ${approvedTasks}/${taskReport.taskCount} tasks`);
+      
+      // Create special activity for task verification (higher score)
+      await storage.createActivity({
+        curatorId: curator.id,
+        serverId: server.id,
+        type: 'task_verification',
+        channelId: message.channelId,
+        channelName: message.channel && 'name' in message.channel ? message.channel.name : null,
+        messageId: message.id,
+        content: `Verified ${approvedTasks}/${taskReport.taskCount} tasks`,
+        targetMessageId: referencedMessage.id,
+        targetMessageContent: taskReport.content
+      });
+
+    } catch (error) {
+      console.error('Error handling task verification:', error);
+    }
+  }
+
+  // Handle task verification via reactions (emoji verdicts)
+  async function handleTaskReactionVerification(reaction: any, user: any, server: any, curator: any) {
+    try {
+      console.log(`📋 TASK REACTION VERIFICATION: ${curator.name} reacting with ${reaction.emoji.name || reaction.emoji.toString()}`);
+      
+      const taskReport = await storage.getTaskReportByMessageId(reaction.message.id);
+      if (!taskReport) {
+        console.log(`⚠️ No task report found for message ${reaction.message.id}`);
+        return;
+      }
+
+      if (taskReport.status !== 'pending') {
+        console.log(`⚠️ Task report ${taskReport.id} already verified`);
+        return;
+      }
+
+      // Map emojis to approval counts
+      const emojiApprovals = getEmojiApprovalMapping(reaction.emoji.name || reaction.emoji.toString(), taskReport.taskCount);
+      
+      if (emojiApprovals === null) {
+        console.log(`⚠️ Unknown verification emoji: ${reaction.emoji.name || reaction.emoji.toString()}`);
+        return;
+      }
+
+      // Update task report with emoji verification
+      await storage.updateTaskReport(taskReport.id, {
+        curatorId: curator.id,
+        verifiedAt: new Date(),
+        status: 'verified',
+        approvedTasks: emojiApprovals,
+        curatorFaction: curator.factions?.[0] || 'unknown'
+      });
+
+      console.log(`✅ TASK VERIFIED VIA EMOJI: ${curator.name} (${curator.factions?.[0]}) approved ${emojiApprovals}/${taskReport.taskCount} tasks`);
+      
+      // Create special activity for emoji task verification
+      await storage.createActivity({
+        curatorId: curator.id,
+        serverId: server.id,
+        type: 'task_verification',
+        channelId: reaction.message.channelId,
+        channelName: reaction.message.channel && 'name' in reaction.message.channel ? reaction.message.channel.name : null,
+        messageId: null,
+        content: `Verified ${emojiApprovals}/${taskReport.taskCount} tasks via ${reaction.emoji.name || reaction.emoji.toString()}`,
+        reactionEmoji: reaction.emoji.name || reaction.emoji.toString(),
+        targetMessageId: reaction.message.id,
+        targetMessageContent: taskReport.content
+      });
+
+    } catch (error) {
+      console.error('Error handling task reaction verification:', error);
+    }
+  }
+
+  // Helper function to extract task count from message content
+  function extractTaskCount(content: string): number {
+    // Look for patterns like "5 задач", "10 заданий", "15 тасков", etc.
+    const patterns = [
+      /(\d+)\s*задач/i,
+      /(\d+)\s*заданий/i,
+      /(\d+)\s*тасков/i,
+      /(\d+)\s*task/i,
+      /(\d+)\s*tasks/i,
+      /задач[иа]?\s*(\d+)/i,
+      /заданий?\s*(\d+)/i,
+      /тасков?\s*(\d+)/i,
+      /task[s]?\s*(\d+)/i
+    ];
+
+    for (const pattern of patterns) {
+      const match = content.match(pattern);
+      if (match) {
+        return parseInt(match[1]);
+      }
+    }
+
+    // Look for standalone numbers (risky but fallback)
+    const numberMatch = content.match(/\b(\d{1,2})\b/);
+    if (numberMatch && parseInt(numberMatch[1]) >= 1 && parseInt(numberMatch[1]) <= 50) {
+      return parseInt(numberMatch[1]);
+    }
+
+    return 0;
+  }
+
+  // Helper function to extract approval count from curator message
+  function extractApprovalCount(content: string, totalTasks: number): number {
+    // Look for patterns like "одобрено 5", "5 одобрено", "5/10", "5 из 10", etc.
+    const patterns = [
+      /одобрено\s*(\d+)/i,
+      /(\d+)\s*одобрено/i,
+      /(\d+)\/\d+/,
+      /(\d+)\s*из\s*\d+/i,
+      /approved\s*(\d+)/i,
+      /(\d+)\s*approved/i,
+      /(\d+)\s*ok/i,
+      /ok\s*(\d+)/i,
+      /(\d+)\s*✅/,
+      /✅\s*(\d+)/
+    ];
+
+    for (const pattern of patterns) {
+      const match = content.match(pattern);
+      if (match) {
+        const count = parseInt(match[1]);
+        return Math.min(count, totalTasks); // Don't exceed total tasks
+      }
+    }
+
+    // If curator says "все" or "all" - approve all tasks
+    if (/\b(все|all|всё)\b/i.test(content)) {
+      return totalTasks;
+    }
+
+    // If curator says "нет" or "no" - approve none
+    if (/\b(нет|no|none|ничего)\b/i.test(content)) {
+      return 0;
+    }
+
+    // Default: approve all tasks if no specific count found
+    return totalTasks;
+  }
+
+  // Helper function to map emojis to approval counts
+  function getEmojiApprovalMapping(emoji: string, totalTasks: number): number | null {
+    const emojiMap: Record<string, (total: number) => number> = {
+      '✅': (total) => total, // All approved
+      '❌': () => 0, // None approved  
+      '⭐': (total) => total, // All approved (excellent)
+      '👍': (total) => total, // All approved
+      '👎': () => 0, // None approved
+      '🔥': (total) => total, // All approved (excellent)
+      '💯': (total) => total, // All approved (perfect)
+      '❓': (total) => Math.floor(total / 2), // Half approved (questionable)
+      '⚠️': (total) => Math.floor(total / 2), // Half approved (warning)
+      '🚫': () => 0, // None approved
+      '🎯': (total) => total, // All approved (on target)
+      '🏆': (total) => total, // All approved (champion)
+      // Number emojis for specific counts
+      '1️⃣': () => 1,
+      '2️⃣': () => 2,
+      '3️⃣': () => 3,
+      '4️⃣': () => 4,
+      '5️⃣': () => 5,
+      '6️⃣': () => 6,
+      '7️⃣': () => 7,
+      '8️⃣': () => 8,
+      '9️⃣': () => 9,
+      '🔟': () => 10
+    };
+
+    const handler = emojiMap[emoji];
+    if (handler) {
+      return Math.min(handler(totalTasks), totalTasks);
+    }
+
+    return null; // Unknown emoji
   }
 
   client.on(Events.Error, (error) => {

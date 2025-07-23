@@ -25,6 +25,7 @@ interface GlobalRatingConfig {
   activityPointsMessage: number;
   activityPointsReaction: number;
   activityPointsReply: number;
+  activityPointsTaskVerification: number;
   responseTimeGoodSeconds: number;
   responseTimePoorSeconds: number;
 }
@@ -49,6 +50,7 @@ export default function BotSettings() {
     activityPointsMessage: 3,
     activityPointsReaction: 1,
     activityPointsReply: 2,
+    activityPointsTaskVerification: 5,
     responseTimeGoodSeconds: 60,
     responseTimePoorSeconds: 300,
   });
@@ -502,6 +504,17 @@ export default function BotSettings() {
                         onChange={(e) => updateGlobalConfig('activityPointsReply', parseInt(e.target.value) || 0)}
                         className="bg-[#1a1a1a] border-gray-600 text-white mt-1"
                       />
+                    </div>
+
+                    <div>
+                      <Label className="text-white text-sm">Баллы за проверку задач</Label>
+                      <Input
+                        type="number"
+                        value={globalConfig.activityPointsTaskVerification}
+                        onChange={(e) => updateGlobalConfig('activityPointsTaskVerification', parseInt(e.target.value) || 0)}
+                        className="bg-[#1a1a1a] border-gray-600 text-white mt-1"
+                      />
+                      <p className="text-xs text-gray-400 mt-1">Баллы за верификацию задач в каналах completed-tasks</p>
                     </div>
 
                     {/* Response Time Thresholds */}

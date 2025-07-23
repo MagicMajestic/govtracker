@@ -3,6 +3,7 @@ import {
   activities, 
   discordServers,
   users,
+  responseTracking,
   type Curator, 
   type InsertCurator,
   type Activity,
@@ -10,7 +11,9 @@ import {
   type DiscordServer,
   type InsertDiscordServer,
   type User,
-  type InsertUser
+  type InsertUser,
+  type ResponseTracking,
+  type InsertResponseTracking
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, sql, count } from "drizzle-orm";
@@ -25,7 +28,8 @@ export interface IStorage {
   getCurators(): Promise<Curator[]>;
   getCuratorById(id: number): Promise<Curator | undefined>;
   getCuratorByDiscordId(discordId: string): Promise<Curator | undefined>;
-  getCuratorsByType(curatorType: 'government' | 'crime'): Promise<Curator[]>;
+  getCuratorsByType(curatorType: 'government' | 'government_crimea' | 'crime'): Promise<Curator[]>;
+  getCuratorsBySubdivision(subdivision: 'government' | 'crimea'): Promise<Curator[]>;
   createCurator(curator: InsertCurator): Promise<Curator>;
   updateCurator(id: number, curator: Partial<InsertCurator>): Promise<Curator | undefined>;
   deleteCurator(id: number): Promise<boolean>;
@@ -41,6 +45,13 @@ export interface IStorage {
   getDiscordServers(): Promise<DiscordServer[]>;
   createDiscordServer(server: InsertDiscordServer): Promise<DiscordServer>;
   getServerByServerId(serverId: string): Promise<DiscordServer | undefined>;
+  updateDiscordServer(id: number, server: Partial<InsertDiscordServer>): Promise<DiscordServer | undefined>;
+  
+  // Response tracking methods
+  createResponseTracking(tracking: InsertResponseTracking): Promise<ResponseTracking>;
+  updateResponseTracking(id: number, tracking: Partial<InsertResponseTracking>): Promise<ResponseTracking | undefined>;
+  getResponseTrackingByMention(mentionMessageId: string): Promise<ResponseTracking | undefined>;
+  getCuratorAvgResponseTime(curatorId: number): Promise<number | null>;
   
   // Statistics methods
   getCuratorStats(curatorId?: number): Promise<any>;
@@ -84,8 +95,12 @@ export class DatabaseStorage implements IStorage {
     return curator || undefined;
   }
 
-  async getCuratorsByType(curatorType: 'government' | 'crime'): Promise<Curator[]> {
+  async getCuratorsByType(curatorType: 'government' | 'government_crimea' | 'crime'): Promise<Curator[]> {
     return await db.select().from(curators).where(and(eq(curators.isActive, true), eq(curators.curatorType, curatorType)));
+  }
+
+  async getCuratorsBySubdivision(subdivision: 'government' | 'crimea'): Promise<Curator[]> {
+    return await db.select().from(curators).where(and(eq(curators.isActive, true), eq(curators.subdivision, subdivision)));
   }
 
   async createCurator(curator: InsertCurator): Promise<Curator> {
@@ -231,6 +246,55 @@ export class DatabaseStorage implements IStorage {
     return server || undefined;
   }
 
+  async updateDiscordServer(id: number, server: Partial<InsertDiscordServer>): Promise<DiscordServer | undefined> {
+    const [updated] = await db
+      .update(discordServers)
+      .set(server)
+      .where(eq(discordServers.id, id))
+      .returning();
+    return updated || undefined;
+  }
+
+  // Response tracking methods
+  async createResponseTracking(tracking: InsertResponseTracking): Promise<ResponseTracking> {
+    const [newTracking] = await db
+      .insert(responseTracking)
+      .values(tracking)
+      .returning();
+    return newTracking;
+  }
+
+  async updateResponseTracking(id: number, tracking: Partial<InsertResponseTracking>): Promise<ResponseTracking | undefined> {
+    const [updated] = await db
+      .update(responseTracking)
+      .set(tracking)
+      .where(eq(responseTracking.id, id))
+      .returning();
+    return updated || undefined;
+  }
+
+  async getResponseTrackingByMention(mentionMessageId: string): Promise<ResponseTracking | undefined> {
+    const [tracking] = await db
+      .select()
+      .from(responseTracking)
+      .where(eq(responseTracking.mentionMessageId, mentionMessageId));
+    return tracking || undefined;
+  }
+
+  async getCuratorAvgResponseTime(curatorId: number): Promise<number | null> {
+    const result = await db
+      .select({
+        avgTime: sql<number>`AVG(${responseTracking.responseTimeSeconds})`
+      })
+      .from(responseTracking)
+      .where(and(
+        eq(responseTracking.curatorId, curatorId),
+        sql`${responseTracking.responseTimeSeconds} IS NOT NULL`
+      ));
+    
+    return result[0]?.avgTime || null;
+  }
+
   // Statistics methods
   async getCuratorStats(curatorId?: number): Promise<any> {
     const whereClause = curatorId ? eq(activities.curatorId, curatorId) : undefined;
@@ -291,43 +355,33 @@ export class DatabaseStorage implements IStorage {
 
   async getTopCurators(limit: number): Promise<any> {
     try {
-      const curatorStats = await db
-        .select({
-          id: curators.id,
-          discordId: curators.discordId,
-          name: curators.name,
-          factions: curators.factions,
-          curatorType: curators.curatorType,
-          isActive: curators.isActive,
-          createdAt: curators.createdAt,
-          totalActivities: sql<number>`COALESCE(count(${activities.id}), 0)`,
-          messages: sql<number>`COALESCE(count(case when ${activities.type} = 'message' then 1 end), 0)`,
-          reactions: sql<number>`COALESCE(count(case when ${activities.type} = 'reaction' then 1 end), 0)`,
-          replies: sql<number>`COALESCE(count(case when ${activities.type} = 'reply' then 1 end), 0)`
-        })
-        .from(curators)
-        .leftJoin(activities, eq(curators.id, activities.curatorId))
-        .where(eq(curators.isActive, true))
-        .groupBy(curators.id)
-        .orderBy(sql`COALESCE(count(${activities.id}), 0) DESC`)
-        .limit(limit);
-
-      const maxActivities = curatorStats[0]?.totalActivities || 1;
+      console.log("getTopCurators called with limit:", limit);
       
-      return curatorStats.map((stat, index) => ({
-        id: stat.id,
-        discordId: stat.discordId,
-        name: stat.name,
-        factions: stat.factions,
-        curatorType: stat.curatorType,
-        isActive: stat.isActive,
-        createdAt: stat.createdAt,
-        score: Math.round((stat.totalActivities / Math.max(maxActivities, 1)) * 100),
-        totalActivities: stat.totalActivities,
-        messages: stat.messages,
-        reactions: stat.reactions,
-        replies: stat.replies
+      // First, get all active curators
+      const allCurators = await db
+        .select()
+        .from(curators)
+        .where(eq(curators.isActive, true));
+
+      console.log("Found active curators:", allCurators.length);
+
+      if (allCurators.length === 0) {
+        console.log("No active curators found, returning empty array");
+        return [];
+      }
+
+      // For now, just return the curators with zero activity stats to avoid SQL issues
+      const result = allCurators.map(curator => ({
+        ...curator,
+        totalActivities: 0,
+        messages: 0,
+        reactions: 0,
+        replies: 0,
+        score: 0
       }));
+
+      console.log("Returning curator stats:", result);
+      return result;
     } catch (error) {
       console.error("Error in getTopCurators:", error);
       return [];

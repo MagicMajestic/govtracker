@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Users, BarChart3, Heart, Clock, RefreshCw } from "lucide-react";
-import { ActivityChart } from "@/components/activity-chart";
+import { ActivityChartEnhanced } from "@/components/activity-chart-enhanced";
 import { ServerStatus } from "@/components/server-status";
 import { TopCurators } from "@/components/top-curators";
 import { RecentActivity } from "@/components/recent-activity";
@@ -111,8 +111,8 @@ export default function Dashboard() {
         </div>
 
         {/* Charts and Status */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <ActivityChart />
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+          <ActivityChartEnhanced />
           <ServerStatus />
         </div>
 

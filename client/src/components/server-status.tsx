@@ -61,7 +61,7 @@ export function ServerStatus() {
     return {
       ...server,
       activityToday: isConnected ? Math.floor(totalActivities / (activeServers.length || 1)) : 0,
-      avgResponseTime: isConnected ? "~5 мин" : "Н/Д",
+      avgResponseTime: isConnected ? "~5 мин" : "0",
       statusText
     };
   }) || [];
@@ -72,7 +72,7 @@ export function ServerStatus() {
         <CardTitle>Статус серверов</CardTitle>
         <CardDescription>
           {activeServers.length} из {servers?.length || 0} серверов активны • 
-          {totalActivities} активностей сегодня
+          {totalActivities} взаимодействий сегодня
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -87,7 +87,7 @@ export function ServerStatus() {
                   </Badge>
                 </div>
                 <div className="flex items-center space-x-4 text-xs text-muted-foreground">
-                  <span>{server.activityToday} активностей</span>
+                  <span>{server.activityToday} взаимодействий</span>
                   <span>Среднее время ответа: {server.avgResponseTime}</span>
                 </div>
               </div>

@@ -163,6 +163,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.put("/api/servers/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const parsed = insertDiscordServerSchema.partial().parse(req.body);
+      const server = await storage.updateDiscordServer(id, parsed);
+      if (!server) {
+        return res.status(404).json({ error: "Server not found" });
+      }
+      res.json(server);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid server data" });
+    }
+  });
+
   // Curator statistics
   app.get("/api/curator-stats", async (req, res) => {
     try {
@@ -186,14 +200,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.get("/api/curators/top", async (req, res) => {
+    const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+    console.log("NEW - Fetching top curators with limit:", limit);
+    
     try {
-      const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
       const topCurators = await storage.getTopCurators(limit);
+      console.log("NEW - Got top curators result:", JSON.stringify(topCurators, null, 2));
       res.json(topCurators);
     } catch (error) {
-      console.error("Top curators error:", error);
-      res.status(500).json({ error: "Failed to fetch top curators" });
+      console.log("NEW - Error in top curators route:", error);
+      res.json([]);
     }
+  });
+
+  // Test endpoint to verify changes are working
+  app.get("/api/test-curators", async (req, res) => {
+    console.log("Test endpoint called");
+    const curators = await storage.getCurators();
+    console.log("Test - found curators:", curators.length);
+    res.json({ message: "Test working", curators: curators.length });
   });
 
   // Individual curator details

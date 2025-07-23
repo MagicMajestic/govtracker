@@ -8,6 +8,7 @@ import Curators from "@/pages/curators";
 import Activity from "@/pages/activity";
 import NotFound from "@/pages/not-found";
 import CuratorDetails from "@/pages/curator-details";
+import ServerSettingsPage from "@/pages/server-settings";
 import Sidebar from "@/components/sidebar";
 
 function Router() {
@@ -20,6 +21,7 @@ function Router() {
           <Route path="/curators" component={Curators} />
           <Route path="/curators/:id" component={CuratorDetails} />
           <Route path="/activity" component={Activity} />
+          <Route path="/settings" component={ServerSettingsPage} />
           <Route component={NotFound} />
         </Switch>
       </div>

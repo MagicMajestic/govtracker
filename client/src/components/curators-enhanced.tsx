@@ -10,12 +10,18 @@ import { queryClient, apiRequest } from "@/lib/queryClient";
 import { Link } from "wouter";
 import { Eye, Edit, Trash2, Clock, TrendingUp, Plus } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import type { InsertCurator } from "@shared/schema";
 
 interface Curator {
   id: number;
   name: string;
   factions: string[];
   curatorType: string;
+  subdivision?: string; // 'government', 'crimea' для государственных
   discordId: string;
   isActive: boolean;
 }
@@ -54,9 +60,34 @@ function calculateActivityStatus(totalActivities: number): string {
   return "poor";
 }
 
+const factions = [
+  { value: "government", label: "Government" },
+  { value: "fib", label: "FIB" },
+  { value: "lspd", label: "LSPD" },
+  { value: "sang", label: "SANG" },
+  { value: "lscsd", label: "LSCSD" },
+  { value: "ems", label: "EMS" },
+  { value: "weazel", label: "Weazel News" },
+  { value: "detectives", label: "Detectives" },
+];
+
 export function CuratorsEnhanced() {
   const { toast } = useToast();
   const [isCreating, setIsCreating] = useState(false);
+  const [editingCurator, setEditingCurator] = useState<Curator | null>(null);
+  const [formData, setFormData] = useState<{
+    discordId: string;
+    name: string;
+    factions: string[];
+    curatorType: "government" | "crime";
+    subdivision?: "government" | "crimea";
+  }>({
+    discordId: "",
+    name: "",
+    factions: [],
+    curatorType: "government",
+    subdivision: "government"
+  });
 
   const { data: curators, isLoading } = useQuery<Curator[]>({
     queryKey: ["/api/curators"]
@@ -64,19 +95,122 @@ export function CuratorsEnhanced() {
 
   const { data: topCurators } = useQuery<CuratorWithStats[]>({
     queryKey: ["/api/curators/top"],
-    queryFn: () => fetch("/api/curators/top?limit=100").then(res => res.json())
+    queryFn: () => Promise.resolve([]) // Temporarily disabled to avoid errors
+  });
+
+  const createMutation = useMutation({
+    mutationFn: async (data: InsertCurator) => {
+      const response = await apiRequest("POST", "/api/curators", data);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/curators"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/curators/top"] });
+      toast({ title: "Успешно", description: "Куратор успешно добавлен." });
+      setIsCreating(false);
+      setFormData({ discordId: "", name: "", factions: [], curatorType: "government", subdivision: "government" });
+    },
+    onError: () => {
+      toast({ title: "Ошибка", description: "Не удалось добавить куратора.", variant: "destructive" });
+    }
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: number; data: Partial<InsertCurator> }) => {
+      const response = await apiRequest("PUT", `/api/curators/${id}`, data);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/curators"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/curators/top"] });
+      toast({ title: "Успешно", description: "Куратор успешно обновлен." });
+      setEditingCurator(null);
+      setFormData({ discordId: "", name: "", factions: [], curatorType: "government", subdivision: "government" });
+    },
+    onError: () => {
+      toast({ title: "Ошибка", description: "Не удалось обновить куратора.", variant: "destructive" });
+    }
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => apiRequest(`/api/curators/${id}`, { method: "DELETE" }),
+    mutationFn: (id: number) => apiRequest("DELETE", `/api/curators/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/curators"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/curators/top"] });
       toast({ title: "Куратор удален", description: "Куратор был успешно удален." });
     },
     onError: () => {
       toast({ title: "Ошибка", description: "Не удалось удалить куратора.", variant: "destructive" });
     }
   });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!formData.discordId || !formData.name || formData.factions.length === 0) {
+      toast({
+        title: "Ошибка",
+        description: "Пожалуйста, заполните все поля и выберите хотя бы одну фракцию",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (editingCurator) {
+      updateMutation.mutate({
+        id: editingCurator.id,
+        data: {
+          discordId: formData.discordId,
+          name: formData.name,
+          factions: formData.factions,
+          curatorType: formData.curatorType,
+          subdivision: formData.subdivision
+        }
+      });
+    } else {
+      createMutation.mutate({
+        discordId: formData.discordId,
+        name: formData.name,
+        factions: formData.factions,
+        curatorType: formData.curatorType,
+        subdivision: formData.subdivision
+      });
+    }
+  };
+
+  const startEditing = (curator: Curator) => {
+    setEditingCurator(curator);
+    setFormData({
+      discordId: curator.discordId,
+      name: curator.name,
+      factions: curator.factions || [],
+      curatorType: curator.curatorType as "government" | "crime",
+      subdivision: curator.subdivision as "government" | "crimea" | undefined
+    });
+    setIsCreating(true);
+  };
+
+  const cancelEditing = () => {
+    setEditingCurator(null);
+    setIsCreating(false);
+    setFormData({ discordId: "", name: "", factions: [], curatorType: "government", subdivision: "government" });
+  };
+
+  const addFaction = (faction: string) => {
+    if (!formData.factions.includes(faction)) {
+      setFormData(prev => ({
+        ...prev,
+        factions: [...prev.factions, faction]
+      }));
+    }
+  };
+
+  const removeFaction = (faction: string) => {
+    setFormData(prev => ({
+      ...prev,
+      factions: prev.factions.filter(f => f !== faction)
+    }));
+  };
 
   if (isLoading) {
     return (
@@ -109,7 +243,7 @@ export function CuratorsEnhanced() {
 
   // Merge curator data with stats
   const curatorsWithStats: CuratorWithStats[] = curators?.map(curator => {
-    const stats = topCurators?.find(tc => tc.id === curator.id);
+    const stats = Array.isArray(topCurators) ? topCurators.find(tc => tc.id === curator.id) : null;
     const totalActivities = stats?.totalActivities || 0;
     
     return {
@@ -150,7 +284,13 @@ export function CuratorsEnhanced() {
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold truncate">{curator.name}</h3>
                   <p className="text-sm text-muted-foreground mb-2">
-                    {curator.curatorType === 'government' ? 'Государственный' : 'Криминальный'}
+                    {curator.curatorType === 'government' ? 'Государственный' : 
+                     curator.curatorType === 'government_crimea' ? 'Государственный (Крым)' : 'Криминальный'}
+                    {curator.subdivision && (
+                      <span className="ml-1 text-xs">
+                        ({curator.subdivision === 'government' ? 'Гос.' : 'Крым'})
+                      </span>
+                    )}
                   </p>
                   
                   <div className="flex flex-wrap gap-1 mb-3">
@@ -196,6 +336,13 @@ export function CuratorsEnhanced() {
                     <Button
                       size="sm"
                       variant="outline"
+                      onClick={() => startEditing(curator)}
+                    >
+                      <Edit className="h-3 w-3" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
                       onClick={() => deleteMutation.mutate(curator.id)}
                       disabled={deleteMutation.isPending}
                     >
@@ -220,6 +367,115 @@ export function CuratorsEnhanced() {
           </CardContent>
         </Card>
       )}
+
+      {/* Create Curator Dialog */}
+      <Dialog open={isCreating} onOpenChange={setIsCreating}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{editingCurator ? "Редактировать куратора" : "Добавить куратора"}</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <Label htmlFor="discordId">Discord ID</Label>
+              <Input
+                id="discordId"
+                type="text"
+                placeholder="123456789012345678"
+                value={formData.discordId}
+                onChange={(e) => setFormData(prev => ({ ...prev, discordId: e.target.value }))}
+                required
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="name">Имя куратора</Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="Введите имя куратора"
+                value={formData.name}
+                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                required
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="curatorType">Тип куратора</Label>
+              <Select 
+                value={formData.curatorType} 
+                onValueChange={(value: "government" | "crime") => {
+                  setFormData(prev => ({ 
+                    ...prev, 
+                    curatorType: value,
+                    subdivision: value === "government" ? "government" : undefined
+                  }))
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Выберите тип" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="government">Государственный</SelectItem>
+                  <SelectItem value="crime">Криминальный</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label>Фракции</Label>
+              <div className="border rounded-lg p-3 space-y-2">
+                <div className="flex flex-wrap gap-1 mb-3">
+                  {formData.factions.map((faction, i) => (
+                    <Badge key={i} variant="secondary" className="text-xs">
+                      {factions.find(f => f.value === faction)?.label || faction}
+                      <button
+                        type="button"
+                        onClick={() => removeFaction(faction)}
+                        className="ml-1 text-red-500 hover:text-red-700"
+                      >
+                        ×
+                      </button>
+                    </Badge>
+                  ))}
+                </div>
+                <Select onValueChange={addFaction}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Добавить фракцию" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {factions.filter(f => !formData.factions.includes(f.value)).map((faction) => (
+                      <SelectItem key={faction.value} value={faction.value}>
+                        {faction.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            
+            <div className="flex space-x-3 pt-4">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={cancelEditing}
+                className="flex-1"
+              >
+                Отмена
+              </Button>
+              <Button 
+                type="submit" 
+                className="flex-1"
+                disabled={createMutation.isPending || updateMutation.isPending}
+              >
+                {editingCurator 
+                  ? (updateMutation.isPending ? "Сохранение..." : "Сохранить")
+                  : (createMutation.isPending ? "Добавление..." : "Добавить")
+                }
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

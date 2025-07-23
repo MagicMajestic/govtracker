@@ -74,22 +74,35 @@ export function startDiscordBot() {
         message.content.toLowerCase().includes('вопрос') ||
         message.content.toLowerCase().includes('question')
       );
+
+      console.log(`Message analysis:
+        - From curator: ${curator ? curator.name : 'No'}
+        - Server has role tag: ${server.roleTagId ? 'Yes' : 'No'}
+        - Contains role mention: ${server.roleTagId && message.content.includes(`<@&${server.roleTagId}>`) ? 'Yes' : 'No'}
+        - Contains keywords: ${['куратор', 'curator', 'помощь', 'help', 'вопрос', 'question'].some(word => message.content.toLowerCase().includes(word))}
+        - Needs curator response: ${needsCuratorResponse}`);
       
       if (needsCuratorResponse) {
         console.log(`Message needs curator response - creating response tracking record`);
         
         try {
-          await storage.createResponseTracking({
-            serverId: server.id,
-            curatorId: 0, // Will be updated when curator responds
-            mentionMessageId: message.id,
-            mentionTimestamp: message.createdAt,
-            responseMessageId: null,
-            responseTimestamp: null,
-            responseType: null,
-            responseTimeSeconds: null
-          });
-          console.log(`Response tracking record created for message ${message.id}`);
+          // Find any available curator for this server - we'll update with actual curator when they respond
+          const serverCurators = await storage.getCurators();
+          const availableCurator = serverCurators.find(c => c.isActive);
+          
+          if (availableCurator) {
+            await storage.createResponseTracking({
+              serverId: server.id,
+              curatorId: availableCurator.id, // Placeholder, will be updated when actual curator responds
+              mentionMessageId: message.id,
+              mentionTimestamp: message.createdAt,
+              responseMessageId: null,
+              responseTimestamp: null,
+              responseType: null,
+              responseTimeSeconds: null
+            });
+            console.log(`✅ NEW RESPONSE TRACKING: Created record for message ${message.id} awaiting curator response (server: ${server.name})`);
+          }
         } catch (error) {
           console.error('Failed to create response tracking:', error);
         }
@@ -112,18 +125,58 @@ export function startDiscordBot() {
           const referencedMessage = await message.fetchReference();
           targetMessageContent = referencedMessage.content.substring(0, 500); // Limit length
           
+          // ENHANCED: Check if replying to message with curator mention/keywords
+          const needsResponse = referencedMessage.content && (
+            (server.roleTagId && referencedMessage.content.includes(`<@&${server.roleTagId}>`)) ||
+            referencedMessage.content.toLowerCase().includes('куратор') ||
+            referencedMessage.content.toLowerCase().includes('curator') ||
+            referencedMessage.content.toLowerCase().includes('помощь') ||
+            referencedMessage.content.toLowerCase().includes('help')
+          );
+
+          if (needsResponse) {
+            console.log(`🚀 REAL-TIME RESPONSE: Checking for existing tracking or creating new one for reply by ${curator.name}`);
+            
+            // Only create tracking if there's no existing tracking for this message
+            const existingTracking = await storage.getResponseTrackingByMention(referencedMessage.id);
+            if (!existingTracking) {
+              // Create realistic response time based on when user might have seen the message
+              const estimatedViewTime = new Date(referencedMessage.createdTimestamp);
+              const responseTimeMs = message.createdAt.getTime() - estimatedViewTime.getTime();
+              const responseTimeSeconds = Math.max(1, Math.round(responseTimeMs / 1000)); // At least 1 second
+              
+              try {
+                await storage.createResponseTracking({
+                  serverId: server.id,
+                  curatorId: curator.id,
+                  mentionMessageId: referencedMessage.id,
+                  mentionTimestamp: estimatedViewTime,
+                  responseMessageId: message.id,
+                  responseTimestamp: message.createdAt,
+                  responseType: 'reply',
+                  responseTimeSeconds: responseTimeSeconds
+                });
+                console.log(`✅ NEW RESPONSE TRACKED: ${curator.name} responded in ${responseTimeSeconds}s with reply`);
+              } catch (error) {
+                console.error('Failed to create new response tracking:', error);
+              }
+            }
+          }
+          
           // Check if this is a response to a tracked mention
           const tracking = await storage.getResponseTrackingByMention(message.reference?.messageId || '');
-          if (tracking && !tracking.responseMessageId) {
+          if (tracking && !tracking.responseTimestamp) {
             const responseTimeMs = message.createdAt.getTime() - new Date(tracking.mentionTimestamp).getTime();
+            const responseTimeSeconds = Math.round(responseTimeMs / 1000);
+            
             await storage.updateResponseTracking(tracking.id, {
               curatorId: curator.id,
               responseMessageId: message.id,
               responseTimestamp: message.createdAt,
               responseType: 'reply',
-              responseTimeSeconds: Math.round(responseTimeMs / 1000)
+              responseTimeSeconds: responseTimeSeconds
             });
-            console.log(`Updated response tracking: ${Math.round(responseTimeMs / 1000)}s response time`);
+            console.log(`✅ EXISTING RESPONSE TRACKED: ${curator.name} responded in ${responseTimeSeconds}s with reply`);
           }
         } catch (error) {
           console.error('Failed to fetch referenced message:', error);
@@ -173,18 +226,61 @@ export function startDiscordBot() {
 
       console.log(`Found server: ${server.name}`);
 
-      // Check if this reaction is a response to a tracked mention
+      // ENHANCED: Check if this reaction is a response to a message with curator mention 
+      const originalMessage = reaction.message;
+      
+      // Check if original message contains curator role mention or keywords
+      const needsResponse = originalMessage.content && (
+        (server.roleTagId && originalMessage.content.includes(`<@&${server.roleTagId}>`)) ||
+        originalMessage.content.toLowerCase().includes('куратор') ||
+        originalMessage.content.toLowerCase().includes('curator') ||
+        originalMessage.content.toLowerCase().includes('помощь') ||
+        originalMessage.content.toLowerCase().includes('help')
+      );
+
+      if (needsResponse) {
+        console.log(`🚀 REAL-TIME RESPONSE: Checking for existing tracking or creating new one for reaction by ${curator.name}`);
+        
+        // Only create tracking if there's no existing tracking for this message
+        const existingTracking = await storage.getResponseTrackingByMention(originalMessage.id);
+        if (!existingTracking) {
+          // Create realistic response time based on message creation time
+          const messageTimestamp = originalMessage.createdAt || new Date(originalMessage.createdTimestamp);
+          const responseTimeMs = Date.now() - messageTimestamp.getTime();
+          const responseTimeSeconds = Math.max(1, Math.round(responseTimeMs / 1000)); // At least 1 second
+          
+          try {
+            await storage.createResponseTracking({
+              serverId: server.id,
+              curatorId: curator.id,
+              mentionMessageId: originalMessage.id,
+              mentionTimestamp: messageTimestamp,
+              responseMessageId: `reaction_${originalMessage.id}`,
+              responseTimestamp: new Date(),
+              responseType: 'reaction',
+              responseTimeSeconds: responseTimeSeconds
+            });
+            console.log(`✅ NEW RESPONSE TRACKED: ${curator.name} responded in ${responseTimeSeconds}s with reaction`);
+          } catch (error) {
+            console.error('Failed to create new response tracking:', error);
+          }
+        }
+      }
+
+      // Also check existing tracking
       const tracking = await storage.getResponseTrackingByMention(reaction.message.id);
-      if (tracking && !tracking.responseMessageId) {
+      if (tracking && !tracking.responseTimestamp) {
         const responseTimeMs = Date.now() - new Date(tracking.mentionTimestamp).getTime();
+        const responseTimeSeconds = Math.round(responseTimeMs / 1000);
+        
         await storage.updateResponseTracking(tracking.id, {
           curatorId: curator.id,
-          responseMessageId: null, // Reactions don't have message IDs
+          responseMessageId: `reaction_${reaction.message.id}`,
           responseTimestamp: new Date(),
           responseType: 'reaction',
-          responseTimeSeconds: Math.round(responseTimeMs / 1000)
+          responseTimeSeconds: responseTimeSeconds
         });
-        console.log(`Updated response tracking for reaction: ${Math.round(responseTimeMs / 1000)}s response time`);
+        console.log(`✅ EXISTING RESPONSE TRACKED: ${curator.name} responded in ${responseTimeSeconds}s with reaction`);
       }
 
       let targetMessageContent = null;

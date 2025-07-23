@@ -10,7 +10,7 @@ import { queryClient, apiRequest } from "@/lib/queryClient";
 import { Link } from "wouter";
 import { Eye, Edit, Trash2, Clock, TrendingUp, Plus } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getActivityStatusText, getActivityStatusColor } from "@/lib/rating";
+import { getRatingText, getRatingColor, getActivityStatusText, getActivityStatusColor } from "@/lib/rating";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -275,18 +275,18 @@ export function CuratorsEnhanced() {
                     ))}
                   </div>
 
-                  {/* Activity Status */}
+                  {/* Performance Rating */}
                   <div className="space-y-2 mb-4">
                     <div className="flex items-center space-x-2">
-                      <div className={`h-2 w-2 rounded-full ${getActivityStatusColor(curator.totalActivities)}`} />
+                      <div className={`h-2 w-2 rounded-full ${getRatingColor(curator.score).replace('bg-', 'bg-')}`} />
                       <span className="text-xs font-medium">
-                        {getActivityStatusText(curator.totalActivities)}
+                        {getRatingText(curator.score)}
                       </span>
                     </div>
                     
                     <div className="flex items-center space-x-2 text-xs text-muted-foreground">
                       <TrendingUp className="h-3 w-3" />
-                      <span>{curator.totalActivities} активностей</span>
+                      <span>{curator.score} очков • {curator.totalActivities} активностей</span>
                     </div>
                     
                     <div className="flex items-center space-x-2 text-xs text-muted-foreground">
@@ -294,9 +294,12 @@ export function CuratorsEnhanced() {
                       <span>Ответ: {curator.avgResponseTime ? `${curator.avgResponseTime}с` : "Н/Д"}</span>
                     </div>
 
-                    {curator.score > 0 && (
-                      <Progress value={curator.score} className="h-1" />
-                    )}
+                    <div className={`h-2 w-full ${getRatingColor(curator.score)} rounded-full`}>
+                      <div 
+                        className="h-full bg-white/30 rounded-full" 
+                        style={{ width: `${Math.max(0, 100 - curator.score)}%` }}
+                      />
+                    </div>
                   </div>
 
                   {/* Actions */}

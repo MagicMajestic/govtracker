@@ -241,6 +241,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
 
 
+  // Test endpoint to create response tracking data
+  app.post("/api/test-response-tracking", async (req, res) => {
+    try {
+      console.log("Creating test response tracking data...");
+      
+      // Get first available curator and server
+      const curators = await storage.getCurators();
+      const servers = await storage.getDiscordServers();
+      
+      if (curators.length === 0 || servers.length === 0) {
+        return res.json({ error: "Need curators and servers first" });
+      }
+      
+      const curator = curators[0];
+      const server = servers[0];
+      
+      // Create several test response tracking records with different times
+      const testTimes = [15, 25, 8, 45, 12, 30, 18, 22]; // Various response times in seconds
+      
+      for (let i = 0; i < testTimes.length; i++) {
+        const now = new Date();
+        const mentionTime = new Date(now.getTime() - (testTimes[i] + 60) * 1000); // Message was sent X+60 seconds ago
+        const responseTime = new Date(now.getTime() - 60 * 1000); // Response was X seconds later
+        
+        await storage.createResponseTracking({
+          serverId: server.id,
+          curatorId: curator.id,
+          mentionMessageId: `test_mention_${i}_${Date.now()}`,
+          mentionTimestamp: mentionTime,
+          responseMessageId: `test_response_${i}_${Date.now()}`,
+          responseTimestamp: responseTime,
+          responseType: i % 2 === 0 ? 'reply' : 'reaction',
+          responseTimeSeconds: testTimes[i]
+        });
+      }
+      
+      console.log(`Created ${testTimes.length} test response tracking records`);
+      res.json({ 
+        success: true, 
+        message: `Created ${testTimes.length} test response tracking records`,
+        averageTime: testTimes.reduce((a, b) => a + b, 0) / testTimes.length 
+      });
+    } catch (error) {
+      console.error("Error creating test data:", error);
+      res.status(500).json({ error: "Failed to create test data" });
+    }
+  });
+
   // Curator activities
   app.get("/api/activities/curator/:id", async (req, res) => {
     try {

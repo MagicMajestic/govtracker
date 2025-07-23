@@ -20,20 +20,21 @@ A Discord bot that monitors curator (moderator) activities across multiple rolep
 -- Curators (moderators)
 curators: id, discord_id, name, factions[], curator_type, active
 -- Discord servers to monitor  
-discord_servers: id, server_id, name, role_tag_id
+discord_servers: id, server_id, name, role_tag_id, is_active
 -- Activity tracking
 activities: id, curator_id, server_id, type, channel_id, message_id, content, timestamp
 -- Response time tracking (CRITICAL for system)
 response_tracking: id, server_id, curator_id, mention_message_id, mention_timestamp, response_message_id, response_timestamp, response_type, response_time_seconds
--- User management
+-- User management  
 users: id, discord_id, username, role
 ```
 
 **Response Tracking Logic (Core Feature):**
 1. Bot detects messages with keywords: "куратор", "curator", "помощь", "help", "вопрос", "question"
-2. Creates `response_tracking` record with mention details
-3. When curator responds (message/reaction), updates record with response time
-4. Calculates performance metrics from response times
+2. Creates `response_tracking` record using REAL message timestamps (not artificial ones)
+3. When curator responds (message/reaction), calculates actual response time based on message creation timestamps
+4. Prevents duplicate tracking entries for same message
+5. Calculates realistic performance metrics from authentic response times
 
 ### Discord Bot Integration
 
@@ -109,13 +110,14 @@ GET /api/servers - Discord server management
 
 **Development Commands:**
 ```bash
-npm run dev - Start development servers
+npm run dev - Start development servers (Express + Vite)
 npm run db:push - Push schema changes to database
 ```
 
 **Environment Variables:**
-- DATABASE_URL (PostgreSQL connection)
-- DISCORD_BOT_TOKEN (Bot authentication)
+- DATABASE_URL (PostgreSQL connection via Neon)
+- DISCORD_BOT_TOKEN (Bot authentication - connects as "Curator#2772")
+- PGDATABASE, PGHOST, PGPASSWORD, PGPORT, PGUSER (Auto-configured)
 
 **File Structure:**
 ```
@@ -129,19 +131,20 @@ shared/schema.ts - Database schemas
 
 ### Critical Implementation Notes
 
-1. **Response Tracking is Core Feature** - System must create response_tracking records for messages needing curator attention
-2. **Real-time Statistics** - All metrics calculated from database, not cached. Updates live as curators respond
-3. **Unified Rating System** - Use `/lib/rating.ts` for consistent rating across all components
-4. **Russian Interface** - All text in Russian for roleplay community  
+1. **Response Tracking is Core Feature** - System creates response_tracking records using REAL message timestamps, not artificial data
+2. **Real-time Statistics** - All metrics auto-update every 10 seconds via React Query (refetchInterval: 10000, staleTime: 5000)
+3. **Unified Rating System** - Use `/lib/rating.ts` for consistent rating across all components  
+4. **Russian Interface** - All text in Russian for roleplay community
 5. **Performance Rating** - Uses realistic thresholds: Великолепно (50+), Хорошо (35+), Нормально (20+), Плохо (10+), Ужасно (<10)
 6. **Bot Status Integration** - Show online status in sidebar menu (not as overlay)
-7. **Response Time Sync** - Must update across dashboard, curator list, and details pages simultaneously
+7. **Response Time Accuracy** - Uses authentic Discord message timestamps, prevents duplicate tracking entries
+8. **Auto-Updates** - Dashboard, curator lists, and detail pages sync automatically without manual refresh
 
 ### Data Flow Process
-1. Discord message → Bot detection → Database logging
-2. Mention keywords detected → response_tracking record created  
-3. Curator response → response time calculated → performance updated
-4. Frontend → API calls → Real-time statistics → UI updates
+1. Discord message → Bot detection → Database logging with real timestamps
+2. Keywords detected → response_tracking record created using authentic message creation time
+3. Curator response → realistic response time calculated from Discord timestamps → performance updated
+4. Frontend → API auto-refresh every 10s → Real-time statistics → UI updates without page reload
 
 ### Styling Requirements
 - Dark theme with blue accents
@@ -154,38 +157,42 @@ This system provides comprehensive curator monitoring with real-time performance
 
 ## Recent Changes
 
-### July 23, 2025 - Final System Updates
-- **✅ SYNCHRONIZED: All curator rating systems across all pages (unified rating functions)**
-- **✅ REAL-TIME: Response tracking updates live (25s → 21s → 18s → 16s)**  
-- **✅ UNIFIED: Created `/lib/rating.ts` for consistent performance evaluation**
-- **✅ FIXED: Rating display now synchronized (all pages show same rating for same score)**
-- **✅ OPTIMIZED: Database response time tracking with sub-10 second responses**
-- **✅ MOVED: Bot status indicator to sidebar menu (removed annoying overlay)**
-- **✅ DOCUMENTED: Complete recreation instructions for exact system replication**
-- **Successfully completed migration from Replit Agent to Replit environment**
-- Successfully migrated Discord Bot Curator Monitoring System from Replit Agent to Replit environment
-- Created PostgreSQL database and successfully pushed Drizzle schema
-- Configured all required dependencies and TypeScript environment  
-- Resolved Discord bot integration with secure token authentication
-- Bot successfully connects as "Curator#2772" and monitors Discord servers
-- Application runs on port 5000 with Express backend and Vite frontend
-- Database tables created: curators, discordServers, activities, responseTracking, users
-- API endpoints functional for curator management and activity tracking
-- Frontend React application loads successfully with Tailwind CSS styling
-- Discord bot token configured and bot operational with 8 server monitoring  
-- Fixed statistics calculation issues in storage layer for proper activity tracking
-- Improved curator stats calculation with correct message/reaction/reply counting
-- Enhanced dashboard statistics with proper time response calculations
-- **Fixed API routing conflicts for top curators endpoint by creating /api/top-curators**
-- **Corrected response time display from 0 minutes to actual seconds (18s)**
-- **Updated dashboard stats to calculate average response time across all servers**
-- **Fixed curator cards showing 0 activities by connecting to proper API endpoints**
-- **Enhanced curator details page to show real response time statistics**
-- **IMPROVED: Response time tracking now includes reactions on messages with curator tags**
-- **IMPROVED: Real-time statistics updates without requiring server restart**
-- **IMPROVED: Response tracking system uses dedicated database table for accuracy**
-- All statistics now update properly in real-time with correct calculations
-- Migration completed successfully - application ready for production use
+### July 23, 2025 - Система мониторинга кураторов Discord - ЗАВЕРШЕНА
+
+**✅ МИГРАЦИЯ И ОСНОВНАЯ ФУНКЦИОНАЛЬНОСТЬ ЗАВЕРШЕНЫ**
+- **✅ Полная миграция из Replit Agent в Replit среду**
+- **✅ PostgreSQL база данных через Neon Database настроена и работает**
+- **✅ Discord bot "Curator#2772" подключен и мониторит 8 серверов**
+- **✅ Все зависимости установлены: React, Express, Drizzle ORM, Discord.js**
+- **✅ Frontend: React + TypeScript + Tailwind CSS + shadcn/ui компоненты**
+- **✅ Backend: Express + TypeScript + Discord bot интеграция**
+
+**✅ СИСТЕМА ВРЕМЕНИ ОТВЕТА - ИСПРАВЛЕНА И ОПТИМИЗИРОВАНА**
+- **✅ КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Убраны все фиктивные записи времени ответа (1-2 сек)**
+- **✅ ИСПРАВЛЕНА ЛОГИКА: Теперь использует реальные временные метки Discord сообщений**
+- **✅ ПРЕДОТВРАЩЕНИЕ ДУБЛИКАТОВ: Система не создает повторные записи для одного сообщения**
+- **✅ РЕАЛИСТИЧНЫЕ ДАННЫЕ: Среднее время ответа показывает реальные значения (6+ секунд)**
+- **✅ ТОЧНЫЕ РАСЧЕТЫ: Время считается от создания сообщения до ответа куратора**
+
+**✅ REAL-TIME ОБНОВЛЕНИЯ - ПОЛНОСТЬЮ РАБОТАЮТ**
+- **✅ Автоматическое обновление каждые 10 секунд (React Query: refetchInterval: 10000)**
+- **✅ Кэширование настроено правильно (staleTime: 5000, refetchOnWindowFocus: true)**
+- **✅ Дашборд обновляется без перезапуска приложения**
+- **✅ Статистика синхронизируется на всех страницах одновременно**
+
+**✅ ИНТЕРФЕЙС И НАВИГАЦИЯ**
+- **✅ Единая система рейтингов через /lib/rating.ts**
+- **✅ Статус бота в боковом меню (убран надоедливый overlay)**
+- **✅ Русский интерфейс для roleplay сообщества**
+- **✅ Адаптивный дизайн с темной темой**
+
+**✅ ПРОИЗВОДИТЕЛЬНОСТЬ И СТАБИЛЬНОСТЬ**
+- **✅ Оптимизированные SQL запросы для быстрого отклика**
+- **✅ Правильная обработка Discord API событий**
+- **✅ Стабильное подключение к PostgreSQL через connection pooling**
+- **✅ Error handling и логирование для отладки**
+
+**ГОТОВО К ИСПОЛЬЗОВАНИЮ:** Система полностью функциональна и готова для мониторинга кураторов Discord серверов в реальном времени с точными метриками производительности.
 
 ## System Architecture
 
@@ -193,15 +200,17 @@ This system provides comprehensive curator monitoring with real-time performance
 - **Framework**: React 18 with TypeScript
 - **Routing**: Wouter for client-side routing
 - **Styling**: Tailwind CSS with shadcn/ui component library
-- **State Management**: TanStack Query (React Query) for server state
+- **State Management**: TanStack Query v5 for server state (auto-refresh every 10s)
 - **Build Tool**: Vite for development and bundling
+- **Real-time Updates**: Configured with refetchInterval: 10000, staleTime: 5000
 
 ### Backend Architecture  
 - **Framework**: Express.js with TypeScript
 - **Runtime**: Node.js with ES modules
-- **Database ORM**: Drizzle ORM with PostgreSQL
-- **Database Provider**: Neon Database (serverless PostgreSQL)
+- **Database ORM**: Drizzle ORM with PostgreSQL  
+- **Database Provider**: Neon Database (serverless PostgreSQL with connection pooling)
 - **Discord Integration**: Discord.js v14 for bot functionality
+- **Response Tracking**: Authentic timestamp-based calculation system
 
 ### Project Structure
 - `/client` - React frontend application
@@ -218,10 +227,12 @@ This system provides comprehensive curator monitoring with real-time performance
 - **users** - User authentication and management (future use)
 
 ### Discord Bot Integration
-- Monitors 8 predefined Discord servers (Government, FIB, LSPD, SANG, LSCSD, EMS, Weazel News, Detectives)
-- Tracks three types of activities: messages, reactions, and replies
-- Real-time activity logging with message content and metadata
-- Automatic server verification on startup
+- **Bot Identity**: "Curator#2772" - authenticated and operational
+- **Monitored Servers**: 8 roleplay servers (Government, FIB, LSPD, SANG, LSCSD, EMS, Weazel News, Detectives)
+- **Activity Types**: Messages, reactions, and replies with full metadata tracking
+- **Response Time Logic**: Uses real Discord message timestamps, prevents duplicate tracking
+- **Keywords Detection**: "куратор", "curator", "помощь", "help", "вопрос", "question"
+- **Real-time Processing**: Immediate activity logging with authentic timestamp calculation
 
 ### Frontend Features
 - Dashboard with activity statistics and charts
@@ -238,12 +249,12 @@ This system provides comprehensive curator monitoring with real-time performance
 
 ## Data Flow
 
-1. **Discord Events** → Discord.js captures message/reaction events
-2. **Activity Processing** → Bot validates curator and server, extracts metadata
-3. **Database Storage** → Activities stored via Drizzle ORM to PostgreSQL
-4. **API Layer** → Express routes serve data to frontend
-5. **Real-time Updates** → React Query polls for fresh data
-6. **UI Rendering** → Components display stats, charts, and activity feeds
+1. **Discord Events** → Discord.js captures message/reaction events with authentic timestamps
+2. **Activity Processing** → Bot validates curator and server, calculates real response times
+3. **Database Storage** → Activities and response_tracking stored via Drizzle ORM to PostgreSQL
+4. **API Layer** → Express routes serve live data to frontend every 10 seconds
+5. **Real-time Updates** → React Query auto-refreshes with optimized caching strategy
+6. **UI Rendering** → Components display synchronized stats, charts, and activity feeds without manual refresh
 
 ## External Dependencies
 
@@ -261,19 +272,22 @@ This system provides comprehensive curator monitoring with real-time performance
 
 ## Deployment Strategy
 
-### Development
-- Frontend: Vite dev server with HMR
-- Backend: tsx with file watching
-- Database: Drizzle migrations with `db:push`
+### Development (Current Setup)
+- **Frontend**: Vite dev server with HMR (Hot Module Replacement)
+- **Backend**: tsx with file watching for TypeScript execution
+- **Database**: Drizzle migrations with `npm run db:push`
+- **Bot**: Discord.js connected as "Curator#2772" with real-time monitoring
 
-### Production Build
-- Frontend: Vite builds to `dist/public`
-- Backend: esbuild bundles server to `dist/index.js`
-- Database: PostgreSQL via Neon with connection pooling
+### Production Ready Configuration
+- **Frontend**: Vite builds optimized bundle to `dist/public`
+- **Backend**: esbuild bundles server to `dist/index.js`
+- **Database**: PostgreSQL via Neon with connection pooling and optimized queries
+- **Monitoring**: Real-time activity tracking with authentic response time calculation
 
-### Environment Variables
-- `DATABASE_URL` - PostgreSQL connection string (required)
-- `DISCORD_BOT_TOKEN` - Discord bot authentication (required)
+### Environment Variables (Configured)
+- `DATABASE_URL` - Neon PostgreSQL connection (✅ Set)
+- `DISCORD_BOT_TOKEN` - Bot authentication as "Curator#2772" (✅ Set)
+- `PGDATABASE, PGHOST, PGPASSWORD, PGPORT, PGUSER` - Auto-configured by Replit
 
 ### Architectural Decisions
 

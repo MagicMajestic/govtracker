@@ -511,11 +511,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Task report routes
   app.get('/api/task-reports', async (req, res) => {
     try {
-      const { serverId, status, week } = req.query;
+      const { serverId, status, week, dateFrom, dateTo } = req.query;
       
       let taskReports;
       if (serverId) {
-        taskReports = await storage.getTaskReportsForServer(parseInt(serverId as string));
+        taskReports = await storage.getTaskReportsForServer(parseInt(serverId as string), dateFrom as string, dateTo as string);
       } else if (status === 'pending') {
         taskReports = await storage.getPendingTaskReports();
       } else if (week) {
@@ -529,11 +529,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
           !server.name.toLowerCase().includes('детектив')
         );
         const allReports = await Promise.all(
-          filteredServers.map(server => storage.getTaskReportsForServer(server.id))
+          filteredServers.map(server => storage.getTaskReportsForServer(server.id, dateFrom as string, dateTo as string))
         );
         taskReports = allReports.flat().sort((a, b) => 
           new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()
         ).slice(0, 50); // Limit to 50 most recent
+      }
+      
+      // Apply date filtering if not handled by storage
+      if (dateFrom || dateTo) {
+        taskReports = taskReports.filter(report => {
+          const reportDate = new Date(report.submittedAt);
+          if (dateFrom && reportDate < new Date(dateFrom as string)) return false;
+          if (dateTo && reportDate > new Date(dateTo as string)) return false;
+          return true;
+        });
+      }
+      
+      // Apply status filtering if specified
+      if (status && status !== 'all') {
+        taskReports = taskReports.filter(report => report.status === status);
       }
       
       res.json(taskReports);

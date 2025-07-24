@@ -91,7 +91,7 @@ export function startDiscordBot() {
         connectedServers.add(server.serverId);
         
         // Check permissions for Test server specifically
-        if (server.name === 'Test' && server.completedTasksChannelId) {
+        if ((server.name === 'Test' || server.name === 'TEST') && server.completedTasksChannelId) {
           const channel = guild.channels.cache.get(server.completedTasksChannelId);
           if (channel) {
             console.log(`✅ Found Test server completed-tasks channel: ${channel.name}`);
@@ -300,7 +300,7 @@ export function startDiscordBot() {
 
       // Handle task submissions in completed-tasks channels (from non-curators AND curators in test server)
       if (isCompletedTasksChannel && !message.reference) {
-        const isTestServer = server.name === 'Test Server' || server.name === 'Test';
+        const isTestServer = server.name === 'Test Server' || server.name === 'Test' || server.name === 'TEST';
         console.log(`🔍 TASK CHANNEL CHECK:
           - Channel ID: ${message.channelId}
           - Server completed tasks channel: ${server.completedTasksChannelId}
@@ -525,7 +525,7 @@ export function startDiscordBot() {
       });
 
       // Special handling for Test Server - send notifications to itself (no @here mention)
-      if (serverName === 'Test Server') {
+      if (serverName === 'Test Server' || serverName === 'TEST') {
         console.log(`🧪 TEST SERVER NOTIFICATION: Sending to test server itself`);
         
         const testServer = client.guilds.cache.get(messageInfo.guildId);
@@ -534,22 +534,8 @@ export function startDiscordBot() {
           return;
         }
 
-        // Get the test server's notification channel
-        const testNotificationChannel = testServer.channels.cache.get('1369298073661997114');
-        if (!testNotificationChannel || !testNotificationChannel.isTextBased()) {
-          console.log(`❌ Test server notification channel not found`);
-          return;
-        }
-
-        const messageLink = `https://discord.com/channels/${messageInfo.guildId}/${messageInfo.channelId}/${messageInfo.messageId}`;
-        const timeStr = actualTimeWithoutResponse >= 60000 ? Math.floor(actualTimeWithoutResponse / 60000) + ' мин' : Math.floor(actualTimeWithoutResponse / 1000) + ' сек';
-        
-        const notificationText = `🧪 Тестовое уведомление: ${messageLink} без ответа уже ${timeStr}.`;
-        
-        console.log(`📤 Sending test notification:`, notificationText);
-        
-        await testNotificationChannel.send(notificationText);
-        console.log(`✅ TEST NOTIFICATION SENT: ${timeStr} without response`);
+        // Disable test server notifications to prevent spam
+        console.log(`🔇 TEST SERVER NOTIFICATIONS DISABLED to prevent spam`);
         return;
       }
 
@@ -751,7 +737,7 @@ export function startDiscordBot() {
       }
       
       // Only faction leaders (non-curators) can submit tasks, EXCEPT in test server
-      const isTestServer = server.name === 'Test Server' || server.name === 'Test';
+      const isTestServer = server.name === 'Test Server' || server.name === 'Test' || server.name === 'TEST';
       console.log(`🔍 Server check: ${server.name} - isTestServer: ${isTestServer}, hasCurator: ${!!curator}`);
       if (curator && !isTestServer) {
         console.log(`⚠️ Non-test server curator ${curator.name} posted in completed-tasks - skipping task submission`);

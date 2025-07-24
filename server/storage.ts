@@ -1012,11 +1012,20 @@ export class DatabaseStorage implements IStorage {
     return report || undefined;
   }
 
-  async getTaskReportsForServer(serverId: number): Promise<TaskReport[]> {
+  async getTaskReportsForServer(serverId: number, dateFrom?: string, dateTo?: string): Promise<TaskReport[]> {
+    const conditions = [eq(taskReports.serverId, serverId)];
+    
+    if (dateFrom) {
+      conditions.push(sql`${taskReports.submittedAt} >= ${dateFrom}`);
+    }
+    if (dateTo) {
+      conditions.push(sql`${taskReports.submittedAt} <= ${dateTo}`);
+    }
+
     return await db
       .select()
       .from(taskReports)
-      .where(eq(taskReports.serverId, serverId))
+      .where(and(...conditions))
       .orderBy(desc(taskReports.submittedAt));
   }
 

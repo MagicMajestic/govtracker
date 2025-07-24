@@ -13,6 +13,7 @@ import ServerManagement from "@/pages/server-management";
 import BotSettings from "@/pages/bot-settings";
 import TaskReports from "@/pages/task-reports";
 import BackupManagement from "@/pages/backup-management";
+import ExcludedCurators from "@/pages/excluded-curators";
 import Sidebar from "@/components/sidebar";
 
 function Router() {
@@ -28,6 +29,7 @@ function Router() {
           <Route path="/servers" component={ServerManagement} />
           <Route path="/tasks" component={TaskReports} />
           <Route path="/backup" component={BackupManagement} />
+          <Route path="/excluded-curators" component={ExcludedCurators} />
           <Route path="/settings" component={BotSettings} />
           <Route component={NotFound} />
         </Switch>

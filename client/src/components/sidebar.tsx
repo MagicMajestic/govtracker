@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
-import { Shield, BarChart3, Users, Server, History, Download, Settings, FileText } from "lucide-react";
+import { Shield, BarChart3, Users, Server, History, Download, Settings, FileText, UserX } from "lucide-react";
 
 const navigation = [
   { name: "Панель управления", href: "/", icon: BarChart3 },
@@ -8,6 +8,7 @@ const navigation = [
   { name: "Серверы Discord", href: "/servers", icon: Server },
   { name: "История активности", href: "/activity", icon: History },
   { name: "Отчеты о задачах", href: "/tasks", icon: FileText },
+  { name: "Исключенные кураторы", href: "/excluded-curators", icon: UserX },
   { name: "Резервные копии", href: "/backup", icon: Download },
   { name: "Настройки бота", href: "/settings", icon: Settings },
 ];

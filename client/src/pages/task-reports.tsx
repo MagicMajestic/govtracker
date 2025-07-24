@@ -12,17 +12,20 @@ import { DateRange } from "react-day-picker";
 interface TaskReport {
   id: number;
   serverId: number;
-  submitterId: string;
-  submitterName: string;
+  authorId: string;
+  authorName: string;
   messageId: string;
   channelId: string;
   content: string;
+  taskCount: number;
   weekStart: string;
   submittedAt: string;
   status: 'pending' | 'verified';
   curatorId?: number;
-  verifiedAt?: string;
-  curatorFaction?: string;
+  curatorName?: string;
+  curatorDiscordId?: string;
+  checkedAt?: string;
+  approvedTasks?: number;
 }
 
 interface TaskStats {
@@ -153,21 +156,35 @@ export default function TaskReports() {
           </Button>
         </div>
 
-        {/* Date Range Filters */}
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 bg-gray-800/50 rounded-lg p-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+        {/* Date Range Filters - Compact Layout */}
+        <div className="bg-gray-800/50 rounded-lg p-4">
+          <div className="flex flex-col lg:flex-row lg:items-center space-y-3 lg:space-y-0 lg:space-x-4">
             <span className="text-sm text-gray-300 font-medium">Период отчетов:</span>
-            <DatePickerWithRange 
-              date={dateRange}
-              onDateChange={setDateRange}
-              showTime={showTime}
-            />
-            <DateTimeToggle 
-              showTime={showTime}
-              onToggle={setShowTime}
-            />
+            
+            <div className="flex flex-wrap items-center gap-2">
+              <DatePickerWithRange 
+                date={dateRange}
+                onDateChange={setDateRange}
+                showTime={showTime}
+              />
+              <DateTimeToggle 
+                showTime={showTime}
+                onToggle={setShowTime}
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setDateRange(undefined)}
+                className="text-xs"
+              >
+                Сбросить
+              </Button>
+            </div>
+            
+            <div className="flex flex-wrap gap-2">
+              <QuickDateRanges onDateChange={setDateRange} />
+            </div>
           </div>
-          <QuickDateRanges onDateChange={setDateRange} />
         </div>
       </div>
 
@@ -264,37 +281,32 @@ export default function TaskReports() {
                           <div className="text-sm text-gray-400 space-y-1">
                             <div className="flex items-center gap-2">
                               <User className="h-4 w-4" />
-                              <span>Отправитель: {report.submitterName}</span>
+                              <span>Отправитель: {report.authorName}</span>
                             </div>
                             <div className="flex items-center gap-2">
                               <Calendar className="h-4 w-4" />
                               <span>Подано: {formatDate(report.submittedAt)}</span>
                             </div>
-                            {report.verifiedAt && (
+                            {report.checkedAt && report.curatorName && (
                               <div className="flex items-center gap-2">
                                 <CheckCircle className="h-4 w-4" />
-                                <span>Проверено: {formatDate(report.verifiedAt)}</span>
-                                {report.curatorFaction && (
-                                  <span className="text-blue-400">({report.curatorFaction})</span>
-                                )}
+                                <span>Проверено куратором {report.curatorName}: {formatDate(report.checkedAt)}</span>
                               </div>
                             )}
                           </div>
-                        </div>
-                        
-                        <div className="text-right">
-                          <div className="text-sm font-medium text-blue-400">
-                            Отчет #{report.id}
+                          
+                          <div className="mt-3 p-3 bg-gray-800 rounded text-sm">
+                            <p className="text-gray-300">{report.content}</p>
+
                           </div>
                         </div>
-                      </div>
-                      
-                      <div className="bg-[#2a2a2a] p-2 rounded border border-gray-600">
-                        <div className="flex items-center gap-2 mb-1">
-                          <MessageSquare className="h-4 w-4 text-gray-400" />
-                          <span className="text-xs text-gray-400">Содержание отчета:</span>
+                        
+                        <div className="ml-4">
+                          <div className="text-2xl font-bold text-blue-400">
+                            {report.taskCount}
+                          </div>
+
                         </div>
-                        <p className="text-sm text-gray-300">{report.content}</p>
                       </div>
                     </CardContent>
                   </Card>
@@ -305,25 +317,25 @@ export default function TaskReports() {
         </TabsContent>
 
         <TabsContent value="stats" className="space-y-6">
-          <div className="grid gap-6">
+          {/* Server Statistics */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {taskStats.map((stat) => (
               <Card key={stat.serverId} className="bg-[#1a1a1a] border-gray-700">
-                <CardHeader>
-                  <CardTitle className="text-white">{stat.serverName}</CardTitle>
-                  <CardDescription className="text-gray-400">
-                    Статистика проверки задач
-                  </CardDescription>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg text-white">{stat.serverName}</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-gray-400">Ожидают</p>
-                      <p className="text-xl font-bold text-yellow-400">{stat.pendingReports}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-400">Проверено</p>
-                      <p className="text-xl font-bold text-green-400">{stat.verifiedReports}</p>
-                    </div>
+                <CardContent className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Ожидают:</span>
+                    <span className="text-yellow-400 font-semibold">{stat.pendingReports}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Проверено:</span>
+                    <span className="text-green-400 font-semibold">{stat.verifiedReports}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Всего:</span>
+                    <span className="text-blue-400 font-semibold">{stat.totalReports}</span>
                   </div>
                 </CardContent>
               </Card>

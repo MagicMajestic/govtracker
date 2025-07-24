@@ -7,10 +7,13 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { formatDistanceToNow } from "date-fns";
 import { ru } from "date-fns/locale";
-import { MessageSquare, Heart, Reply, ArrowLeft, TrendingUp, Clock } from "lucide-react";
+import { MessageSquare, Heart, Reply, ArrowLeft, TrendingUp, Clock, CheckCircle } from "lucide-react";
 import { Link } from "wouter";
 import { getRatingText, getRatingColor } from "@/lib/rating";
 import { formatTimeRussian } from "@/lib/timeFormat";
+import { DatePickerWithRange, QuickDateRanges, DateTimeToggle } from "@/components/date-range-picker";
+import { DateRange } from "react-day-picker";
+import { useState, useCallback } from "react";
 
 interface Curator {
   id: number;
@@ -22,7 +25,7 @@ interface Curator {
 
 interface Activity {
   id: number;
-  type: "message" | "reaction" | "reply";
+  type: "message" | "reaction" | "reply" | "task_verification";
   content?: string;
   reactionEmoji?: string;
   channelName: string;
@@ -37,6 +40,7 @@ interface CuratorStats {
   messages: number;
   reactions: number;
   replies: number;
+  taskVerifications: number;
   score: number;
   avgResponseTime?: number;
 }
@@ -46,6 +50,7 @@ function getActivityIcon(type: string) {
     case "message": return <MessageSquare className="h-4 w-4" />;
     case "reaction": return <Heart className="h-4 w-4" />;
     case "reply": return <Reply className="h-4 w-4" />;
+    case "task_verification": return <CheckCircle className="h-4 w-4" />;
     default: return <MessageSquare className="h-4 w-4" />;
   }
 }
@@ -55,6 +60,7 @@ function getActivityColor(type: string) {
     case "message": return "bg-blue-500";
     case "reaction": return "bg-red-500";
     case "reply": return "bg-green-500";
+    case "task_verification": return "bg-purple-500";
     default: return "bg-gray-500";
   }
 }
@@ -64,6 +70,12 @@ function getActivityColor(type: string) {
 export default function CuratorDetails() {
   const { id } = useParams();
   const curatorId = parseInt(id || "0");
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  const [showTime, setShowTime] = useState<boolean>(false);
+
+  const handleDateRangeChange = useCallback((newDateRange: DateRange | undefined) => {
+    setDateRange(newDateRange);
+  }, []);
 
   const { data: curator } = useQuery<Curator>({
     queryKey: ["/api/curators", curatorId],
@@ -76,8 +88,19 @@ export default function CuratorDetails() {
   });
 
   const { data: stats } = useQuery<CuratorStats>({
-    queryKey: ["/api/curators/stats", curatorId],
-    queryFn: () => fetch(`/api/curators/${curatorId}/stats`).then(res => res.json())
+    queryKey: ["/api/curators/detailed-stats", curatorId, dateRange?.from?.toISOString(), dateRange?.to?.toISOString()],
+    queryFn: () => {
+      const params = new URLSearchParams();
+      if (dateRange?.from) {
+        params.append('from', dateRange.from.toISOString());
+      }
+      if (dateRange?.to) {
+        params.append('to', dateRange.to.toISOString());
+      }
+      return fetch(`/api/curators/${curatorId}/detailed-stats?${params.toString()}`).then(res => res.json());
+    },
+    staleTime: 30000,
+    refetchInterval: 10000
   });
 
   if (!curator) {
@@ -110,6 +133,23 @@ export default function CuratorDetails() {
             Назад к кураторам
           </Button>
         </Link>
+      </div>
+
+      {/* Date Range Filter */}
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 bg-gray-800/50 rounded-lg p-4 mb-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+          <span className="text-sm text-gray-300 font-medium">Период активности:</span>
+          <DatePickerWithRange 
+            date={dateRange}
+            onDateChange={handleDateRangeChange}
+            showTime={showTime}
+          />
+          <DateTimeToggle 
+            showTime={showTime}
+            onToggle={setShowTime}
+          />
+        </div>
+        <QuickDateRanges onDateChange={handleDateRangeChange} />
       </div>
 
       {/* Curator Profile */}
@@ -178,6 +218,11 @@ export default function CuratorDetails() {
               <p className="text-sm text-muted-foreground">
                 {stats?.messages || 0} сообщ. • {stats?.reactions || 0} реакц. • {stats?.replies || 0} ответов
               </p>
+              {stats?.taskVerifications ? (
+                <p className="text-sm text-green-400 font-medium">
+                  Проверено задач: {stats.taskVerifications}
+                </p>
+              ) : null}
             </div>
           </div>
         </CardContent>

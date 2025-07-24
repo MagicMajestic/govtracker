@@ -9,7 +9,7 @@ import { useState, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { Link } from "wouter";
-import { Eye, Edit, Trash2, Clock, TrendingUp, Plus, RefreshCw } from "lucide-react";
+import { Eye, Edit, Trash2, Clock, TrendingUp, Plus, RefreshCw, CheckCircle } from "lucide-react";
 import { DatePickerWithRange, QuickDateRanges, DateTimeToggle } from "@/components/date-range-picker";
 import { DateRange } from "react-day-picker";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -34,6 +34,7 @@ interface CuratorWithStats extends Curator {
   totalActivities: number;
   score: number;
   avgResponseTime?: number;
+  taskVerifications: number;
   activityStatus: "excellent" | "good" | "normal" | "poor";
 }
 
@@ -273,6 +274,7 @@ export function CuratorsEnhanced() {
       totalActivities,
       score: stats?.score || 0,
       avgResponseTime: stats?.avgResponseTime,
+      taskVerifications: stats?.taskVerifications || 0,
       activityStatus: "normal" as any
     };
   }) || [];
@@ -389,6 +391,13 @@ export function CuratorsEnhanced() {
                       <Clock className="h-3 w-3" />
                       <span>Ответ: {curator.avgResponseTime ? `${curator.avgResponseTime}с` : "Н/Д"}</span>
                     </div>
+                    
+                    {curator.taskVerifications > 0 && (
+                      <div className="flex items-center space-x-2 text-xs text-green-400">
+                        <CheckCircle className="h-3 w-3" />
+                        <span>Проверено тасков: {curator.taskVerifications}</span>
+                      </div>
+                    )}
 
                     <div className={`h-2 w-full ${getRatingColor(curator.score)} rounded-full`}>
                       <div 

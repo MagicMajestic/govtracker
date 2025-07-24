@@ -602,6 +602,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+
+
   // Start Discord bot
   startDiscordBot();
 

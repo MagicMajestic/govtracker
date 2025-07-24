@@ -24,6 +24,9 @@ const pendingNotifications = new Map();
 // Map to track repeat notification intervals
 const repeatNotificationIntervals = new Map();
 
+// Map to track message creation timestamps for accurate time calculation
+const messageStartTimes = new Map();
+
 // Set to track connected servers
 export const connectedServers = new Set<string>();
 
@@ -52,6 +55,8 @@ export async function updateConnectedServers() {
   
   console.log(`✅ Connected servers updated: ${Array.from(connectedServers)}`);
 }
+
+
 
 export function startDiscordBot() {
   if (!DISCORD_TOKEN) {
@@ -262,6 +267,10 @@ export function startDiscordBot() {
               responseTimeSeconds: null
             });
             console.log(`✅ NEW RESPONSE TRACKING: Created record for message ${message.id} awaiting curator response (server: ${server.name})`);
+            
+            // Store message creation time for accurate notification time calculation
+            const notificationKey = `${message.guildId}_${message.id}`;
+            messageStartTimes.set(notificationKey, message.createdAt.getTime());
             
             // Schedule curator notification
             const messageInfo = {
@@ -501,11 +510,17 @@ export function startDiscordBot() {
   });
 
   // Function to send notification to curator server
-  async function sendCuratorNotification(messageInfo: any, serverName: string, timeWithoutResponse: number) {
+  async function sendCuratorNotification(messageInfo: any, serverName: string, intervalMs?: number) {
     try {
+      // Calculate actual time since message creation
+      const notificationKey = `${messageInfo.guildId}_${messageInfo.messageId}`;
+      const messageStartTime = messageStartTimes.get(notificationKey);
+      const actualTimeWithoutResponse = messageStartTime ? (Date.now() - messageStartTime) : (intervalMs || 0);
+      
       console.log(`🚨 ATTEMPTING TO SEND CURATOR NOTIFICATION:`, {
         serverName,
-        timeWithoutResponse: `${timeWithoutResponse/1000}s`,
+        actualTimeWithoutResponse: `${actualTimeWithoutResponse/1000}s`,
+        intervalMs: intervalMs ? `${intervalMs/1000}s` : 'Not provided',
         guildId: messageInfo.guildId
       });
 
@@ -527,7 +542,7 @@ export function startDiscordBot() {
         }
 
         const messageLink = `https://discord.com/channels/${messageInfo.guildId}/${messageInfo.channelId}/${messageInfo.messageId}`;
-        const timeStr = timeWithoutResponse >= 60000 ? Math.floor(timeWithoutResponse / 60000) + ' мин' : Math.floor(timeWithoutResponse / 1000) + ' сек';
+        const timeStr = actualTimeWithoutResponse >= 60000 ? Math.floor(actualTimeWithoutResponse / 60000) + ' мин' : Math.floor(actualTimeWithoutResponse / 1000) + ' сек';
         
         const notificationText = `🧪 Тестовое уведомление: ${messageLink} без ответа уже ${timeStr}.`;
         
@@ -587,7 +602,7 @@ export function startDiscordBot() {
       }
 
       const messageLink = `https://discord.com/channels/${messageInfo.guildId}/${messageInfo.channelId}/${messageInfo.messageId}`;
-      const timeStr = timeWithoutResponse >= 60000 ? Math.floor(timeWithoutResponse / 60000) + ' мин' : Math.floor(timeWithoutResponse / 1000) + ' сек';
+      const timeStr = actualTimeWithoutResponse >= 60000 ? Math.floor(actualTimeWithoutResponse / 60000) + ' мин' : Math.floor(actualTimeWithoutResponse / 1000) + ' сек';
       
       const notificationText = `${roleMention} ${messageLink} без ответа уже ${timeStr}.`;
       
@@ -661,12 +676,12 @@ export function startDiscordBot() {
         // Send first notification after delay
         const timeoutId = setTimeout(async () => {
           console.log(`⏱️ FIRST REPEAT NOTIFICATION for ${notificationKey}`);
-          await sendCuratorNotification(messageInfo, serverName, delayMs);
+          await sendCuratorNotification(messageInfo, serverName);
           
           // Set up interval for repeat notifications
           const intervalId = setInterval(async () => {
             console.log(`🔁 REPEAT NOTIFICATION for ${notificationKey}`);
-            await sendCuratorNotification(messageInfo, serverName, delayMs);
+            await sendCuratorNotification(messageInfo, serverName);
           }, delayMs);
           
           repeatNotificationIntervals.set(notificationKey, intervalId);
@@ -678,7 +693,7 @@ export function startDiscordBot() {
         // Single notification (original behavior)
         const timeoutId = setTimeout(async () => {
           console.log(`⏱️ SINGLE NOTIFICATION TIMEOUT TRIGGERED for ${notificationKey}`);
-          await sendCuratorNotification(messageInfo, serverName, delayMs);
+          await sendCuratorNotification(messageInfo, serverName);
           pendingNotifications.delete(notificationKey);
         }, delayMs);
         
@@ -689,7 +704,7 @@ export function startDiscordBot() {
       // Fallback to single notification
       const timeoutId = setTimeout(async () => {
         console.log(`⏱️ FALLBACK NOTIFICATION TIMEOUT TRIGGERED for ${notificationKey}`);
-        await sendCuratorNotification(messageInfo, serverName, delayMs);
+        await sendCuratorNotification(messageInfo, serverName);
         pendingNotifications.delete(notificationKey);
       }, delayMs);
       
@@ -717,7 +732,12 @@ export function startDiscordBot() {
       repeatNotificationIntervals.delete(notificationKey);
       console.log(`❌ REPEAT NOTIFICATIONS CANCELLED: Response received for ${messageId}`);
     }
+    
+    // Clean up message start time tracking
+    messageStartTimes.delete(notificationKey);
   }
+
+
 
   // Handle task submission in completed-tasks channels
   async function handleTaskSubmission(message: any, server: any, curator: any) {
@@ -992,3 +1012,4 @@ export function startDiscordBot() {
 
   client.login(DISCORD_TOKEN).catch(console.error);
 }
+

@@ -1,12 +1,14 @@
 import * as React from "react";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { Calendar as CalendarIcon, Clock } from "lucide-react";
 import { DateRange } from "react-day-picker";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Popover,
   PopoverContent,
@@ -17,22 +19,65 @@ interface DatePickerWithRangeProps {
   className?: string;
   date?: DateRange;
   onDateChange?: (date: DateRange | undefined) => void;
+  showTime?: boolean;
+}
+
+interface DateTimeRange extends DateRange {
+  fromTime?: string;
+  toTime?: string;
 }
 
 export function DatePickerWithRange({
   className,
   date,
   onDateChange,
+  showTime = false,
 }: DatePickerWithRangeProps) {
   const [selectedDate, setSelectedDate] = React.useState<DateRange | undefined>(date);
+  const [fromTime, setFromTime] = React.useState<string>("00:00");
+  const [toTime, setToTime] = React.useState<string>("23:59");
 
   React.useEffect(() => {
     setSelectedDate(date);
   }, [date]);
 
   const handleDateChange = (newDate: DateRange | undefined) => {
-    setSelectedDate(newDate);
-    onDateChange?.(newDate);
+    if (newDate && showTime) {
+      // Объединяем дату и время
+      const dateWithTime = {
+        from: newDate.from ? combineDateTime(newDate.from, fromTime) : undefined,
+        to: newDate.to ? combineDateTime(newDate.to, toTime) : undefined,
+      };
+      setSelectedDate(dateWithTime);
+      onDateChange?.(dateWithTime);
+    } else {
+      setSelectedDate(newDate);
+      onDateChange?.(newDate);
+    }
+  };
+
+  const handleTimeChange = (timeType: 'from' | 'to', time: string) => {
+    if (timeType === 'from') {
+      setFromTime(time);
+    } else {
+      setToTime(time);
+    }
+
+    if (selectedDate) {
+      const dateWithTime = {
+        from: selectedDate.from ? combineDateTime(selectedDate.from, timeType === 'from' ? time : fromTime) : undefined,
+        to: selectedDate.to ? combineDateTime(selectedDate.to, timeType === 'to' ? time : toTime) : undefined,
+      };
+      setSelectedDate(dateWithTime);
+      onDateChange?.(dateWithTime);
+    }
+  };
+
+  const combineDateTime = (date: Date, time: string): Date => {
+    const [hours, minutes] = time.split(':').map(Number);
+    const newDate = new Date(date);
+    newDate.setHours(hours, minutes, 0, 0);
+    return newDate;
   };
 
   return (
@@ -51,11 +96,11 @@ export function DatePickerWithRange({
             {selectedDate?.from ? (
               selectedDate.to ? (
                 <>
-                  {format(selectedDate.from, "dd.MM.yyyy", { locale: ru })} -{" "}
-                  {format(selectedDate.to, "dd.MM.yyyy", { locale: ru })}
+                  {format(selectedDate.from, showTime ? "dd.MM.yyyy HH:mm" : "dd.MM.yyyy", { locale: ru })} -{" "}
+                  {format(selectedDate.to, showTime ? "dd.MM.yyyy HH:mm" : "dd.MM.yyyy", { locale: ru })}
                 </>
               ) : (
-                format(selectedDate.from, "dd.MM.yyyy", { locale: ru })
+                format(selectedDate.from, showTime ? "dd.MM.yyyy HH:mm" : "dd.MM.yyyy", { locale: ru })
               )
             ) : (
               <span>Выберите период</span>
@@ -63,15 +108,49 @@ export function DatePickerWithRange({
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0 bg-gray-800 border-gray-600" align="start">
-          <Calendar
-            initialFocus
-            mode="range"
-            defaultMonth={selectedDate?.from}
-            selected={selectedDate}
-            onSelect={handleDateChange}
-            numberOfMonths={2}
-            className="text-white"
-          />
+          <div className="p-4">
+            <Calendar
+              initialFocus
+              mode="range"
+              defaultMonth={selectedDate?.from}
+              selected={selectedDate}
+              onSelect={handleDateChange}
+              numberOfMonths={2}
+              className="text-white"
+            />
+            
+            {showTime && (
+              <div className="border-t border-gray-600 pt-4 mt-4 space-y-4">
+                <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-2">
+                    <Clock className="h-4 w-4 text-gray-400" />
+                    <Label className="text-sm text-white">Время</Label>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-xs text-gray-400">С</Label>
+                    <Input
+                      type="time"
+                      value={fromTime}
+                      onChange={(e) => handleTimeChange('from', e.target.value)}
+                      className="bg-gray-700 border-gray-600 text-white text-sm"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs text-gray-400">До</Label>
+                    <Input
+                      type="time"
+                      value={toTime}
+                      onChange={(e) => handleTimeChange('to', e.target.value)}
+                      className="bg-gray-700 border-gray-600 text-white text-sm"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </PopoverContent>
       </Popover>
     </div>
@@ -114,6 +193,36 @@ export function QuickDateRanges({ onDateChange }: { onDateChange: (date: DateRan
         onClick={() => onDateChange(undefined)}
       >
         Сбросить
+      </Button>
+    </div>
+  );
+}
+
+// Компонент для переключения между режимами выбора времени
+export function DateTimeToggle({ 
+  showTime, 
+  onToggle 
+}: { 
+  showTime: boolean; 
+  onToggle: (showTime: boolean) => void; 
+}) {
+  return (
+    <div className="flex items-center space-x-2">
+      <Button
+        variant={!showTime ? "default" : "outline"}
+        size="sm"
+        onClick={() => onToggle(false)}
+        className={!showTime ? "bg-blue-600 hover:bg-blue-700 text-white" : "bg-gray-800 border-gray-600 text-white hover:bg-gray-700"}
+      >
+        Только дата
+      </Button>
+      <Button
+        variant={showTime ? "default" : "outline"}
+        size="sm"
+        onClick={() => onToggle(true)}
+        className={showTime ? "bg-blue-600 hover:bg-blue-700 text-white" : "bg-gray-800 border-gray-600 text-white hover:bg-gray-700"}
+      >
+        Дата и время
       </Button>
     </div>
   );

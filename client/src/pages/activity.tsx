@@ -61,7 +61,7 @@ export default function Activity() {
     }
   };
 
-  const filteredActivities = activities?.filter((activity: any) => {
+  const filteredActivities = (activities || []).filter((activity: any) => {
     const matchesSearch = !searchTerm || 
       activity.curator?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       activity.content?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -124,7 +124,7 @@ export default function Activity() {
                 </SelectTrigger>
                 <SelectContent className="bg-gray-800 border-gray-600">
                   <SelectItem value="all" className="text-white">Все серверы</SelectItem>
-                  {servers?.map((server: any) => (
+                  {(servers || []).map((server: any) => (
                     <SelectItem key={server.id} value={server.name} className="text-white">
                       {server.name}
                     </SelectItem>

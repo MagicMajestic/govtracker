@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CheckCircle, Clock, User, Calendar, MessageSquare, RefreshCw } from "lucide-react";
-import { DatePickerWithRange, QuickDateRanges } from "@/components/date-range-picker";
+import { DatePickerWithRange, QuickDateRanges, DateTimeToggle } from "@/components/date-range-picker";
 import { DateRange } from "react-day-picker";
 
 interface TaskReport {
@@ -61,10 +61,15 @@ export default function TaskReports() {
   const [selectedServer, setSelectedServer] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  const [showTime, setShowTime] = useState<boolean>(false);
+
+  // Stable string keys for React Query
+  const dateFromKey = dateRange?.from ? dateRange.from.getTime().toString() : 'null';
+  const dateToKey = dateRange?.to ? dateRange.to.getTime().toString() : 'null';
 
   // Fetch servers
   const { data: servers = [], refetch: refetchServers } = useQuery<Server[]>({
-    queryKey: ['/api/servers', dateRange],
+    queryKey: ['/api/servers', dateFromKey, dateToKey],
     queryFn: () => {
       const params = new URLSearchParams();
       if (dateRange?.from) {
@@ -75,12 +80,13 @@ export default function TaskReports() {
       }
       return fetch(`/api/servers?${params.toString()}`).then(res => res.json());
     },
+    staleTime: 30000,
     refetchInterval: 30000,
   });
 
   // Fetch task reports
   const { data: taskReports = [], refetch: refetchReports } = useQuery<TaskReport[]>({
-    queryKey: ['/api/task-reports', dateRange, selectedServer, statusFilter],
+    queryKey: ['/api/task-reports', dateFromKey, dateToKey, selectedServer, statusFilter],
     queryFn: () => {
       const params = new URLSearchParams();
       if (dateRange?.from) {
@@ -97,12 +103,14 @@ export default function TaskReports() {
       }
       return fetch(`/api/task-reports?${params.toString()}`).then(res => res.json());
     },
+    staleTime: 30000,
     refetchInterval: 10000,
   });
 
   // Fetch task statistics
   const { data: taskStats = [], refetch: refetchStats } = useQuery<TaskStats[]>({
     queryKey: ['/api/task-reports/stats'],
+    staleTime: 30000,
     refetchInterval: 10000,
   });
 
@@ -152,6 +160,11 @@ export default function TaskReports() {
             <DatePickerWithRange 
               date={dateRange}
               onDateChange={setDateRange}
+              showTime={showTime}
+            />
+            <DateTimeToggle 
+              showTime={showTime}
+              onToggle={setShowTime}
             />
           </div>
           <QuickDateRanges onDateChange={setDateRange} />

@@ -5,7 +5,7 @@ import { Users, BarChart3, Heart, Clock, RefreshCw } from "lucide-react";
 import { ActivityChartEnhanced } from "@/components/activity-chart-enhanced";
 import { TopCurators } from "@/components/top-curators";
 import { RecentActivity } from "@/components/recent-activity";
-import { DatePickerWithRange, QuickDateRanges } from "@/components/date-range-picker";
+import { DatePickerWithRange, QuickDateRanges, DateTimeToggle } from "@/components/date-range-picker";
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
 
@@ -19,6 +19,7 @@ interface DashboardStats {
 
 export default function Dashboard() {
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  const [showTime, setShowTime] = useState<boolean>(false);
   
   const { data: stats, refetch, isLoading } = useQuery<DashboardStats>({
     queryKey: ["/api/dashboard/stats", dateRange],
@@ -101,6 +102,11 @@ export default function Dashboard() {
               <DatePickerWithRange 
                 date={dateRange}
                 onDateChange={setDateRange}
+                showTime={showTime}
+              />
+              <DateTimeToggle 
+                showTime={showTime}
+                onToggle={setShowTime}
               />
             </div>
             <QuickDateRanges onDateChange={setDateRange} />

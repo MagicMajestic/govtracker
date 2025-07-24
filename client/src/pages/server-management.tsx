@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +11,7 @@ import { Server, Plus, Edit, Trash2, CheckCircle, XCircle, Activity, RefreshCw }
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatTimeRussian } from "@/lib/timeFormat";
-import { DatePickerWithRange, QuickDateRanges } from "@/components/date-range-picker";
+import { DatePickerWithRange, QuickDateRanges, DateTimeToggle } from "@/components/date-range-picker";
 import { DateRange } from "react-day-picker";
 
 interface DiscordServer {
@@ -48,6 +48,7 @@ export default function ServerManagement() {
   const [editingServer, setEditingServer] = useState<DiscordServer | null>(null);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  const [showTime, setShowTime] = useState<boolean>(false);
   const [formData, setFormData] = useState({
     serverId: "",
     name: "",
@@ -61,7 +62,7 @@ export default function ServerManagement() {
 
   // Fetch servers
   const { data: servers = [], isLoading: serversLoading, refetch: refetchServers } = useQuery<DiscordServer[]>({
-    queryKey: ['/api/servers', dateRange],
+    queryKey: ['/api/servers', dateRange?.from?.toISOString(), dateRange?.to?.toISOString()],
     queryFn: () => {
       const params = new URLSearchParams();
       if (dateRange?.from) {
@@ -72,12 +73,13 @@ export default function ServerManagement() {
       }
       return fetch(`/api/servers?${params.toString()}`).then(res => res.json());
     },
+    staleTime: 5000,
     refetchInterval: 10000,
   });
 
-  // Fetch server stats
+  // Fetch server stats  
   const { data: serverStats = [], isLoading: statsLoading, refetch: refetchStats } = useQuery<ServerStats[]>({
-    queryKey: ['/api/servers/stats', dateRange],
+    queryKey: ['/api/servers/stats', dateRange?.from?.toISOString(), dateRange?.to?.toISOString()],
     queryFn: () => {
       const params = new URLSearchParams();
       if (dateRange?.from) {
@@ -88,6 +90,7 @@ export default function ServerManagement() {
       }
       return fetch(`/api/servers/stats?${params.toString()}`).then(res => res.json());
     },
+    staleTime: 5000,
     refetchInterval: 10000,
   });
 
@@ -223,10 +226,15 @@ export default function ServerManagement() {
         {/* Date Range Filters */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 bg-gray-800/50 rounded-lg p-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
-            <span className="text-sm text-gray-300 font-medium">Период активности:</span>
+            <span className="text-sm text-gray-300 font-medium">Период анализа:</span>
             <DatePickerWithRange 
               date={dateRange}
               onDateChange={setDateRange}
+              showTime={showTime}
+            />
+            <DateTimeToggle 
+              showTime={showTime}
+              onToggle={setShowTime}
             />
           </div>
           <QuickDateRanges onDateChange={setDateRange} />

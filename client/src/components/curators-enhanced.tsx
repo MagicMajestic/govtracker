@@ -3,13 +3,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { Link } from "wouter";
 import { Eye, Edit, Trash2, Clock, TrendingUp, Plus, RefreshCw } from "lucide-react";
-import { DatePickerWithRange, QuickDateRanges } from "@/components/date-range-picker";
+import { DatePickerWithRange, QuickDateRanges, DateTimeToggle } from "@/components/date-range-picker";
 import { DateRange } from "react-day-picker";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getRatingText, getRatingColor, getActivityStatusText, getActivityStatusColor } from "@/lib/rating";
@@ -52,6 +53,8 @@ export function CuratorsEnhanced() {
   const [isCreating, setIsCreating] = useState(false);
   const [editingCurator, setEditingCurator] = useState<Curator | null>(null);
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  const [showTime, setShowTime] = useState<boolean>(false);
+  const [curatorTypeFilter, setCuratorTypeFilter] = useState<string>("all");
   const [formData, setFormData] = useState<{
     discordId: string;
     name: string;
@@ -67,7 +70,7 @@ export function CuratorsEnhanced() {
   });
 
   const { data: curators, isLoading, refetch } = useQuery<Curator[]>({
-    queryKey: ["/api/curators", dateRange],
+    queryKey: ["/api/curators", dateRange?.from?.toISOString(), dateRange?.to?.toISOString()],
     queryFn: () => {
       const params = new URLSearchParams();
       if (dateRange?.from) {
@@ -77,11 +80,13 @@ export function CuratorsEnhanced() {
         params.append('dateTo', dateRange.to.toISOString());
       }
       return fetch(`/api/curators?${params.toString()}`).then(res => res.json());
-    }
+    },
+    staleTime: 5000,
+    refetchInterval: 10000
   });
 
   const { data: topCurators, refetch: refetchTop } = useQuery<CuratorWithStats[]>({
-    queryKey: ["/api/top-curators", dateRange],
+    queryKey: ["/api/top-curators", dateRange?.from?.toISOString(), dateRange?.to?.toISOString()],
     queryFn: () => {
       const params = new URLSearchParams({ limit: '50' });
       if (dateRange?.from) {
@@ -91,7 +96,24 @@ export function CuratorsEnhanced() {
         params.append('dateTo', dateRange.to.toISOString());
       }
       return fetch(`/api/top-curators?${params.toString()}`).then(res => res.json());
-    }
+    },
+    staleTime: 5000,
+    refetchInterval: 10000
+  });
+
+  // Filter curators by type
+  const filteredCurators = curators?.filter(curator => {
+    if (curatorTypeFilter === "all") return true;
+    if (curatorTypeFilter === "government") return curator.curatorType === "government";
+    if (curatorTypeFilter === "criminal") return curator.curatorType === "criminal";
+    return true;
+  });
+
+  const filteredTopCurators = topCurators?.filter(curator => {
+    if (curatorTypeFilter === "all") return true;
+    if (curatorTypeFilter === "government") return curator.curatorType === "government";
+    if (curatorTypeFilter === "criminal") return curator.curatorType === "criminal";
+    return true;
   });
 
   const createMutation = useMutation({
@@ -280,21 +302,41 @@ export function CuratorsEnhanced() {
           </div>
         </div>
 
-        {/* Date Range Filters */}
+        {/* Filters */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 bg-gray-800/50 rounded-lg p-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
             <span className="text-sm text-gray-300 font-medium">Период активности:</span>
             <DatePickerWithRange 
               date={dateRange}
               onDateChange={setDateRange}
+              showTime={showTime}
+            />
+            <DateTimeToggle 
+              showTime={showTime}
+              onToggle={setShowTime}
             />
           </div>
-          <QuickDateRanges onDateChange={setDateRange} />
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-gray-300 font-medium">Тип:</span>
+              <Select value={curatorTypeFilter} onValueChange={setCuratorTypeFilter}>
+                <SelectTrigger className="w-40">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Все кураторы</SelectItem>
+                  <SelectItem value="government">Государственные</SelectItem>
+                  <SelectItem value="criminal">Криминальные</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <QuickDateRanges onDateChange={setDateRange} />
+          </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {curatorsWithStats.map((curator) => (
+        {filteredTopCurators?.map((curator) => (
           <Card key={curator.id} className="hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-start space-x-4">

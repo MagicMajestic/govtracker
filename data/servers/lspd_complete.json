@@ -1,0 +1,31 @@
+{
+  "server": {
+    "id": 3,
+    "name": "LSPD",
+    "serverId": "728352953924321430",
+    "roleTagId": null,
+    "completedTasksChannelId": null
+  },
+  "summary": {
+    "totalActivities": 0,
+    "messages": 0,
+    "reactions": 0,
+    "replies": 0,
+    "taskVerifications": 0,
+    "totalTaskReports": 0,
+    "pendingTasks": 0,
+    "verifiedTasks": 0,
+    "avgResponseTime": null,
+    "responseTrackingCount": 0
+  },
+  "dailyStats": {
+    "activitiesByDay": {},
+    "avgResponseTimeByDay": {}
+  },
+  "fullData": {
+    "activities": [],
+    "taskReports": [],
+    "responseTracking": []
+  },
+  "exportedAt": "2025-07-24T21:58:13.325Z"
+}

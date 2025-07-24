@@ -21,6 +21,16 @@ export const notificationSettings = pgTable("notification_settings", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Backup frequency settings
+export const backupSettings = pgTable("backup_settings", {
+  id: serial("id").primaryKey(),
+  frequency: text("frequency").notNull().default('daily'), // 'hourly', '4hours', '12hours', 'daily', 'weekly', 'monthly'
+  isActive: boolean("is_active").default(true),
+  lastBackup: timestamp("last_backup"),
+  nextBackup: timestamp("next_backup"),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Performance rating thresholds - only min scores and colors
 export const ratingSettings = pgTable("rating_settings", {
   id: serial("id").primaryKey(),
@@ -214,6 +224,11 @@ export const insertNotificationSettingsSchema = createInsertSchema(notificationS
   notificationChannelId: true,
 });
 
+export const insertBackupSettingsSchema = createInsertSchema(backupSettings).pick({
+  frequency: true,
+  isActive: true,
+});
+
 // Types
 export type BotSettings = typeof botSettings.$inferSelect;
 export type InsertBotSettings = z.infer<typeof insertBotSettingsSchema>;
@@ -233,6 +248,8 @@ export type TaskReport = typeof taskReports.$inferSelect;
 export type InsertTaskReport = z.infer<typeof insertTaskReportSchema>;
 export type NotificationSettings = typeof notificationSettings.$inferSelect;
 export type InsertNotificationSettings = z.infer<typeof insertNotificationSettingsSchema>;
+export type BackupSettings = typeof backupSettings.$inferSelect;
+export type InsertBackupSettings = z.infer<typeof insertBackupSettingsSchema>;
 
 // Users table (keeping original structure)
 export const users = pgTable("users", {

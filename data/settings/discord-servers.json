@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "serverId": "728355725121945731",
+    "name": "Government",
+    "roleTagId": null,
+    "completedTasksChannelId": null,
+    "isActive": true
+  },
+  {
+    "id": 2,
+    "serverId": "728356233161080853",
+    "name": "FIB",
+    "roleTagId": null,
+    "completedTasksChannelId": null,
+    "isActive": true
+  },
+  {
+    "id": 3,
+    "serverId": "728352953924321430",
+    "name": "LSPD",
+    "roleTagId": null,
+    "completedTasksChannelId": null,
+    "isActive": true
+  },
+  {
+    "id": 4,
+    "serverId": "728587491908780044",
+    "name": "SANG",
+    "roleTagId": null,
+    "completedTasksChannelId": null,
+    "isActive": true
+  },
+  {
+    "id": 5,
+    "serverId": "728354790081560597",
+    "name": "LSCSD",
+    "roleTagId": null,
+    "completedTasksChannelId": null,
+    "isActive": true
+  },
+  {
+    "id": 6,
+    "serverId": "728354410832330782",
+    "name": "EMS",
+    "roleTagId": null,
+    "completedTasksChannelId": null,
+    "isActive": true
+  },
+  {
+    "id": 7,
+    "serverId": "728355269532188793",
+    "name": "Weazel News",
+    "roleTagId": null,
+    "completedTasksChannelId": null,
+    "isActive": true
+  },
+  {
+    "id": 8,
+    "serverId": "825137602553708544",
+    "name": "Detectives",
+    "roleTagId": "1397531360180047882",
+    "completedTasksChannelId": "-",
+    "isActive": true
+  },
+  {
+    "id": 9,
+    "serverId": "1369298072647106641",
+    "name": "TEST",
+    "roleTagId": "1369299977494466651",
+    "completedTasksChannelId": "1397712218228789289",
+    "isActive": true
+  }
+]

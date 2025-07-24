@@ -1,6 +1,6 @@
 import { Express } from 'express';
 
-export function setupBackupRoutes(app: Express) {
+export function setupBackupRoutes(app: Express, storage: any) {
   // Backup and file storage routes
   app.post('/api/backup/export', async (req, res) => {
     try {
@@ -82,6 +82,78 @@ export function setupBackupRoutes(app: Express) {
     } catch (error) {
       console.error('Error creating scheduled backup:', error);
       res.status(500).json({ error: 'Ошибка при создании автоматической резервной копии' });
+    }
+  });
+
+  // Backup settings endpoints
+  app.get('/api/backup/settings', async (req, res) => {
+    try {
+      const settings = await storage.getBackupSettings();
+      
+      // If no settings exist, return default settings
+      if (!settings) {
+        const defaultSettings = {
+          frequency: 'daily',
+          isActive: true,
+          lastBackup: null,
+          nextBackup: null
+        };
+        res.json(defaultSettings);
+        return;
+      }
+
+      res.json(settings);
+    } catch (error) {
+      console.error('Error getting backup settings:', error);
+      res.status(500).json({ error: 'Ошибка при получении настроек резервного копирования' });
+    }
+  });
+
+  app.post('/api/backup/settings', async (req, res) => {
+    try {
+      const { frequency, isActive } = req.body;
+      
+      if (!frequency) {
+        return res.status(400).json({ error: 'Частота резервного копирования обязательна' });
+      }
+
+      const validFrequencies = ['hourly', '4hours', '12hours', 'daily', 'weekly', 'monthly'];
+      if (!validFrequencies.includes(frequency)) {
+        return res.status(400).json({ error: 'Недопустимая частота резервного копирования' });
+      }
+
+      const settings = await storage.setBackupSettings({
+        frequency,
+        isActive: isActive !== false // default to true
+      });
+
+      res.json({ success: true, settings });
+    } catch (error) {
+      console.error('Error saving backup settings:', error);
+      res.status(500).json({ error: 'Ошибка при сохранении настроек резервного копирования' });
+    }
+  });
+
+  app.put('/api/backup/settings', async (req, res) => {
+    try {
+      const updates = req.body;
+      
+      if (updates.frequency) {
+        const validFrequencies = ['hourly', '4hours', '12hours', 'daily', 'weekly', 'monthly'];
+        if (!validFrequencies.includes(updates.frequency)) {
+          return res.status(400).json({ error: 'Недопустимая частота резервного копирования' });
+        }
+      }
+
+      const settings = await storage.updateBackupSettings(updates);
+      if (!settings) {
+        return res.status(404).json({ error: 'Настройки резервного копирования не найдены' });
+      }
+
+      res.json({ success: true, settings });
+    } catch (error) {
+      console.error('Error updating backup settings:', error);
+      res.status(500).json({ error: 'Ошибка при обновлении настроек резервного копирования' });
     }
   });
 }

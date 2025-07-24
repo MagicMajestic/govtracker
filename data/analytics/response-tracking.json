@@ -1,0 +1,35 @@
+[
+  {
+    "id": 3,
+    "serverId": 9,
+    "curatorId": 1,
+    "mentionMessageId": "1398061381219123304",
+    "mentionTimestamp": "2025-07-24T21:56:48.007Z",
+    "responseMessageId": "reaction_1398061381219123304_318071839329091584",
+    "responseTimestamp": "2025-07-24T21:56:51.601Z",
+    "responseType": "reaction",
+    "responseTimeSeconds": 4
+  },
+  {
+    "id": 2,
+    "serverId": 9,
+    "curatorId": 1,
+    "mentionMessageId": "1398054939292598334",
+    "mentionTimestamp": "2025-07-24T21:31:12.132Z",
+    "responseMessageId": "reaction_1398054939292598334_318071839329091584",
+    "responseTimestamp": "2025-07-24T21:31:33.652Z",
+    "responseType": "reaction",
+    "responseTimeSeconds": 22
+  },
+  {
+    "id": 1,
+    "serverId": 8,
+    "curatorId": 1,
+    "mentionMessageId": "1398050975490506894",
+    "mentionTimestamp": "2025-07-24T21:15:27.088Z",
+    "responseMessageId": "reaction_1398050975490506894_318071839329091584",
+    "responseTimestamp": "2025-07-24T21:15:29.688Z",
+    "responseType": "reaction",
+    "responseTimeSeconds": 3
+  }
+]

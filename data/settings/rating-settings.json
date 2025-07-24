@@ -1,0 +1,42 @@
+[
+  {
+    "id": 5,
+    "ratingName": "terrible",
+    "ratingText": "Ужасно",
+    "minScore": 0,
+    "color": "bg-red-500",
+    "updatedAt": "2025-07-24T21:12:57.164Z"
+  },
+  {
+    "id": 4,
+    "ratingName": "poor",
+    "ratingText": "Плохо",
+    "minScore": 10,
+    "color": "bg-orange-500",
+    "updatedAt": "2025-07-24T21:12:57.125Z"
+  },
+  {
+    "id": 3,
+    "ratingName": "normal",
+    "ratingText": "Нормально",
+    "minScore": 20,
+    "color": "bg-yellow-500",
+    "updatedAt": "2025-07-24T21:12:57.087Z"
+  },
+  {
+    "id": 2,
+    "ratingName": "good",
+    "ratingText": "Хорошо",
+    "minScore": 35,
+    "color": "bg-blue-500",
+    "updatedAt": "2025-07-24T21:12:57.049Z"
+  },
+  {
+    "id": 1,
+    "ratingName": "excellent",
+    "ratingText": "Великолепно",
+    "minScore": 50,
+    "color": "bg-green-500",
+    "updatedAt": "2025-07-24T21:12:57.009Z"
+  }
+]

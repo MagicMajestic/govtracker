@@ -1,0 +1,313 @@
+{
+  "botSettings": [
+    {
+      "key": "monitoringEnabled",
+      "value": "true"
+    },
+    {
+      "key": "curatorNotificationEnabled",
+      "value": "true"
+    },
+    {
+      "key": "notificationDelay",
+      "value": "20"
+    },
+    {
+      "key": "keywordDetection",
+      "value": "false"
+    },
+    {
+      "key": "logLevel",
+      "value": "info"
+    },
+    {
+      "key": "repeatNotifications",
+      "value": "false"
+    },
+    {
+      "key": "curatorServerId",
+      "value": "805026457327108126"
+    },
+    {
+      "key": "curatorChannelId",
+      "value": "1397751897632280717"
+    },
+    {
+      "key": "customKeywords",
+      "value": "куратор,curator,помощь,help,вопрос,question"
+    },
+    {
+      "key": "allowedChannels",
+      "value": ""
+    }
+  ],
+  "notificationSettings": [
+    {
+      "id": 1,
+      "notificationServerId": "805026457327108126",
+      "notificationChannelId": "1397751897632280717",
+      "isActive": true,
+      "updatedAt": "2025-07-24T20:35:35.830Z"
+    }
+  ],
+  "ratingSettings": [
+    {
+      "id": 5,
+      "ratingName": "terrible",
+      "ratingText": "Ужасно",
+      "minScore": 0,
+      "color": "bg-red-500",
+      "updatedAt": "2025-07-24T20:28:38.125Z"
+    },
+    {
+      "id": 4,
+      "ratingName": "poor",
+      "ratingText": "Плохо",
+      "minScore": 10,
+      "color": "bg-orange-500",
+      "updatedAt": "2025-07-24T20:28:38.103Z"
+    },
+    {
+      "id": 3,
+      "ratingName": "normal",
+      "ratingText": "Нормально",
+      "minScore": 20,
+      "color": "bg-yellow-500",
+      "updatedAt": "2025-07-24T20:28:38.082Z"
+    },
+    {
+      "id": 2,
+      "ratingName": "good",
+      "ratingText": "Хорошо",
+      "minScore": 35,
+      "color": "bg-blue-500",
+      "updatedAt": "2025-07-24T20:28:38.060Z"
+    },
+    {
+      "id": 1,
+      "ratingName": "excellent",
+      "ratingText": "Великолепно",
+      "minScore": 50,
+      "color": "bg-green-500",
+      "updatedAt": "2025-07-24T20:28:38.038Z"
+    }
+  ],
+  "globalRatingConfig": [
+    {
+      "id": 1,
+      "activityPointsMessage": 3,
+      "activityPointsReaction": 1,
+      "activityPointsReply": 2,
+      "activityPointsTaskVerification": 5,
+      "responseTimeGoodSeconds": 60,
+      "responseTimePoorSeconds": 300,
+      "updatedAt": "2025-07-24T20:28:38.188Z"
+    }
+  ],
+  "discordServers": [
+    {
+      "id": 1,
+      "serverId": "728355725121945731",
+      "name": "Government",
+      "roleTagId": null,
+      "completedTasksChannelId": null,
+      "isActive": true
+    },
+    {
+      "id": 2,
+      "serverId": "728356233161080853",
+      "name": "FIB",
+      "roleTagId": null,
+      "completedTasksChannelId": null,
+      "isActive": true
+    },
+    {
+      "id": 3,
+      "serverId": "728352953924321430",
+      "name": "LSPD",
+      "roleTagId": null,
+      "completedTasksChannelId": null,
+      "isActive": true
+    },
+    {
+      "id": 4,
+      "serverId": "728587491908780044",
+      "name": "SANG",
+      "roleTagId": null,
+      "completedTasksChannelId": null,
+      "isActive": true
+    },
+    {
+      "id": 5,
+      "serverId": "728354790081560597",
+      "name": "LSCSD",
+      "roleTagId": null,
+      "completedTasksChannelId": null,
+      "isActive": true
+    },
+    {
+      "id": 6,
+      "serverId": "728354410832330782",
+      "name": "EMS",
+      "roleTagId": null,
+      "completedTasksChannelId": null,
+      "isActive": true
+    },
+    {
+      "id": 7,
+      "serverId": "728355269532188793",
+      "name": "Weazel News",
+      "roleTagId": null,
+      "completedTasksChannelId": null,
+      "isActive": true
+    },
+    {
+      "id": 8,
+      "serverId": "825137602553708544",
+      "name": "Detectives",
+      "roleTagId": null,
+      "completedTasksChannelId": null,
+      "isActive": true
+    },
+    {
+      "id": 9,
+      "serverId": "1369298072647106641",
+      "name": "TEST",
+      "roleTagId": "1369299977494466651",
+      "completedTasksChannelId": "1397712218228789289",
+      "isActive": true
+    }
+  ],
+  "curators": [
+    {
+      "id": 1,
+      "discordId": "318071839329091584",
+      "name": "Magic",
+      "factions": [
+        "detectives",
+        "weazel"
+      ],
+      "curatorType": "government",
+      "subdivision": "government",
+      "isActive": true,
+      "createdAt": "2025-07-24T20:37:55.965Z"
+    }
+  ],
+  "activities": [
+    {
+      "id": 8,
+      "curatorId": 1,
+      "serverId": 9,
+      "type": "reply",
+      "channelId": "1397712218228789289",
+      "channelName": "⚡│completed-tasks",
+      "messageId": "1398042580322750548",
+      "content": "+",
+      "reactionEmoji": null,
+      "targetMessageId": "1398042523532001313",
+      "targetMessageContent": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
+      "timestamp": "2025-07-24T20:42:05.760Z"
+    },
+    {
+      "id": 7,
+      "curatorId": 1,
+      "serverId": 9,
+      "type": "task_verification",
+      "channelId": "1397712218228789289",
+      "channelName": "⚡│completed-tasks",
+      "messageId": "1398042580322750548",
+      "content": "Verified 1/1 tasks",
+      "reactionEmoji": null,
+      "targetMessageId": "1398042523532001313",
+      "targetMessageContent": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
+      "timestamp": "2025-07-24T20:42:05.716Z"
+    },
+    {
+      "id": 6,
+      "curatorId": 1,
+      "serverId": 9,
+      "type": "reaction",
+      "channelId": "1397712218228789289",
+      "channelName": "⚡│completed-tasks",
+      "messageId": null,
+      "content": null,
+      "reactionEmoji": "✅",
+      "targetMessageId": "1398042523532001313",
+      "targetMessageContent": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
+      "timestamp": "2025-07-24T20:41:53.612Z"
+    },
+    {
+      "id": 5,
+      "curatorId": 1,
+      "serverId": 9,
+      "type": "message",
+      "channelId": "1397712218228789289",
+      "channelName": "⚡│completed-tasks",
+      "messageId": "1398042523532001313",
+      "content": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
+      "timestamp": "2025-07-24T20:41:52.265Z"
+    },
+    {
+      "id": 4,
+      "curatorId": 1,
+      "serverId": 9,
+      "type": "reply",
+      "channelId": "1397712218228789289",
+      "channelName": "⚡│completed-tasks",
+      "messageId": "1398042437779456140",
+      "content": "+",
+      "reactionEmoji": null,
+      "targetMessageId": "1398042259248910376",
+      "targetMessageContent": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
+      "timestamp": "2025-07-24T20:41:31.740Z"
+    },
+    {
+      "id": 3,
+      "curatorId": 1,
+      "serverId": 9,
+      "type": "task_verification",
+      "channelId": "1397712218228789289",
+      "channelName": "⚡│completed-tasks",
+      "messageId": "1398042437779456140",
+      "content": "Verified 1/1 tasks",
+      "reactionEmoji": null,
+      "targetMessageId": "1398042259248910376",
+      "targetMessageContent": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
+      "timestamp": "2025-07-24T20:41:31.691Z"
+    },
+    {
+      "id": 2,
+      "curatorId": 1,
+      "serverId": 9,
+      "type": "reaction",
+      "channelId": "1397712218228789289",
+      "channelName": "⚡│completed-tasks",
+      "messageId": null,
+      "content": null,
+      "reactionEmoji": "✅",
+      "targetMessageId": "1398042259248910376",
+      "targetMessageContent": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
+      "timestamp": "2025-07-24T20:40:56.173Z"
+    },
+    {
+      "id": 1,
+      "curatorId": 1,
+      "serverId": 9,
+      "type": "message",
+      "channelId": "1397712218228789289",
+      "channelName": "⚡│completed-tasks",
+      "messageId": "1398042259248910376",
+      "content": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
+      "timestamp": "2025-07-24T20:40:49.162Z"
+    }
+  ],
+  "responseTracking": [],
+  "taskReports": [],
+  "users": []
+}

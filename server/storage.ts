@@ -9,6 +9,7 @@ import {
   globalRatingConfig,
   taskReports,
   notificationSettings,
+  backupSettings,
   type Curator, 
   type InsertCurator,
   type Activity,
@@ -28,7 +29,9 @@ import {
   type TaskReport,
   type InsertTaskReport,
   type NotificationSettings,
-  type InsertNotificationSettings
+  type InsertNotificationSettings,
+  type BackupSettings,
+  type InsertBackupSettings
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, sql, count } from "drizzle-orm";
@@ -71,6 +74,7 @@ export interface IStorage {
   getResponseTrackingByMention(mentionMessageId: string): Promise<ResponseTracking | undefined>;
   getUnrespondedMessages(): Promise<ResponseTracking[]>;
   getCuratorAvgResponseTime(curatorId: number): Promise<number | null>;
+  getAllResponseTracking(): Promise<ResponseTracking[]>;
 
   // Bot settings methods
   getBotSettings(): Promise<Record<string, string>>;
@@ -96,6 +100,7 @@ export interface IStorage {
   getTaskReportsForServer(serverId: number): Promise<TaskReport[]>;
   getPendingTaskReports(): Promise<TaskReport[]>;
   getTaskReportsByWeek(weekStart: Date): Promise<TaskReport[]>;
+  getAllTaskReports(): Promise<TaskReport[]>;
   getCuratorTaskStats(curatorId: number): Promise<{
     totalChecked: number;
     totalApproved: number;
@@ -106,6 +111,11 @@ export interface IStorage {
   getNotificationSettings(): Promise<NotificationSettings | undefined>;
   setNotificationSettings(settings: InsertNotificationSettings): Promise<NotificationSettings>;
   updateNotificationSettings(settings: Partial<InsertNotificationSettings>): Promise<NotificationSettings | undefined>;
+  
+  // Backup settings methods
+  getBackupSettings(): Promise<BackupSettings | undefined>;
+  setBackupSettings(settings: InsertBackupSettings): Promise<BackupSettings>;
+  updateBackupSettings(settings: Partial<InsertBackupSettings>): Promise<BackupSettings | undefined>;
   
   // Statistics methods
   getCuratorStats(curatorId?: number, dateFrom?: Date, dateTo?: Date): Promise<any>;
@@ -1139,6 +1149,63 @@ export class DatabaseStorage implements IStorage {
       .where(eq(notificationSettings.id, currentSettings.id))
       .returning();
     return updated || undefined;
+  }
+
+  // Backup settings methods
+  async getBackupSettings(): Promise<BackupSettings | undefined> {
+    const [settings] = await db
+      .select()
+      .from(backupSettings)
+      .where(eq(backupSettings.isActive, true))
+      .limit(1);
+    return settings || undefined;
+  }
+
+  async setBackupSettings(settings: InsertBackupSettings): Promise<BackupSettings> {
+    // Deactivate all existing settings first
+    await db
+      .update(backupSettings)
+      .set({ isActive: false });
+    
+    // Insert new settings
+    const [newSettings] = await db
+      .insert(backupSettings)
+      .values({ ...settings, isActive: true })
+      .returning();
+    return newSettings;
+  }
+
+  async updateBackupSettings(settings: Partial<InsertBackupSettings>): Promise<BackupSettings | undefined> {
+    const existingSettings = await this.getBackupSettings();
+    if (existingSettings) {
+      const [updated] = await db
+        .update(backupSettings)
+        .set(settings)
+        .where(eq(backupSettings.id, existingSettings.id))
+        .returning();
+      return updated || undefined;
+    } else {
+      const [created] = await db
+        .insert(backupSettings)
+        .values(settings as InsertBackupSettings)
+        .returning();
+      return created || undefined;
+    }
+  }
+
+  // Additional methods for data export
+  async getAllTaskReports(): Promise<TaskReport[]> {
+    return await db
+      .select()
+      .from(taskReports)
+      .orderBy(desc(taskReports.submittedAt));
+  }
+
+  async getAllResponseTracking(): Promise<ResponseTracking[]> {
+    return await db
+      .select()
+      .from(responseTracking)
+      .orderBy(desc(responseTracking.mentionTimestamp));
   }
 }
 

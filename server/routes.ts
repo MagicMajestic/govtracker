@@ -653,6 +653,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
 
   // Start Discord bot
+  // Setup backup routes
+  setupBackupRoutes(app, storage);
+
+  // Start Discord bot
   startDiscordBot();
 
   const httpServer = createServer(app);

@@ -726,6 +726,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Excluded curators routes
+  app.get('/api/excluded-curators', async (req, res) => {
+    try {
+      const excludedCurators = await storage.getExcludedCurators();
+      res.json(excludedCurators);
+    } catch (error) {
+      console.error('Error getting excluded curators:', error);
+      res.status(500).json({ error: 'Failed to get excluded curators' });
+    }
+  });
+
+  app.post('/api/excluded-curators', async (req, res) => {
+    try {
+      const curatorData = req.body;
+      const excluded = await storage.addExcludedCurator(curatorData);
+      res.json(excluded);
+    } catch (error) {
+      console.error('Error adding excluded curator:', error);
+      res.status(500).json({ error: 'Failed to add excluded curator' });
+    }
+  });
+
+  app.delete('/api/excluded-curators/:discordId', async (req, res) => {
+    try {
+      const { discordId } = req.params;
+      await storage.removeExcludedCurator(discordId);
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error removing excluded curator:', error);
+      res.status(500).json({ error: 'Failed to remove excluded curator' });
+    }
+  });
+
   // Setup backup routes
   setupBackupRoutes(app, storage);
 

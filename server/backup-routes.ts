@@ -15,8 +15,9 @@ export function setupBackupRoutes(app: Express, storage: any) {
 
   app.post('/api/backup/import', async (req, res) => {
     try {
-      // Здесь будет логика импорта данных из файлов
-      res.json({ success: true, message: 'Импорт данных из файлов (в разработке)' });
+      const { importFromBackup } = await import('./import-backup.js');
+      await importFromBackup();
+      res.json({ success: true, message: 'Данные успешно импортированы из резервной копии' });
     } catch (error) {
       console.error('Error importing data:', error);
       res.status(500).json({ error: 'Ошибка при импорте данных' });

@@ -10,6 +10,7 @@ import {
   taskReports,
   notificationSettings,
   backupSettings,
+  excludedCurators,
   type Curator, 
   type InsertCurator,
   type Activity,
@@ -31,7 +32,9 @@ import {
   type NotificationSettings,
   type InsertNotificationSettings,
   type BackupSettings,
-  type InsertBackupSettings
+  type InsertBackupSettings,
+  type ExcludedCurator,
+  type InsertExcludedCurator
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, sql, count } from "drizzle-orm";
@@ -116,6 +119,11 @@ export interface IStorage {
   getBackupSettings(): Promise<BackupSettings | undefined>;
   setBackupSettings(settings: InsertBackupSettings): Promise<BackupSettings>;
   updateBackupSettings(settings: Partial<InsertBackupSettings>): Promise<BackupSettings | undefined>;
+  
+  // Excluded curators methods
+  getExcludedCurators(): Promise<ExcludedCurator[]>;
+  addExcludedCurator(curator: InsertExcludedCurator): Promise<ExcludedCurator | undefined>;
+  removeExcludedCurator(discordId: string): Promise<void>;
   
   // Statistics methods
   getCuratorStats(curatorId?: number, dateFrom?: Date, dateTo?: Date): Promise<any>;
@@ -1206,6 +1214,80 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(responseTracking)
       .orderBy(desc(responseTracking.mentionTimestamp));
+  }
+
+  // Excluded curators methods
+  async getExcludedCurators(): Promise<ExcludedCurator[]> {
+    return await db.select().from(excludedCurators);
+  }
+
+  async addExcludedCurator(curator: InsertExcludedCurator): Promise<ExcludedCurator | undefined> {
+    try {
+      const [newExcluded] = await db
+        .insert(excludedCurators)
+        .values(curator)
+        .returning();
+      console.log(`🚫 Added excluded curator: ${curator.name} (${curator.discordId})`);
+      return newExcluded || undefined;
+    } catch (error: any) {
+      if (error.code === '23505') {
+        console.log(`⚠️ Curator already excluded: ${curator.name} (${curator.discordId})`);
+        const [existing] = await db
+          .select()
+          .from(excludedCurators)
+          .where(eq(excludedCurators.discordId, curator.discordId));
+        return existing || undefined;
+      }
+      throw error;
+    }
+  }
+
+  async removeExcludedCurator(discordId: string): Promise<void> {
+    await db
+      .delete(excludedCurators)
+      .where(eq(excludedCurators.discordId, discordId));
+    console.log(`✅ Removed curator from exclusion list: ${discordId}`);
+  }
+
+  // Clear functions for import
+  async clearAllActivities(): Promise<void> {
+    await db.delete(activities);
+  }
+
+  async clearAllResponseTracking(): Promise<void> {
+    await db.delete(responseTracking);
+  }
+
+  async clearAllTaskReports(): Promise<void> {
+    await db.delete(taskReports);
+  }
+
+  async clearAllCurators(): Promise<void> {
+    await db.delete(curators);
+  }
+
+  // Create activity with custom timestamp
+  async createActivityWithTimestamp(activity: {
+    curatorId: number;
+    serverId: number;
+    type: 'message' | 'reaction' | 'reply' | 'task_verification';
+    channelId: string;
+    channelName: string;
+    messageId: string;
+    content?: string;
+    reactionEmoji?: string;
+    targetMessageId?: string;
+    targetMessageContent?: string;
+    timestamp: Date;
+  }): Promise<Activity> {
+    const [newActivity] = await db
+      .insert(activities)
+      .values({
+        ...activity,
+        createdAt: activity.timestamp // Используем переданную временную метку
+      })
+      .returning();
+    return newActivity;
   }
 }
 

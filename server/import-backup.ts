@@ -20,6 +20,30 @@ export async function importFromBackup() {
     // Читаем полный бэкап
     const backupData: BackupData = JSON.parse(readFileSync('./data/full-backup.json', 'utf-8'));
     
+    // Получаем список исключенных кураторов
+    const excludedCurators = await storage.getExcludedCurators();
+    const excludedDiscordIds = new Set(excludedCurators.map((c: any) => c.discordId));
+    console.log(`🚫 Found ${excludedCurators.length} excluded curators:`, excludedCurators.map((c: any) => c.name).join(', '));
+    
+    // ОЧИЩАЕМ СУЩЕСТВУЮЩИЕ ДАННЫЕ ПЕРЕД ИМПОРТОМ
+    console.log('🧹 Clearing existing data before import...');
+    
+    // Удаляем активности
+    await storage.clearAllActivities();
+    console.log('✅ Cleared all activities');
+    
+    // Удаляем отслеживание ответов  
+    await storage.clearAllResponseTracking();
+    console.log('✅ Cleared all response tracking');
+    
+    // Удаляем отчеты о задачах
+    await storage.clearAllTaskReports();
+    console.log('✅ Cleared all task reports');
+    
+    // Удаляем всех кураторов (кроме исключенных в blacklist)
+    await storage.clearAllCurators();
+    console.log('✅ Cleared all curators');
+    
     // Импортируем настройки бота
     console.log('📝 Importing bot settings...');
     for (const setting of backupData.botSettings) {
@@ -33,8 +57,7 @@ export async function importFromBackup() {
       for (const notification of backupData.notificationSettings) {
         await storage.updateNotificationSettings({
           notificationServerId: notification.notificationServerId,
-          notificationChannelId: notification.notificationChannelId,
-          isActive: notification.isActive
+          notificationChannelId: notification.notificationChannelId
         });
         console.log(`✅ Imported notification settings: Server ${notification.notificationServerId}`);
       }
@@ -67,11 +90,10 @@ export async function importFromBackup() {
             serverId: server.serverId,
             name: server.name,
             roleTagId: server.roleTagId,
-            isActive: server.isActive,
             completedTasksChannelId: server.completedTasksChannelId
           });
           console.log(`✅ Imported Discord server: ${server.name} (${server.serverId})`);
-        } catch (error) {
+        } catch (error: any) {
           if (error.code === '23505') {
             console.log(`⚠️ Discord server already exists: ${server.name} (${server.serverId})`);
           } else {
@@ -81,10 +103,23 @@ export async function importFromBackup() {
       }
     }
     
-    // Импортируем кураторов
+    // Импортируем кураторов (с фильтрацией исключенных)
     if (backupData.curators && backupData.curators.length > 0) {
       console.log('👥 Importing curators...');
+      let totalCurators = 0;
+      let excludedCount = 0;
+      let importedCount = 0;
+      
       for (const curator of backupData.curators) {
+        totalCurators++;
+        
+        // Проверяем, не исключен ли куратор
+        if (excludedDiscordIds.has(curator.discordId)) {
+          console.log(`🚫 Skipping excluded curator: ${curator.name} (${curator.discordId})`);
+          excludedCount++;
+          continue;
+        }
+        
         try {
           await storage.createCurator({
             discordId: curator.discordId,
@@ -93,7 +128,8 @@ export async function importFromBackup() {
             curatorType: curator.curatorType || 'government'
           });
           console.log(`✅ Imported curator: ${curator.name} (${curator.discordId})`);
-        } catch (error) {
+          importedCount++;
+        } catch (error: any) {
           if (error.code === '23505') {
             console.log(`⚠️ Curator already exists: ${curator.name} (${curator.discordId})`);
           } else {
@@ -101,6 +137,8 @@ export async function importFromBackup() {
           }
         }
       }
+      
+      console.log(`📊 Curator import summary: ${importedCount} imported, ${excludedCount} excluded, ${totalCurators} total`);
     }
     
     // Импортируем активности
@@ -109,7 +147,7 @@ export async function importFromBackup() {
       let importedActivities = 0;
       for (const activity of backupData.activities) {
         try {
-          await storage.logActivity({
+          await storage.createActivityWithTimestamp({
             curatorId: activity.curatorId,
             serverId: activity.serverId,
             type: activity.type as 'message' | 'reaction' | 'reply' | 'task_verification',
@@ -120,10 +158,10 @@ export async function importFromBackup() {
             reactionEmoji: activity.reactionEmoji,
             targetMessageId: activity.targetMessageId,
             targetMessageContent: activity.targetMessageContent,
-            timestamp: new Date(activity.timestamp)
+            timestamp: new Date(activity.timestamp) // Используем оригинальную временную метку
           });
           importedActivities++;
-        } catch (error) {
+        } catch (error: any) {
           console.log(`⚠️ Skipped activity ID ${activity.id}: ${error.message}`);
         }
       }
@@ -147,7 +185,7 @@ export async function importFromBackup() {
             responseTimeSeconds: response.responseTimeSeconds
           });
           importedResponses++;
-        } catch (error) {
+        } catch (error: any) {
           console.log(`⚠️ Skipped response tracking (might already exist): ${response.mentionMessageId}`);
         }
       }
@@ -184,7 +222,7 @@ export async function importFromBackup() {
           });
           importedTasks++;
           console.log(`✅ Imported task report: ${task.messageId} for server ${actualServerId}`);
-        } catch (error) {
+        } catch (error: any) {
           console.log(`❌ Failed to import task report ${task.messageId}: ${error.message}`);
         }
       }
@@ -194,7 +232,7 @@ export async function importFromBackup() {
     console.log('✅ Data import completed successfully!');
     return true;
     
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ Error during data import:', error);
     return false;
   }

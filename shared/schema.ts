@@ -251,6 +251,24 @@ export type InsertNotificationSettings = z.infer<typeof insertNotificationSettin
 export type BackupSettings = typeof backupSettings.$inferSelect;
 export type InsertBackupSettings = z.infer<typeof insertBackupSettingsSchema>;
 
+// Excluded curators table (for import filtering)
+export const excludedCurators = pgTable("excluded_curators", {
+  id: serial("id").primaryKey(),
+  discordId: text("discord_id").notNull().unique(),
+  name: text("name").notNull(),
+  reason: text("reason"),
+  excludedAt: timestamp("excluded_at").defaultNow(),
+});
+
+export const insertExcludedCuratorSchema = createInsertSchema(excludedCurators).pick({
+  discordId: true,
+  name: true,
+  reason: true,
+});
+
+export type ExcludedCurator = typeof excludedCurators.$inferSelect;
+export type InsertExcludedCurator = z.infer<typeof insertExcludedCuratorSchema>;
+
 // Users table (keeping original structure)
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),

@@ -1,11 +1,43 @@
 [
   {
-    "id": 31,
+    "id": 64,
     "ratingName": "terrible",
     "ratingText": "Ужасно",
     "minScore": 0,
     "color": "bg-red-500",
-    "updatedAt": "2025-07-24T22:14:37.780Z"
+    "updatedAt": "2025-07-24T23:01:33.540Z"
+  },
+  {
+    "id": 65,
+    "ratingName": "terrible",
+    "ratingText": "Ужасно",
+    "minScore": 0,
+    "color": "bg-red-500",
+    "updatedAt": "2025-07-24T23:01:33.653Z"
+  },
+  {
+    "id": 13,
+    "ratingName": "terrible",
+    "ratingText": "Ужасно",
+    "minScore": 0,
+    "color": "bg-red-500",
+    "updatedAt": "2025-07-24T22:49:53.208Z"
+  },
+  {
+    "id": 14,
+    "ratingName": "terrible",
+    "ratingText": "Ужасно",
+    "minScore": 0,
+    "color": "bg-red-500",
+    "updatedAt": "2025-07-24T22:49:53.323Z"
+  },
+  {
+    "id": 15,
+    "ratingName": "terrible",
+    "ratingText": "Ужасно",
+    "minScore": 0,
+    "color": "bg-red-500",
+    "updatedAt": "2025-07-24T22:49:53.436Z"
   },
   {
     "id": 5,
@@ -13,15 +45,7 @@
     "ratingText": "Ужасно",
     "minScore": 0,
     "color": "bg-red-500",
-    "updatedAt": "2025-07-24T22:04:38.796Z"
-  },
-  {
-    "id": 26,
-    "ratingName": "terrible",
-    "ratingText": "Ужасно",
-    "minScore": 0,
-    "color": "bg-red-500",
-    "updatedAt": "2025-07-24T22:14:18.533Z"
+    "updatedAt": "2025-07-24T22:46:14.003Z"
   },
   {
     "id": 6,
@@ -29,15 +53,39 @@
     "ratingText": "Ужасно",
     "minScore": 0,
     "color": "bg-red-500",
-    "updatedAt": "2025-07-24T22:13:25.891Z"
+    "updatedAt": "2025-07-24T22:49:52.412Z"
   },
   {
-    "id": 46,
+    "id": 7,
     "ratingName": "terrible",
     "ratingText": "Ужасно",
     "minScore": 0,
     "color": "bg-red-500",
-    "updatedAt": "2025-07-24T22:19:43.106Z"
+    "updatedAt": "2025-07-24T22:49:52.527Z"
+  },
+  {
+    "id": 8,
+    "ratingName": "terrible",
+    "ratingText": "Ужасно",
+    "minScore": 0,
+    "color": "bg-red-500",
+    "updatedAt": "2025-07-24T22:49:52.640Z"
+  },
+  {
+    "id": 9,
+    "ratingName": "terrible",
+    "ratingText": "Ужасно",
+    "minScore": 0,
+    "color": "bg-red-500",
+    "updatedAt": "2025-07-24T22:49:52.754Z"
+  },
+  {
+    "id": 10,
+    "ratingName": "terrible",
+    "ratingText": "Ужасно",
+    "minScore": 0,
+    "color": "bg-red-500",
+    "updatedAt": "2025-07-24T22:49:52.868Z"
   },
   {
     "id": 11,
@@ -45,47 +93,79 @@
     "ratingText": "Ужасно",
     "minScore": 0,
     "color": "bg-red-500",
-    "updatedAt": "2025-07-24T22:13:43.880Z"
+    "updatedAt": "2025-07-24T22:49:52.981Z"
   },
   {
-    "id": 41,
+    "id": 12,
     "ratingName": "terrible",
     "ratingText": "Ужасно",
     "minScore": 0,
     "color": "bg-red-500",
-    "updatedAt": "2025-07-24T22:18:56.402Z"
+    "updatedAt": "2025-07-24T22:49:53.095Z"
   },
   {
-    "id": 36,
+    "id": 56,
     "ratingName": "terrible",
     "ratingText": "Ужасно",
     "minScore": 0,
     "color": "bg-red-500",
-    "updatedAt": "2025-07-24T22:14:52.903Z"
+    "updatedAt": "2025-07-24T23:01:32.624Z"
   },
   {
-    "id": 16,
+    "id": 57,
     "ratingName": "terrible",
     "ratingText": "Ужасно",
     "minScore": 0,
     "color": "bg-red-500",
-    "updatedAt": "2025-07-24T22:13:56.870Z"
+    "updatedAt": "2025-07-24T23:01:32.745Z"
   },
   {
-    "id": 21,
+    "id": 58,
     "ratingName": "terrible",
     "ratingText": "Ужасно",
     "minScore": 0,
     "color": "bg-red-500",
-    "updatedAt": "2025-07-24T22:14:09.086Z"
+    "updatedAt": "2025-07-24T23:01:32.858Z"
   },
   {
-    "id": 32,
-    "ratingName": "poor",
-    "ratingText": "Плохо",
-    "minScore": 10,
-    "color": "bg-orange-500",
-    "updatedAt": "2025-07-24T22:14:37.848Z"
+    "id": 59,
+    "ratingName": "terrible",
+    "ratingText": "Ужасно",
+    "minScore": 0,
+    "color": "bg-red-500",
+    "updatedAt": "2025-07-24T23:01:32.970Z"
+  },
+  {
+    "id": 60,
+    "ratingName": "terrible",
+    "ratingText": "Ужасно",
+    "minScore": 0,
+    "color": "bg-red-500",
+    "updatedAt": "2025-07-24T23:01:33.083Z"
+  },
+  {
+    "id": 61,
+    "ratingName": "terrible",
+    "ratingText": "Ужасно",
+    "minScore": 0,
+    "color": "bg-red-500",
+    "updatedAt": "2025-07-24T23:01:33.196Z"
+  },
+  {
+    "id": 62,
+    "ratingName": "terrible",
+    "ratingText": "Ужасно",
+    "minScore": 0,
+    "color": "bg-red-500",
+    "updatedAt": "2025-07-24T23:01:33.312Z"
+  },
+  {
+    "id": 63,
+    "ratingName": "terrible",
+    "ratingText": "Ужасно",
+    "minScore": 0,
+    "color": "bg-red-500",
+    "updatedAt": "2025-07-24T23:01:33.427Z"
   },
   {
     "id": 22,
@@ -93,55 +173,103 @@
     "ratingText": "Плохо",
     "minScore": 10,
     "color": "bg-orange-500",
-    "updatedAt": "2025-07-24T22:14:09.144Z"
+    "updatedAt": "2025-07-24T22:49:54.231Z"
   },
   {
-    "id": 12,
+    "id": 23,
     "ratingName": "poor",
     "ratingText": "Плохо",
     "minScore": 10,
     "color": "bg-orange-500",
-    "updatedAt": "2025-07-24T22:13:43.944Z"
+    "updatedAt": "2025-07-24T22:49:54.345Z"
   },
   {
-    "id": 27,
+    "id": 66,
     "ratingName": "poor",
     "ratingText": "Плохо",
     "minScore": 10,
     "color": "bg-orange-500",
-    "updatedAt": "2025-07-24T22:14:18.595Z"
+    "updatedAt": "2025-07-24T23:01:33.766Z"
   },
   {
-    "id": 17,
+    "id": 67,
     "ratingName": "poor",
     "ratingText": "Плохо",
     "minScore": 10,
     "color": "bg-orange-500",
-    "updatedAt": "2025-07-24T22:13:56.928Z"
+    "updatedAt": "2025-07-24T23:01:33.878Z"
   },
   {
-    "id": 37,
+    "id": 68,
     "ratingName": "poor",
     "ratingText": "Плохо",
     "minScore": 10,
     "color": "bg-orange-500",
-    "updatedAt": "2025-07-24T22:14:52.965Z"
+    "updatedAt": "2025-07-24T23:01:33.991Z"
   },
   {
-    "id": 7,
+    "id": 69,
     "ratingName": "poor",
     "ratingText": "Плохо",
     "minScore": 10,
     "color": "bg-orange-500",
-    "updatedAt": "2025-07-24T22:13:25.950Z"
+    "updatedAt": "2025-07-24T23:01:34.103Z"
   },
   {
-    "id": 47,
+    "id": 70,
     "ratingName": "poor",
     "ratingText": "Плохо",
     "minScore": 10,
     "color": "bg-orange-500",
-    "updatedAt": "2025-07-24T22:19:43.169Z"
+    "updatedAt": "2025-07-24T23:01:34.218Z"
+  },
+  {
+    "id": 71,
+    "ratingName": "poor",
+    "ratingText": "Плохо",
+    "minScore": 10,
+    "color": "bg-orange-500",
+    "updatedAt": "2025-07-24T23:01:34.331Z"
+  },
+  {
+    "id": 72,
+    "ratingName": "poor",
+    "ratingText": "Плохо",
+    "minScore": 10,
+    "color": "bg-orange-500",
+    "updatedAt": "2025-07-24T23:01:34.443Z"
+  },
+  {
+    "id": 73,
+    "ratingName": "poor",
+    "ratingText": "Плохо",
+    "minScore": 10,
+    "color": "bg-orange-500",
+    "updatedAt": "2025-07-24T23:01:34.556Z"
+  },
+  {
+    "id": 74,
+    "ratingName": "poor",
+    "ratingText": "Плохо",
+    "minScore": 10,
+    "color": "bg-orange-500",
+    "updatedAt": "2025-07-24T23:01:34.668Z"
+  },
+  {
+    "id": 75,
+    "ratingName": "poor",
+    "ratingText": "Плохо",
+    "minScore": 10,
+    "color": "bg-orange-500",
+    "updatedAt": "2025-07-24T23:01:34.781Z"
+  },
+  {
+    "id": 24,
+    "ratingName": "poor",
+    "ratingText": "Плохо",
+    "minScore": 10,
+    "color": "bg-orange-500",
+    "updatedAt": "2025-07-24T22:49:54.458Z"
   },
   {
     "id": 4,
@@ -149,55 +277,87 @@
     "ratingText": "Плохо",
     "minScore": 10,
     "color": "bg-orange-500",
-    "updatedAt": "2025-07-24T22:04:38.737Z"
+    "updatedAt": "2025-07-24T22:46:13.891Z"
   },
   {
-    "id": 42,
+    "id": 25,
     "ratingName": "poor",
     "ratingText": "Плохо",
     "minScore": 10,
     "color": "bg-orange-500",
-    "updatedAt": "2025-07-24T22:18:56.465Z"
+    "updatedAt": "2025-07-24T22:49:54.571Z"
   },
   {
-    "id": 13,
-    "ratingName": "normal",
-    "ratingText": "Нормально",
-    "minScore": 20,
-    "color": "bg-yellow-500",
-    "updatedAt": "2025-07-24T22:13:44.002Z"
+    "id": 16,
+    "ratingName": "poor",
+    "ratingText": "Плохо",
+    "minScore": 10,
+    "color": "bg-orange-500",
+    "updatedAt": "2025-07-24T22:49:53.549Z"
   },
   {
-    "id": 3,
-    "ratingName": "normal",
-    "ratingText": "Нормально",
-    "minScore": 20,
-    "color": "bg-yellow-500",
-    "updatedAt": "2025-07-24T22:04:38.679Z"
-  },
-  {
-    "id": 8,
-    "ratingName": "normal",
-    "ratingText": "Нормально",
-    "minScore": 20,
-    "color": "bg-yellow-500",
-    "updatedAt": "2025-07-24T22:13:26.009Z"
+    "id": 17,
+    "ratingName": "poor",
+    "ratingText": "Плохо",
+    "minScore": 10,
+    "color": "bg-orange-500",
+    "updatedAt": "2025-07-24T22:49:53.663Z"
   },
   {
     "id": 18,
-    "ratingName": "normal",
-    "ratingText": "Нормально",
-    "minScore": 20,
-    "color": "bg-yellow-500",
-    "updatedAt": "2025-07-24T22:13:56.987Z"
+    "ratingName": "poor",
+    "ratingText": "Плохо",
+    "minScore": 10,
+    "color": "bg-orange-500",
+    "updatedAt": "2025-07-24T22:49:53.777Z"
   },
   {
-    "id": 23,
+    "id": 19,
+    "ratingName": "poor",
+    "ratingText": "Плохо",
+    "minScore": 10,
+    "color": "bg-orange-500",
+    "updatedAt": "2025-07-24T22:49:53.891Z"
+  },
+  {
+    "id": 20,
+    "ratingName": "poor",
+    "ratingText": "Плохо",
+    "minScore": 10,
+    "color": "bg-orange-500",
+    "updatedAt": "2025-07-24T22:49:54.004Z"
+  },
+  {
+    "id": 21,
+    "ratingName": "poor",
+    "ratingText": "Плохо",
+    "minScore": 10,
+    "color": "bg-orange-500",
+    "updatedAt": "2025-07-24T22:49:54.118Z"
+  },
+  {
+    "id": 78,
     "ratingName": "normal",
     "ratingText": "Нормально",
     "minScore": 20,
     "color": "bg-yellow-500",
-    "updatedAt": "2025-07-24T22:14:09.203Z"
+    "updatedAt": "2025-07-24T23:01:35.119Z"
+  },
+  {
+    "id": 26,
+    "ratingName": "normal",
+    "ratingText": "Нормально",
+    "minScore": 20,
+    "color": "bg-yellow-500",
+    "updatedAt": "2025-07-24T22:49:54.685Z"
+  },
+  {
+    "id": 27,
+    "ratingName": "normal",
+    "ratingText": "Нормально",
+    "minScore": 20,
+    "color": "bg-yellow-500",
+    "updatedAt": "2025-07-24T22:49:54.798Z"
   },
   {
     "id": 28,
@@ -205,7 +365,39 @@
     "ratingText": "Нормально",
     "minScore": 20,
     "color": "bg-yellow-500",
-    "updatedAt": "2025-07-24T22:14:18.654Z"
+    "updatedAt": "2025-07-24T22:49:54.912Z"
+  },
+  {
+    "id": 29,
+    "ratingName": "normal",
+    "ratingText": "Нормально",
+    "minScore": 20,
+    "color": "bg-yellow-500",
+    "updatedAt": "2025-07-24T22:49:55.025Z"
+  },
+  {
+    "id": 30,
+    "ratingName": "normal",
+    "ratingText": "Нормально",
+    "minScore": 20,
+    "color": "bg-yellow-500",
+    "updatedAt": "2025-07-24T22:49:55.139Z"
+  },
+  {
+    "id": 31,
+    "ratingName": "normal",
+    "ratingText": "Нормально",
+    "minScore": 20,
+    "color": "bg-yellow-500",
+    "updatedAt": "2025-07-24T22:49:55.252Z"
+  },
+  {
+    "id": 32,
+    "ratingName": "normal",
+    "ratingText": "Нормально",
+    "minScore": 20,
+    "color": "bg-yellow-500",
+    "updatedAt": "2025-07-24T22:49:55.366Z"
   },
   {
     "id": 33,
@@ -213,31 +405,111 @@
     "ratingText": "Нормально",
     "minScore": 20,
     "color": "bg-yellow-500",
-    "updatedAt": "2025-07-24T22:14:37.907Z"
+    "updatedAt": "2025-07-24T22:49:55.479Z"
   },
   {
-    "id": 38,
+    "id": 34,
     "ratingName": "normal",
     "ratingText": "Нормально",
     "minScore": 20,
     "color": "bg-yellow-500",
-    "updatedAt": "2025-07-24T22:14:53.025Z"
+    "updatedAt": "2025-07-24T22:49:55.593Z"
   },
   {
-    "id": 43,
+    "id": 35,
     "ratingName": "normal",
     "ratingText": "Нормально",
     "minScore": 20,
     "color": "bg-yellow-500",
-    "updatedAt": "2025-07-24T22:18:56.523Z"
+    "updatedAt": "2025-07-24T22:49:55.707Z"
   },
   {
-    "id": 48,
+    "id": 3,
     "ratingName": "normal",
     "ratingText": "Нормально",
     "minScore": 20,
     "color": "bg-yellow-500",
-    "updatedAt": "2025-07-24T22:19:43.228Z"
+    "updatedAt": "2025-07-24T22:46:13.778Z"
+  },
+  {
+    "id": 83,
+    "ratingName": "normal",
+    "ratingText": "Нормально",
+    "minScore": 20,
+    "color": "bg-yellow-500",
+    "updatedAt": "2025-07-24T23:01:35.684Z"
+  },
+  {
+    "id": 82,
+    "ratingName": "normal",
+    "ratingText": "Нормально",
+    "minScore": 20,
+    "color": "bg-yellow-500",
+    "updatedAt": "2025-07-24T23:01:35.570Z"
+  },
+  {
+    "id": 81,
+    "ratingName": "normal",
+    "ratingText": "Нормально",
+    "minScore": 20,
+    "color": "bg-yellow-500",
+    "updatedAt": "2025-07-24T23:01:35.458Z"
+  },
+  {
+    "id": 80,
+    "ratingName": "normal",
+    "ratingText": "Нормально",
+    "minScore": 20,
+    "color": "bg-yellow-500",
+    "updatedAt": "2025-07-24T23:01:35.345Z"
+  },
+  {
+    "id": 79,
+    "ratingName": "normal",
+    "ratingText": "Нормально",
+    "minScore": 20,
+    "color": "bg-yellow-500",
+    "updatedAt": "2025-07-24T23:01:35.232Z"
+  },
+  {
+    "id": 77,
+    "ratingName": "normal",
+    "ratingText": "Нормально",
+    "minScore": 20,
+    "color": "bg-yellow-500",
+    "updatedAt": "2025-07-24T23:01:35.006Z"
+  },
+  {
+    "id": 76,
+    "ratingName": "normal",
+    "ratingText": "Нормально",
+    "minScore": 20,
+    "color": "bg-yellow-500",
+    "updatedAt": "2025-07-24T23:01:34.894Z"
+  },
+  {
+    "id": 85,
+    "ratingName": "normal",
+    "ratingText": "Нормально",
+    "minScore": 20,
+    "color": "bg-yellow-500",
+    "updatedAt": "2025-07-24T23:01:35.909Z"
+  },
+  {
+    "id": 84,
+    "ratingName": "normal",
+    "ratingText": "Нормально",
+    "minScore": 20,
+    "color": "bg-yellow-500",
+    "updatedAt": "2025-07-24T23:01:35.796Z"
+  },
+  {
+    "id": 92,
+    "ratingName": "good",
+    "ratingText": "Хорошо",
+    "minScore": 35,
+    "color": "bg-blue-500",
+    "updatedAt": "2025-07-24T23:01:36.697Z"
   },
   {
     "id": 2,
@@ -245,39 +517,31 @@
     "ratingText": "Хорошо",
     "minScore": 35,
     "color": "bg-blue-500",
-    "updatedAt": "2025-07-24T22:04:38.620Z"
+    "updatedAt": "2025-07-24T22:46:13.665Z"
   },
   {
-    "id": 14,
+    "id": 36,
     "ratingName": "good",
     "ratingText": "Хорошо",
     "minScore": 35,
     "color": "bg-blue-500",
-    "updatedAt": "2025-07-24T22:13:44.061Z"
+    "updatedAt": "2025-07-24T22:49:55.820Z"
   },
   {
-    "id": 49,
+    "id": 37,
     "ratingName": "good",
     "ratingText": "Хорошо",
     "minScore": 35,
     "color": "bg-blue-500",
-    "updatedAt": "2025-07-24T22:19:43.287Z"
+    "updatedAt": "2025-07-24T22:49:55.934Z"
   },
   {
-    "id": 44,
+    "id": 38,
     "ratingName": "good",
     "ratingText": "Хорошо",
     "minScore": 35,
     "color": "bg-blue-500",
-    "updatedAt": "2025-07-24T22:18:56.581Z"
-  },
-  {
-    "id": 34,
-    "ratingName": "good",
-    "ratingText": "Хорошо",
-    "minScore": 35,
-    "color": "bg-blue-500",
-    "updatedAt": "2025-07-24T22:14:37.965Z"
+    "updatedAt": "2025-07-24T22:49:56.047Z"
   },
   {
     "id": 39,
@@ -285,79 +549,183 @@
     "ratingText": "Хорошо",
     "minScore": 35,
     "color": "bg-blue-500",
-    "updatedAt": "2025-07-24T22:14:53.084Z"
-  },
-  {
-    "id": 24,
-    "ratingName": "good",
-    "ratingText": "Хорошо",
-    "minScore": 35,
-    "color": "bg-blue-500",
-    "updatedAt": "2025-07-24T22:14:09.261Z"
-  },
-  {
-    "id": 9,
-    "ratingName": "good",
-    "ratingText": "Хорошо",
-    "minScore": 35,
-    "color": "bg-blue-500",
-    "updatedAt": "2025-07-24T22:13:26.067Z"
-  },
-  {
-    "id": 29,
-    "ratingName": "good",
-    "ratingText": "Хорошо",
-    "minScore": 35,
-    "color": "bg-blue-500",
-    "updatedAt": "2025-07-24T22:14:18.713Z"
-  },
-  {
-    "id": 19,
-    "ratingName": "good",
-    "ratingText": "Хорошо",
-    "minScore": 35,
-    "color": "bg-blue-500",
-    "updatedAt": "2025-07-24T22:13:57.046Z"
-  },
-  {
-    "id": 30,
-    "ratingName": "excellent",
-    "ratingText": "Великолепно",
-    "minScore": 50,
-    "color": "bg-green-500",
-    "updatedAt": "2025-07-24T22:14:18.771Z"
-  },
-  {
-    "id": 35,
-    "ratingName": "excellent",
-    "ratingText": "Великолепно",
-    "minScore": 50,
-    "color": "bg-green-500",
-    "updatedAt": "2025-07-24T22:14:38.023Z"
-  },
-  {
-    "id": 15,
-    "ratingName": "excellent",
-    "ratingText": "Великолепно",
-    "minScore": 50,
-    "color": "bg-green-500",
-    "updatedAt": "2025-07-24T22:13:44.119Z"
-  },
-  {
-    "id": 50,
-    "ratingName": "excellent",
-    "ratingText": "Великолепно",
-    "minScore": 50,
-    "color": "bg-green-500",
-    "updatedAt": "2025-07-24T22:19:43.346Z"
+    "updatedAt": "2025-07-24T22:49:56.161Z"
   },
   {
     "id": 40,
+    "ratingName": "good",
+    "ratingText": "Хорошо",
+    "minScore": 35,
+    "color": "bg-blue-500",
+    "updatedAt": "2025-07-24T22:49:56.274Z"
+  },
+  {
+    "id": 41,
+    "ratingName": "good",
+    "ratingText": "Хорошо",
+    "minScore": 35,
+    "color": "bg-blue-500",
+    "updatedAt": "2025-07-24T22:49:56.387Z"
+  },
+  {
+    "id": 42,
+    "ratingName": "good",
+    "ratingText": "Хорошо",
+    "minScore": 35,
+    "color": "bg-blue-500",
+    "updatedAt": "2025-07-24T22:49:56.501Z"
+  },
+  {
+    "id": 43,
+    "ratingName": "good",
+    "ratingText": "Хорошо",
+    "minScore": 35,
+    "color": "bg-blue-500",
+    "updatedAt": "2025-07-24T22:49:56.614Z"
+  },
+  {
+    "id": 44,
+    "ratingName": "good",
+    "ratingText": "Хорошо",
+    "minScore": 35,
+    "color": "bg-blue-500",
+    "updatedAt": "2025-07-24T22:49:56.727Z"
+  },
+  {
+    "id": 45,
+    "ratingName": "good",
+    "ratingText": "Хорошо",
+    "minScore": 35,
+    "color": "bg-blue-500",
+    "updatedAt": "2025-07-24T22:49:56.841Z"
+  },
+  {
+    "id": 86,
+    "ratingName": "good",
+    "ratingText": "Хорошо",
+    "minScore": 35,
+    "color": "bg-blue-500",
+    "updatedAt": "2025-07-24T23:01:36.022Z"
+  },
+  {
+    "id": 87,
+    "ratingName": "good",
+    "ratingText": "Хорошо",
+    "minScore": 35,
+    "color": "bg-blue-500",
+    "updatedAt": "2025-07-24T23:01:36.134Z"
+  },
+  {
+    "id": 88,
+    "ratingName": "good",
+    "ratingText": "Хорошо",
+    "minScore": 35,
+    "color": "bg-blue-500",
+    "updatedAt": "2025-07-24T23:01:36.247Z"
+  },
+  {
+    "id": 89,
+    "ratingName": "good",
+    "ratingText": "Хорошо",
+    "minScore": 35,
+    "color": "bg-blue-500",
+    "updatedAt": "2025-07-24T23:01:36.359Z"
+  },
+  {
+    "id": 90,
+    "ratingName": "good",
+    "ratingText": "Хорошо",
+    "minScore": 35,
+    "color": "bg-blue-500",
+    "updatedAt": "2025-07-24T23:01:36.472Z"
+  },
+  {
+    "id": 91,
+    "ratingName": "good",
+    "ratingText": "Хорошо",
+    "minScore": 35,
+    "color": "bg-blue-500",
+    "updatedAt": "2025-07-24T23:01:36.585Z"
+  },
+  {
+    "id": 93,
+    "ratingName": "good",
+    "ratingText": "Хорошо",
+    "minScore": 35,
+    "color": "bg-blue-500",
+    "updatedAt": "2025-07-24T23:01:36.810Z"
+  },
+  {
+    "id": 94,
+    "ratingName": "good",
+    "ratingText": "Хорошо",
+    "minScore": 35,
+    "color": "bg-blue-500",
+    "updatedAt": "2025-07-24T23:01:36.924Z"
+  },
+  {
+    "id": 95,
+    "ratingName": "good",
+    "ratingText": "Хорошо",
+    "minScore": 35,
+    "color": "bg-blue-500",
+    "updatedAt": "2025-07-24T23:01:37.037Z"
+  },
+  {
+    "id": 46,
     "ratingName": "excellent",
     "ratingText": "Великолепно",
     "minScore": 50,
     "color": "bg-green-500",
-    "updatedAt": "2025-07-24T22:14:53.143Z"
+    "updatedAt": "2025-07-24T22:49:56.954Z"
+  },
+  {
+    "id": 97,
+    "ratingName": "excellent",
+    "ratingText": "Великолепно",
+    "minScore": 50,
+    "color": "bg-green-500",
+    "updatedAt": "2025-07-24T23:01:37.262Z"
+  },
+  {
+    "id": 98,
+    "ratingName": "excellent",
+    "ratingText": "Великолепно",
+    "minScore": 50,
+    "color": "bg-green-500",
+    "updatedAt": "2025-07-24T23:01:37.378Z"
+  },
+  {
+    "id": 99,
+    "ratingName": "excellent",
+    "ratingText": "Великолепно",
+    "minScore": 50,
+    "color": "bg-green-500",
+    "updatedAt": "2025-07-24T23:01:37.491Z"
+  },
+  {
+    "id": 100,
+    "ratingName": "excellent",
+    "ratingText": "Великолепно",
+    "minScore": 50,
+    "color": "bg-green-500",
+    "updatedAt": "2025-07-24T23:01:37.603Z"
+  },
+  {
+    "id": 101,
+    "ratingName": "excellent",
+    "ratingText": "Великолепно",
+    "minScore": 50,
+    "color": "bg-green-500",
+    "updatedAt": "2025-07-24T23:01:37.716Z"
+  },
+  {
+    "id": 102,
+    "ratingName": "excellent",
+    "ratingText": "Великолепно",
+    "minScore": 50,
+    "color": "bg-green-500",
+    "updatedAt": "2025-07-24T23:01:37.829Z"
   },
   {
     "id": 1,
@@ -365,38 +733,110 @@
     "ratingText": "Великолепно",
     "minScore": 50,
     "color": "bg-green-500",
-    "updatedAt": "2025-07-24T22:04:38.560Z"
+    "updatedAt": "2025-07-24T22:46:13.550Z"
   },
   {
-    "id": 10,
+    "id": 103,
     "ratingName": "excellent",
     "ratingText": "Великолепно",
     "minScore": 50,
     "color": "bg-green-500",
-    "updatedAt": "2025-07-24T22:13:26.126Z"
+    "updatedAt": "2025-07-24T23:01:37.941Z"
   },
   {
-    "id": 45,
+    "id": 104,
     "ratingName": "excellent",
     "ratingText": "Великолепно",
     "minScore": 50,
     "color": "bg-green-500",
-    "updatedAt": "2025-07-24T22:18:56.641Z"
+    "updatedAt": "2025-07-24T23:01:38.054Z"
   },
   {
-    "id": 25,
+    "id": 105,
     "ratingName": "excellent",
     "ratingText": "Великолепно",
     "minScore": 50,
     "color": "bg-green-500",
-    "updatedAt": "2025-07-24T22:14:09.320Z"
+    "updatedAt": "2025-07-24T23:01:38.168Z"
   },
   {
-    "id": 20,
+    "id": 96,
     "ratingName": "excellent",
     "ratingText": "Великолепно",
     "minScore": 50,
     "color": "bg-green-500",
-    "updatedAt": "2025-07-24T22:13:57.105Z"
+    "updatedAt": "2025-07-24T23:01:37.150Z"
+  },
+  {
+    "id": 55,
+    "ratingName": "excellent",
+    "ratingText": "Великолепно",
+    "minScore": 50,
+    "color": "bg-green-500",
+    "updatedAt": "2025-07-24T22:49:57.976Z"
+  },
+  {
+    "id": 54,
+    "ratingName": "excellent",
+    "ratingText": "Великолепно",
+    "minScore": 50,
+    "color": "bg-green-500",
+    "updatedAt": "2025-07-24T22:49:57.862Z"
+  },
+  {
+    "id": 53,
+    "ratingName": "excellent",
+    "ratingText": "Великолепно",
+    "minScore": 50,
+    "color": "bg-green-500",
+    "updatedAt": "2025-07-24T22:49:57.748Z"
+  },
+  {
+    "id": 52,
+    "ratingName": "excellent",
+    "ratingText": "Великолепно",
+    "minScore": 50,
+    "color": "bg-green-500",
+    "updatedAt": "2025-07-24T22:49:57.634Z"
+  },
+  {
+    "id": 51,
+    "ratingName": "excellent",
+    "ratingText": "Великолепно",
+    "minScore": 50,
+    "color": "bg-green-500",
+    "updatedAt": "2025-07-24T22:49:57.521Z"
+  },
+  {
+    "id": 50,
+    "ratingName": "excellent",
+    "ratingText": "Великолепно",
+    "minScore": 50,
+    "color": "bg-green-500",
+    "updatedAt": "2025-07-24T22:49:57.408Z"
+  },
+  {
+    "id": 49,
+    "ratingName": "excellent",
+    "ratingText": "Великолепно",
+    "minScore": 50,
+    "color": "bg-green-500",
+    "updatedAt": "2025-07-24T22:49:57.295Z"
+  },
+  {
+    "id": 48,
+    "ratingName": "excellent",
+    "ratingText": "Великолепно",
+    "minScore": 50,
+    "color": "bg-green-500",
+    "updatedAt": "2025-07-24T22:49:57.181Z"
+  },
+  {
+    "id": 47,
+    "ratingName": "excellent",
+    "ratingText": "Великолепно",
+    "minScore": 50,
+    "color": "bg-green-500",
+    "updatedAt": "2025-07-24T22:49:57.068Z"
   }
 ]

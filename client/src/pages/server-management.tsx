@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -60,6 +60,10 @@ export default function ServerManagement() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  const handleDateRangeChange = useCallback((newDateRange: DateRange | undefined) => {
+    setDateRange(newDateRange);
+  }, []);
+
   // Fetch servers
   const { data: servers = [], isLoading: serversLoading, refetch: refetchServers } = useQuery<DiscordServer[]>({
     queryKey: ['/api/servers', dateRange?.from?.toISOString(), dateRange?.to?.toISOString()],
@@ -73,7 +77,7 @@ export default function ServerManagement() {
       }
       return fetch(`/api/servers?${params.toString()}`).then(res => res.json());
     },
-    staleTime: 5000,
+    staleTime: 30000,
     refetchInterval: 10000,
   });
 
@@ -90,7 +94,7 @@ export default function ServerManagement() {
       }
       return fetch(`/api/servers/stats?${params.toString()}`).then(res => res.json());
     },
-    staleTime: 5000,
+    staleTime: 30000,
     refetchInterval: 10000,
   });
 
@@ -229,15 +233,16 @@ export default function ServerManagement() {
             <span className="text-sm text-gray-300 font-medium">Период анализа:</span>
             <DatePickerWithRange 
               date={dateRange}
-              onDateChange={setDateRange}
+              onDateChange={handleDateRangeChange}
               showTime={showTime}
+              requireConfirmation={true}
             />
             <DateTimeToggle 
               showTime={showTime}
               onToggle={setShowTime}
             />
           </div>
-          <QuickDateRanges onDateChange={setDateRange} />
+          <QuickDateRanges onDateChange={handleDateRangeChange} />
         </div>
       </div>
 

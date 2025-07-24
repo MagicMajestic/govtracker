@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { Link } from "wouter";
@@ -69,6 +69,10 @@ export function CuratorsEnhanced() {
     subdivision: "government"
   });
 
+  const handleDateRangeChange = useCallback((newDateRange: DateRange | undefined) => {
+    setDateRange(newDateRange);
+  }, []);
+
   const { data: curators, isLoading, refetch } = useQuery<Curator[]>({
     queryKey: ["/api/curators", dateRange?.from?.toISOString(), dateRange?.to?.toISOString()],
     queryFn: () => {
@@ -81,7 +85,7 @@ export function CuratorsEnhanced() {
       }
       return fetch(`/api/curators?${params.toString()}`).then(res => res.json());
     },
-    staleTime: 5000,
+    staleTime: 30000,
     refetchInterval: 10000
   });
 
@@ -97,7 +101,7 @@ export function CuratorsEnhanced() {
       }
       return fetch(`/api/top-curators?${params.toString()}`).then(res => res.json());
     },
-    staleTime: 5000,
+    staleTime: 30000,
     refetchInterval: 10000
   });
 
@@ -308,8 +312,9 @@ export function CuratorsEnhanced() {
             <span className="text-sm text-gray-300 font-medium">Период активности:</span>
             <DatePickerWithRange 
               date={dateRange}
-              onDateChange={setDateRange}
+              onDateChange={handleDateRangeChange}
               showTime={showTime}
+              requireConfirmation={true}
             />
             <DateTimeToggle 
               showTime={showTime}
@@ -330,7 +335,7 @@ export function CuratorsEnhanced() {
                 </SelectContent>
               </Select>
             </div>
-            <QuickDateRanges onDateChange={setDateRange} />
+            <QuickDateRanges onDateChange={handleDateRangeChange} />
           </div>
         </div>
       </div>

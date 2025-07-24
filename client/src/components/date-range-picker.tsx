@@ -20,6 +20,7 @@ interface DatePickerWithRangeProps {
   date?: DateRange;
   onDateChange?: (date: DateRange | undefined) => void;
   showTime?: boolean;
+  requireConfirmation?: boolean;
 }
 
 interface DateTimeRange extends DateRange {
@@ -32,45 +33,87 @@ export function DatePickerWithRange({
   date,
   onDateChange,
   showTime = false,
+  requireConfirmation = false,
 }: DatePickerWithRangeProps) {
   const [selectedDate, setSelectedDate] = React.useState<DateRange | undefined>(date);
   const [fromTime, setFromTime] = React.useState<string>("00:00");
   const [toTime, setToTime] = React.useState<string>("23:59");
+  const [tempDate, setTempDate] = React.useState<DateRange | undefined>(date);
+  const [tempFromTime, setTempFromTime] = React.useState<string>("00:00");
+  const [tempToTime, setTempToTime] = React.useState<string>("23:59");
+  const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     setSelectedDate(date);
+    setTempDate(date);
   }, [date]);
 
   const handleDateChange = (newDate: DateRange | undefined) => {
-    if (newDate && showTime) {
-      // Объединяем дату и время
-      const dateWithTime = {
-        from: newDate.from ? combineDateTime(newDate.from, fromTime) : undefined,
-        to: newDate.to ? combineDateTime(newDate.to, toTime) : undefined,
-      };
-      setSelectedDate(dateWithTime);
-      onDateChange?.(dateWithTime);
+    if (requireConfirmation) {
+      setTempDate(newDate);
     } else {
-      setSelectedDate(newDate);
-      onDateChange?.(newDate);
+      if (newDate && showTime) {
+        // Объединяем дату и время
+        const dateWithTime = {
+          from: newDate.from ? combineDateTime(newDate.from, fromTime) : undefined,
+          to: newDate.to ? combineDateTime(newDate.to, toTime) : undefined,
+        };
+        setSelectedDate(dateWithTime);
+        onDateChange?.(dateWithTime);
+      } else {
+        setSelectedDate(newDate);
+        onDateChange?.(newDate);
+      }
     }
   };
 
   const handleTimeChange = (timeType: 'from' | 'to', time: string) => {
-    if (timeType === 'from') {
-      setFromTime(time);
+    if (requireConfirmation) {
+      if (timeType === 'from') {
+        setTempFromTime(time);
+      } else {
+        setTempToTime(time);
+      }
     } else {
-      setToTime(time);
-    }
+      if (timeType === 'from') {
+        setFromTime(time);
+      } else {
+        setToTime(time);
+      }
 
-    if (selectedDate) {
+      if (selectedDate) {
+        const dateWithTime = {
+          from: selectedDate.from ? combineDateTime(selectedDate.from, timeType === 'from' ? time : fromTime) : undefined,
+          to: selectedDate.to ? combineDateTime(selectedDate.to, timeType === 'to' ? time : toTime) : undefined,
+        };
+        setSelectedDate(dateWithTime);
+        onDateChange?.(dateWithTime);
+      }
+    }
+  };
+
+  const handleConfirm = () => {
+    if (tempDate && showTime) {
       const dateWithTime = {
-        from: selectedDate.from ? combineDateTime(selectedDate.from, timeType === 'from' ? time : fromTime) : undefined,
-        to: selectedDate.to ? combineDateTime(selectedDate.to, timeType === 'to' ? time : toTime) : undefined,
+        from: tempDate.from ? combineDateTime(tempDate.from, tempFromTime) : undefined,
+        to: tempDate.to ? combineDateTime(tempDate.to, tempToTime) : undefined,
       };
       setSelectedDate(dateWithTime);
+      setFromTime(tempFromTime);
+      setToTime(tempToTime);
       onDateChange?.(dateWithTime);
+    } else {
+      setSelectedDate(tempDate);
+      onDateChange?.(tempDate);
     }
+    setIsOpen(false);
+  };
+
+  const handleCancel = () => {
+    setTempDate(selectedDate);
+    setTempFromTime(fromTime);
+    setTempToTime(toTime);
+    setIsOpen(false);
   };
 
   const combineDateTime = (date: Date, time: string): Date => {
@@ -82,7 +125,7 @@ export function DatePickerWithRange({
 
   return (
     <div className={cn("grid gap-2", className)}>
-      <Popover>
+      <Popover open={requireConfirmation ? isOpen : undefined} onOpenChange={requireConfirmation ? setIsOpen : undefined}>
         <PopoverTrigger asChild>
           <Button
             id="date"
@@ -112,8 +155,8 @@ export function DatePickerWithRange({
             <Calendar
               initialFocus
               mode="range"
-              defaultMonth={selectedDate?.from}
-              selected={selectedDate}
+              defaultMonth={requireConfirmation ? tempDate?.from : selectedDate?.from}
+              selected={requireConfirmation ? tempDate : selectedDate}
               onSelect={handleDateChange}
               numberOfMonths={2}
               className="text-white"
@@ -133,7 +176,7 @@ export function DatePickerWithRange({
                     <Label className="text-xs text-gray-400">С</Label>
                     <Input
                       type="time"
-                      value={fromTime}
+                      value={requireConfirmation ? tempFromTime : fromTime}
                       onChange={(e) => handleTimeChange('from', e.target.value)}
                       className="bg-gray-700 border-gray-600 text-white text-sm"
                     />
@@ -142,12 +185,32 @@ export function DatePickerWithRange({
                     <Label className="text-xs text-gray-400">До</Label>
                     <Input
                       type="time"
-                      value={toTime}
+                      value={requireConfirmation ? tempToTime : toTime}
                       onChange={(e) => handleTimeChange('to', e.target.value)}
                       className="bg-gray-700 border-gray-600 text-white text-sm"
                     />
                   </div>
                 </div>
+              </div>
+            )}
+            
+            {requireConfirmation && (
+              <div className="border-t border-gray-600 pt-4 mt-4 flex justify-end space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCancel}
+                  className="bg-gray-700 border-gray-600 text-white hover:bg-gray-600"
+                >
+                  Отмена
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={handleConfirm}
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  Применить
+                </Button>
               </div>
             )}
           </div>

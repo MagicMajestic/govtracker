@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertCuratorSchema, insertDiscordServerSchema } from "@shared/schema";
 import { startDiscordBot } from "./discord-bot";
+import { setupBackupRoutes } from "./backup-routes.js";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize Discord servers

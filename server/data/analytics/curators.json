@@ -1,0 +1,15 @@
+[
+  {
+    "id": 1,
+    "discordId": "318071839329091584",
+    "name": "Magic",
+    "factions": [
+      "detectives",
+      "weazel"
+    ],
+    "curatorType": "government",
+    "subdivision": "government",
+    "isActive": true,
+    "createdAt": "2025-07-24T20:37:55.965Z"
+  }
+]

@@ -1,0 +1,10 @@
+{
+  "id": 1,
+  "activityPointsMessage": 3,
+  "activityPointsReaction": 1,
+  "activityPointsReply": 2,
+  "activityPointsTaskVerification": 5,
+  "responseTimeGoodSeconds": 60,
+  "responseTimePoorSeconds": 300,
+  "updatedAt": "2025-07-24T20:28:38.188Z"
+}

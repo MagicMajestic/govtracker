@@ -1,0 +1,42 @@
+[
+  {
+    "key": "monitoringEnabled",
+    "value": "true"
+  },
+  {
+    "key": "curatorNotificationEnabled",
+    "value": "true"
+  },
+  {
+    "key": "notificationDelay",
+    "value": "20"
+  },
+  {
+    "key": "keywordDetection",
+    "value": "false"
+  },
+  {
+    "key": "logLevel",
+    "value": "info"
+  },
+  {
+    "key": "repeatNotifications",
+    "value": "false"
+  },
+  {
+    "key": "curatorServerId",
+    "value": "805026457327108126"
+  },
+  {
+    "key": "curatorChannelId",
+    "value": "1397751897632280717"
+  },
+  {
+    "key": "customKeywords",
+    "value": "куратор,curator,помощь,help,вопрос,question"
+  },
+  {
+    "key": "allowedChannels",
+    "value": ""
+  }
+]

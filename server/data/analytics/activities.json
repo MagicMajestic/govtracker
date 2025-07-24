@@ -1,0 +1,282 @@
+[
+  {
+    "id": 8,
+    "curatorId": 1,
+    "serverId": 9,
+    "type": "reply",
+    "channelId": "1397712218228789289",
+    "channelName": "⚡│completed-tasks",
+    "messageId": "1398042580322750548",
+    "content": "+",
+    "reactionEmoji": null,
+    "targetMessageId": "1398042523532001313",
+    "targetMessageContent": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
+    "timestamp": "2025-07-24T20:42:05.760Z",
+    "curator": {
+      "id": 1,
+      "discordId": "318071839329091584",
+      "name": "Magic",
+      "factions": [
+        "detectives",
+        "weazel"
+      ],
+      "curatorType": "government",
+      "subdivision": "government",
+      "isActive": true,
+      "createdAt": "2025-07-24T20:37:55.965Z"
+    },
+    "server": {
+      "id": 9,
+      "serverId": "1369298072647106641",
+      "name": "TEST",
+      "roleTagId": "1369299977494466651",
+      "completedTasksChannelId": "1397712218228789289",
+      "isActive": true
+    }
+  },
+  {
+    "id": 7,
+    "curatorId": 1,
+    "serverId": 9,
+    "type": "task_verification",
+    "channelId": "1397712218228789289",
+    "channelName": "⚡│completed-tasks",
+    "messageId": "1398042580322750548",
+    "content": "Verified 1/1 tasks",
+    "reactionEmoji": null,
+    "targetMessageId": "1398042523532001313",
+    "targetMessageContent": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
+    "timestamp": "2025-07-24T20:42:05.716Z",
+    "curator": {
+      "id": 1,
+      "discordId": "318071839329091584",
+      "name": "Magic",
+      "factions": [
+        "detectives",
+        "weazel"
+      ],
+      "curatorType": "government",
+      "subdivision": "government",
+      "isActive": true,
+      "createdAt": "2025-07-24T20:37:55.965Z"
+    },
+    "server": {
+      "id": 9,
+      "serverId": "1369298072647106641",
+      "name": "TEST",
+      "roleTagId": "1369299977494466651",
+      "completedTasksChannelId": "1397712218228789289",
+      "isActive": true
+    }
+  },
+  {
+    "id": 6,
+    "curatorId": 1,
+    "serverId": 9,
+    "type": "reaction",
+    "channelId": "1397712218228789289",
+    "channelName": "⚡│completed-tasks",
+    "messageId": null,
+    "content": null,
+    "reactionEmoji": "✅",
+    "targetMessageId": "1398042523532001313",
+    "targetMessageContent": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
+    "timestamp": "2025-07-24T20:41:53.612Z",
+    "curator": {
+      "id": 1,
+      "discordId": "318071839329091584",
+      "name": "Magic",
+      "factions": [
+        "detectives",
+        "weazel"
+      ],
+      "curatorType": "government",
+      "subdivision": "government",
+      "isActive": true,
+      "createdAt": "2025-07-24T20:37:55.965Z"
+    },
+    "server": {
+      "id": 9,
+      "serverId": "1369298072647106641",
+      "name": "TEST",
+      "roleTagId": "1369299977494466651",
+      "completedTasksChannelId": "1397712218228789289",
+      "isActive": true
+    }
+  },
+  {
+    "id": 5,
+    "curatorId": 1,
+    "serverId": 9,
+    "type": "message",
+    "channelId": "1397712218228789289",
+    "channelName": "⚡│completed-tasks",
+    "messageId": "1398042523532001313",
+    "content": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
+    "reactionEmoji": null,
+    "targetMessageId": null,
+    "targetMessageContent": null,
+    "timestamp": "2025-07-24T20:41:52.265Z",
+    "curator": {
+      "id": 1,
+      "discordId": "318071839329091584",
+      "name": "Magic",
+      "factions": [
+        "detectives",
+        "weazel"
+      ],
+      "curatorType": "government",
+      "subdivision": "government",
+      "isActive": true,
+      "createdAt": "2025-07-24T20:37:55.965Z"
+    },
+    "server": {
+      "id": 9,
+      "serverId": "1369298072647106641",
+      "name": "TEST",
+      "roleTagId": "1369299977494466651",
+      "completedTasksChannelId": "1397712218228789289",
+      "isActive": true
+    }
+  },
+  {
+    "id": 4,
+    "curatorId": 1,
+    "serverId": 9,
+    "type": "reply",
+    "channelId": "1397712218228789289",
+    "channelName": "⚡│completed-tasks",
+    "messageId": "1398042437779456140",
+    "content": "+",
+    "reactionEmoji": null,
+    "targetMessageId": "1398042259248910376",
+    "targetMessageContent": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
+    "timestamp": "2025-07-24T20:41:31.740Z",
+    "curator": {
+      "id": 1,
+      "discordId": "318071839329091584",
+      "name": "Magic",
+      "factions": [
+        "detectives",
+        "weazel"
+      ],
+      "curatorType": "government",
+      "subdivision": "government",
+      "isActive": true,
+      "createdAt": "2025-07-24T20:37:55.965Z"
+    },
+    "server": {
+      "id": 9,
+      "serverId": "1369298072647106641",
+      "name": "TEST",
+      "roleTagId": "1369299977494466651",
+      "completedTasksChannelId": "1397712218228789289",
+      "isActive": true
+    }
+  },
+  {
+    "id": 3,
+    "curatorId": 1,
+    "serverId": 9,
+    "type": "task_verification",
+    "channelId": "1397712218228789289",
+    "channelName": "⚡│completed-tasks",
+    "messageId": "1398042437779456140",
+    "content": "Verified 1/1 tasks",
+    "reactionEmoji": null,
+    "targetMessageId": "1398042259248910376",
+    "targetMessageContent": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
+    "timestamp": "2025-07-24T20:41:31.691Z",
+    "curator": {
+      "id": 1,
+      "discordId": "318071839329091584",
+      "name": "Magic",
+      "factions": [
+        "detectives",
+        "weazel"
+      ],
+      "curatorType": "government",
+      "subdivision": "government",
+      "isActive": true,
+      "createdAt": "2025-07-24T20:37:55.965Z"
+    },
+    "server": {
+      "id": 9,
+      "serverId": "1369298072647106641",
+      "name": "TEST",
+      "roleTagId": "1369299977494466651",
+      "completedTasksChannelId": "1397712218228789289",
+      "isActive": true
+    }
+  },
+  {
+    "id": 2,
+    "curatorId": 1,
+    "serverId": 9,
+    "type": "reaction",
+    "channelId": "1397712218228789289",
+    "channelName": "⚡│completed-tasks",
+    "messageId": null,
+    "content": null,
+    "reactionEmoji": "✅",
+    "targetMessageId": "1398042259248910376",
+    "targetMessageContent": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
+    "timestamp": "2025-07-24T20:40:56.173Z",
+    "curator": {
+      "id": 1,
+      "discordId": "318071839329091584",
+      "name": "Magic",
+      "factions": [
+        "detectives",
+        "weazel"
+      ],
+      "curatorType": "government",
+      "subdivision": "government",
+      "isActive": true,
+      "createdAt": "2025-07-24T20:37:55.965Z"
+    },
+    "server": {
+      "id": 9,
+      "serverId": "1369298072647106641",
+      "name": "TEST",
+      "roleTagId": "1369299977494466651",
+      "completedTasksChannelId": "1397712218228789289",
+      "isActive": true
+    }
+  },
+  {
+    "id": 1,
+    "curatorId": 1,
+    "serverId": 9,
+    "type": "message",
+    "channelId": "1397712218228789289",
+    "channelName": "⚡│completed-tasks",
+    "messageId": "1398042259248910376",
+    "content": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
+    "reactionEmoji": null,
+    "targetMessageId": null,
+    "targetMessageContent": null,
+    "timestamp": "2025-07-24T20:40:49.162Z",
+    "curator": {
+      "id": 1,
+      "discordId": "318071839329091584",
+      "name": "Magic",
+      "factions": [
+        "detectives",
+        "weazel"
+      ],
+      "curatorType": "government",
+      "subdivision": "government",
+      "isActive": true,
+      "createdAt": "2025-07-24T20:37:55.965Z"
+    },
+    "server": {
+      "id": 9,
+      "serverId": "1369298072647106641",
+      "name": "TEST",
+      "roleTagId": "1369299977494466651",
+      "completedTasksChannelId": "1397712218228789289",
+      "isActive": true
+    }
+  }
+]

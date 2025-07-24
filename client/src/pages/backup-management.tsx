@@ -3,7 +3,10 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Download, Upload, Clock, FileText, Database, AlertCircle } from "lucide-react";
+import { Download, Upload, Clock, FileText, Database, AlertCircle, Settings } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 
@@ -12,6 +15,13 @@ interface BackupStats {
   totalBackups: number;
   settingsFiles: string[];
   analyticsFiles: string[];
+}
+
+interface BackupSettings {
+  frequency: string;
+  isActive: boolean;
+  lastBackup?: string | null;
+  nextBackup?: string | null;
 }
 
 export default function BackupManagement() {
@@ -24,6 +34,12 @@ export default function BackupManagement() {
   const { data: backupStats, isLoading } = useQuery<BackupStats>({
     queryKey: ['/api/backup/stats'],
     refetchInterval: 5000,
+  });
+
+  // Получение настроек резервного копирования
+  const { data: backupSettings, isLoading: settingsLoading } = useQuery<BackupSettings>({
+    queryKey: ['/api/backup/settings'],
+    refetchInterval: 10000,
   });
 
   // Экспорт данных
@@ -90,6 +106,59 @@ export default function BackupManagement() {
     },
   });
 
+  // Сохранение настроек резервного копирования
+  const saveSettingsMutation = useMutation({
+    mutationFn: (settings: { frequency: string; isActive: boolean }) =>
+      fetch('/api/backup/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settings),
+      }).then(res => res.json()),
+    onSuccess: () => {
+      toast({
+        title: "Настройки сохранены",
+        description: "Настройки частоты резервного копирования обновлены",
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/backup/settings'] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Ошибка сохранения",
+        description: error.message || "Не удалось сохранить настройки",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Функция для сохранения частоты
+  const handleFrequencyChange = (frequency: string) => {
+    saveSettingsMutation.mutate({
+      frequency,
+      isActive: backupSettings?.isActive ?? true,
+    });
+  };
+
+  // Функция для переключения активности
+  const handleActiveToggle = (isActive: boolean) => {
+    saveSettingsMutation.mutate({
+      frequency: backupSettings?.frequency || 'daily',
+      isActive,
+    });
+  };
+
+  // Функция для перевода частоты
+  const getFrequencyLabel = (frequency: string) => {
+    const labels: Record<string, string> = {
+      hourly: 'Каждый час',
+      '4hours': 'Каждые 4 часа',
+      '12hours': 'Каждые 12 часов',
+      daily: 'Ежедневно',
+      weekly: 'Еженедельно',
+      monthly: 'Ежемесячно',
+    };
+    return labels[frequency] || frequency;
+  };
+
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -150,6 +219,77 @@ export default function BackupManagement() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Настройки автоматического резервного копирования */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Settings className="h-5 w-5 text-purple-500" />
+            Настройки автоматического резервного копирования
+          </CardTitle>
+          <CardDescription>
+            Конфигурация частоты создания резервных копий без нагрузки на систему
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="backup-active">Автоматическое резервное копирование</Label>
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="backup-active"
+                    checked={backupSettings?.isActive ?? true}
+                    onCheckedChange={handleActiveToggle}
+                    disabled={settingsLoading || saveSettingsMutation.isPending}
+                  />
+                  <Label htmlFor="backup-active" className="text-sm">
+                    {backupSettings?.isActive ? 'Включено' : 'Отключено'}
+                  </Label>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="backup-frequency">Частота резервного копирования</Label>
+                <Select
+                  value={backupSettings?.frequency || 'daily'}
+                  onValueChange={handleFrequencyChange}
+                  disabled={settingsLoading || saveSettingsMutation.isPending}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Выберите частоту" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="hourly">Каждый час</SelectItem>
+                    <SelectItem value="4hours">Каждые 4 часа</SelectItem>
+                    <SelectItem value="12hours">Каждые 12 часов</SelectItem>
+                    <SelectItem value="daily">Ежедневно</SelectItem>
+                    <SelectItem value="weekly">Еженедельно</SelectItem>
+                    <SelectItem value="monthly">Ежемесячно</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <h4 className="font-medium">Текущие настройки:</h4>
+              <div className="text-sm text-muted-foreground space-y-1">
+                <p>• <strong>Частота:</strong> {getFrequencyLabel(backupSettings?.frequency || 'daily')}</p>
+                <p>• <strong>Статус:</strong> {backupSettings?.isActive ? '🟢 Активно' : '🔴 Отключено'}</p>
+                <p>• <strong>Нагрузка:</strong> Минимальная</p>
+                <p>• <strong>Восстановление:</strong> По любому периоду</p>
+              </div>
+              
+              <div className="pt-2 border-t">
+                <p className="text-xs text-muted-foreground">
+                  Система создает отдельные файлы по кураторам и серверам для быстрого доступа к данным 
+                  без нагрузки на основную базу данных.
+                </p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Управление данными */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

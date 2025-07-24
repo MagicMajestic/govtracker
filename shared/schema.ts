@@ -94,7 +94,7 @@ export const taskReports = pgTable("task_reports", {
   curatorName: text("curator_name"), // Имя куратора
   checkedAt: timestamp("checked_at"), // Время проверки
   approvedTasks: integer("approved_tasks"), // Количество одобренных задач
-  status: text("status").notNull().default('pending'), // 'pending', 'checked', 'partial'
+  status: text("status").notNull().default('pending'), // 'pending', 'reviewing', 'verified'
   weekStart: timestamp("week_start").notNull(), // Начало недели для группировки
 });
 

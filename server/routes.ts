@@ -560,6 +560,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/task-reports/stats', async (req, res) => {
     try {
+      const { dateFrom, dateTo } = req.query;
       const servers = await storage.getDiscordServers();
       // Exclude Detectives servers from task report stats
       const filteredServers = servers.filter(server => 
@@ -569,8 +570,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const stats = await Promise.all(
         filteredServers.map(async (server) => {
-          const reports = await storage.getTaskReportsForServer(server.id);
+          const reports = await storage.getTaskReportsForServer(server.id, dateFrom as string, dateTo as string);
           const pending = reports.filter(r => r.status === 'pending').length;
+          const reviewing = reports.filter(r => r.status === 'reviewing').length;
           const verified = reports.filter(r => r.status === 'verified').length;
           const totalTasks = reports.reduce((sum, r) => sum + r.taskCount, 0);
           const approvedTasks = reports
@@ -581,6 +583,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             serverId: server.id,
             serverName: server.name,
             pendingReports: pending,
+            reviewingReports: reviewing,
             verifiedReports: verified,
             totalReports: reports.length,
             totalTasks,

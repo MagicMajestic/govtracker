@@ -2,9 +2,11 @@ import { Client, GatewayIntentBits, Events } from 'discord.js';
 import { storage } from './storage';
 
 const DISCORD_TOKEN = process.env.DISCORD_BOT_TOKEN || "";
-const CURATOR_NOTIFICATION_SERVER_ID = "805026457327108126";
-const CURATOR_NOTIFICATION_CHANNEL_ID = "974783377465036861";
-let NOTIFICATION_DELAY_MS = 20 * 1000; // Default 20 seconds for testing
+
+// These will be loaded from database on startup
+let CURATOR_NOTIFICATION_SERVER_ID = "805026457327108126";
+let CURATOR_NOTIFICATION_CHANNEL_ID = "974783377465036861"; 
+let NOTIFICATION_DELAY_MS = 300 * 1000; // Default 5 minutes, loaded from DB
 
 // Map server names to Discord role IDs for curator notifications
 const CURATOR_ROLES: Record<string, string> = {
@@ -34,6 +36,28 @@ export const connectedServers = new Set<string>();
 let discordClient: Client | null = null;
 
 // Function to update connected servers list
+// Function to load settings from database
+async function loadBotSettings() {
+  try {
+    // Load notification settings
+    const notificationSettings = await storage.getNotificationSettings();
+    if (notificationSettings) {
+      CURATOR_NOTIFICATION_SERVER_ID = notificationSettings.notificationServerId;
+      CURATOR_NOTIFICATION_CHANNEL_ID = notificationSettings.notificationChannelId;
+      console.log(`✅ Loaded notification settings from DB: Server ${CURATOR_NOTIFICATION_SERVER_ID}, Channel ${CURATOR_NOTIFICATION_CHANNEL_ID}`);
+    }
+    
+    // Load notification delay
+    const notificationDelay = await storage.getBotSetting('notificationDelay', '300');
+    NOTIFICATION_DELAY_MS = parseInt(notificationDelay || '300') * 1000;
+    console.log(`✅ Loaded notification delay from DB: ${NOTIFICATION_DELAY_MS/1000} seconds`);
+    
+  } catch (error) {
+    console.error('Error loading bot settings from database:', error);
+    console.log('📍 Using default values');
+  }
+}
+
 export async function updateConnectedServers() {
   if (!discordClient) {
     console.log('Discord client not ready yet');
@@ -78,6 +102,9 @@ export function startDiscordBot() {
 
   client.once(Events.ClientReady, async (readyClient) => {
     console.log(`Discord bot ready! Logged in as ${readyClient.user.tag}`);
+    
+    // Load settings from database first
+    await loadBotSettings();
     
     // Verify server connections and update connected servers set
     const servers = await storage.getDiscordServers();
@@ -128,16 +155,7 @@ export function startDiscordBot() {
     }
     console.log(`📋 Current pending notifications:`, pendingNotifications.size);
 
-    // Load notification delay from settings
-    console.log(`\n⚙️ LOADING BOT SETTINGS:`);
-    try {
-      const notificationDelay = await storage.getBotSetting('notificationDelay', '20');
-      NOTIFICATION_DELAY_MS = parseInt(notificationDelay || '20') * 1000;
-      console.log(`✅ Notification delay set to: ${NOTIFICATION_DELAY_MS/1000} seconds (${NOTIFICATION_DELAY_MS/1000/60} minutes)`);
-    } catch (error) {
-      console.error('Error loading bot settings:', error);
-      console.log(`📍 Using default notification delay: ${NOTIFICATION_DELAY_MS/1000} seconds`);
-    }
+    // Settings have already been loaded by loadBotSettings()
 
     // Check for any unresponded messages in response_tracking and reschedule notifications
     console.log(`\n🔍 CHECKING FOR UNRESPONDED MESSAGES:`);
@@ -298,20 +316,36 @@ export function startDiscordBot() {
         - Has reference (is reply): ${message.reference ? 'YES' : 'NO'}
         - Reference ID: ${message.reference?.messageId || 'None'}`);
 
-      // Handle task submissions in completed-tasks channels (from non-curators AND curators in test server)
+      // Handle task submissions in completed-tasks channels - ONLY messages with curator role tags
       if (isCompletedTasksChannel && !message.reference) {
         const isTestServer = server.name === 'Test Server' || server.name === 'Test' || server.name === 'TEST';
+        
+        // Check if message contains curator role tag or keywords
+        const hasCuratorMention = message.content && (
+          (server.roleTagId && message.content.includes(`<@&${server.roleTagId}>`)) ||
+          message.content.toLowerCase().includes('куратор') ||
+          message.content.toLowerCase().includes('curator') ||
+          message.content.toLowerCase().includes('помощь') ||
+          message.content.toLowerCase().includes('help') ||
+          message.content.toLowerCase().includes('вопрос') ||
+          message.content.toLowerCase().includes('question')
+        );
+        
         console.log(`🔍 TASK CHANNEL CHECK:
           - Channel ID: ${message.channelId}
           - Server completed tasks channel: ${server.completedTasksChannelId}
           - Channel name: ${message.channel && 'name' in message.channel ? message.channel.name : 'Unknown'}
           - Is test server: ${isTestServer} (server name: ${server.name})
           - Author is curator: ${curator ? curator.name : 'No'}
+          - Has curator mention/keywords: ${hasCuratorMention}
           - Message content: "${message.content}"`);
         
-        if (!curator || isTestServer) {
+        // Only create task reports for messages WITH curator mentions/keywords
+        if (hasCuratorMention && (!curator || isTestServer)) {
           await handleTaskSubmission(message, server, curator);
-        } else {
+        } else if (!hasCuratorMention) {
+          console.log(`⚠️ Message in completed-tasks channel has no curator mention/keywords - skipping task submission`);
+        } else if (curator) {
           console.log(`⚠️ Non-test server curator ${curator.name} posted in completed-tasks - skipping task submission`);
         }
       }
@@ -746,6 +780,23 @@ export function startDiscordBot() {
 
       // Extract task information from message content
       const content = message.content;
+      
+      // ВАЖНО: Проверяем наличие тегов кураторов или ключевых слов - БЕЗ ЭТОГО НЕ СОЗДАЕМ ОТЧЕТ
+      const hasCuratorMention = content && (
+        (server.roleTagId && content.includes(`<@&${server.roleTagId}>`)) ||
+        content.toLowerCase().includes('куратор') ||
+        content.toLowerCase().includes('curator') ||
+        content.toLowerCase().includes('помощь') ||
+        content.toLowerCase().includes('help') ||
+        content.toLowerCase().includes('вопрос') ||
+        content.toLowerCase().includes('question')
+      );
+      
+      if (!hasCuratorMention) {
+        console.log(`⚠️ Message "${content}" has no curator mention/keywords - SKIPPING task submission`);
+        return;
+      }
+      
       const taskCount = extractTaskCount(content);
       
       console.log(`🔢 TASK COUNT EXTRACTION: "${content}" → ${taskCount} tasks`);
@@ -798,19 +849,31 @@ export function startDiscordBot() {
         return;
       }
 
-      if (taskReport.status !== 'pending') {
+      // НОВАЯ ЛОГИКА: Проверяем статус отчета
+      if (taskReport.status === 'verified') {
         console.log(`⚠️ Task report ${taskReport.id} already verified`);
         return;
       }
+      
+      // Если статус не "reviewing", то куратор должен сначала поставить реакцию
+      if (taskReport.status === 'pending') {
+        console.log(`⚠️ Task report ${taskReport.id} is still pending. Curator should react first to start review.`);
+        return;
+      }
+      
+      // Проверяем, что это тот же куратор, который начал проверку
+      if (taskReport.status === 'reviewing' && taskReport.curatorId !== curator.id) {
+        console.log(`⚠️ Task report ${taskReport.id} is being reviewed by another curator (${taskReport.curatorName})`);
+        return;
+      }
+      
+      console.log(`✅ CURATOR REPLY VERIFICATION: ${curator.name} is completing the review`);
 
       // Extract approval count from curator message
       const approvedTasks = extractApprovalCount(message.content, taskReport.taskCount);
       
-      // Update task report with curator verification
+      // Финальное обновление - статус "verified" и количество одобренных задач
       await storage.updateTaskReport(taskReport.id, {
-        curatorId: curator.id,
-        curatorDiscordId: curator.discordId,
-        curatorName: curator.name,
         checkedAt: message.createdAt,
         status: 'verified',
         approvedTasks: approvedTasks
@@ -847,44 +910,33 @@ export function startDiscordBot() {
         return;
       }
 
-      if (taskReport.status !== 'pending') {
-        console.log(`⚠️ Task report ${taskReport.id} already verified`);
+      // НОВАЯ ЛОГИКА: При реакции куратора, отчет переходит в статус "reviewing" (На проверке)
+      if (taskReport.status === 'pending') {
+        console.log(`🔄 TASK STATUS UPDATE: Moving to "reviewing" status for curator ${curator.name}`);
+        
+        // Обновляем статус на "reviewing" (На проверке) с информацией о кураторе
+        await storage.updateTaskReport(taskReport.id, {
+          curatorId: curator.id,
+          curatorDiscordId: curator.discordId,
+          curatorName: curator.name,
+          status: 'reviewing'  // На проверке: (никнейм куратора)
+        });
+        
+        console.log(`✅ TASK STATUS UPDATED: На проверке: ${curator.name}`);
+        return; // Выходим, ждем ответа куратора
+      }
+      
+      // Task report already processed
+      if (taskReport.status === 'verified') {
+        console.log(`⚠️ Task report already verified`);
         return;
       }
-
-      // Map emojis to approval counts
-      const emojiApprovals = getEmojiApprovalMapping(reaction.emoji.name || reaction.emoji.toString(), taskReport.taskCount);
       
-      if (emojiApprovals === null) {
-        console.log(`⚠️ Unknown verification emoji: ${reaction.emoji.name || reaction.emoji.toString()}`);
+      // Если статус уже "reviewing", то реакции игнорируются - нужен ОТВЕТ
+      if (taskReport.status === 'reviewing') {
+        console.log(`⚠️ Task report is already under review. Curator must REPLY to complete verification.`);
         return;
       }
-
-      // Update task report with emoji verification
-      await storage.updateTaskReport(taskReport.id, {
-        curatorId: curator.id,
-        curatorDiscordId: curator.discordId,
-        curatorName: curator.name,
-        checkedAt: new Date(),
-        status: 'verified',
-        approvedTasks: emojiApprovals
-      });
-
-      console.log(`✅ TASK VERIFIED VIA EMOJI: ${curator.name} (${curator.factions?.[0]}) approved ${emojiApprovals}/${taskReport.taskCount} tasks`);
-      
-      // Create special activity for emoji task verification
-      await storage.createActivity({
-        curatorId: curator.id,
-        serverId: server.id,
-        type: 'task_verification',
-        channelId: reaction.message.channelId,
-        channelName: reaction.message.channel && 'name' in reaction.message.channel ? reaction.message.channel.name : null,
-        messageId: null,
-        content: `Verified ${emojiApprovals}/${taskReport.taskCount} tasks via ${reaction.emoji.name || reaction.emoji.toString()}`,
-        reactionEmoji: reaction.emoji.name || reaction.emoji.toString(),
-        targetMessageId: reaction.message.id,
-        targetMessageContent: taskReport.content
-      });
 
     } catch (error) {
       console.error('Error handling task reaction verification:', error);

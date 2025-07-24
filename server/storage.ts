@@ -692,7 +692,7 @@ export class DatabaseStorage implements IStorage {
     try {
       // Get all active curators
       console.log("About to call getCurators()...");
-      const allCurators = await this.getCurators();
+      const allCurators = await this.getCurators(dateFrom, dateTo);
       console.log("Found curators:", allCurators.length);
       
       if (allCurators.length === 0) {
@@ -735,7 +735,22 @@ export class DatabaseStorage implements IStorage {
         const messages = curatorActivities.filter(a => a.type === 'message').length;
         const reactions = curatorActivities.filter(a => a.type === 'reaction').length;
         const replies = curatorActivities.filter(a => a.type === 'reply').length;
-        const taskVerifications = curatorActivities.filter(a => a.type === 'task_verification').length;
+        
+        // Get task verifications count from taskReports table with date filtering
+        const taskConditions = [eq(taskReports.curatorId, curator.id)];
+        if (dateFrom) {
+          taskConditions.push(sql`${taskReports.checkedAt} >= ${dateFrom.toISOString()}`);
+        }
+        if (dateTo) {
+          taskConditions.push(sql`${taskReports.checkedAt} <= ${dateTo.toISOString()}`);
+        }
+        
+        const taskVerificationsFromDB = await db
+          .select({ count: sql<number>`count(*)` })
+          .from(taskReports)
+          .where(and(...taskConditions));
+        
+        const taskVerifications = taskVerificationsFromDB[0]?.count || 0;
         
         // Get dynamic scoring configuration
         const globalConfig = await this.getGlobalRatingConfig();
@@ -744,7 +759,7 @@ export class DatabaseStorage implements IStorage {
         const reactionPoints = globalConfig?.activityPointsReaction || 1;
         const taskPoints = globalConfig?.activityPointsTaskVerification || 5;
         
-        // Enhanced scoring with configurable points
+        // Enhanced scoring with configurable points including verified tasks
         const score = messages * messagePoints + replies * replyPoints + reactions * reactionPoints + taskVerifications * taskPoints;
         
         // Calculate average response time using response tracking

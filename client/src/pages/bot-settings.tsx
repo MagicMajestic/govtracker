@@ -30,6 +30,15 @@ interface GlobalRatingConfig {
   responseTimePoorSeconds: number;
 }
 
+interface NotificationSettings {
+  id: number;
+  notificationServerId: string;
+  notificationChannelId: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export default function BotSettings() {
   const [botConfig, setBotConfig] = useState({
     monitoringEnabled: "true",
@@ -54,6 +63,7 @@ export default function BotSettings() {
     responseTimeGoodSeconds: 60,
     responseTimePoorSeconds: 300,
   });
+  const [notificationSettings, setNotificationSettings] = useState<NotificationSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
@@ -62,15 +72,17 @@ export default function BotSettings() {
   useEffect(() => {
     const loadSettings = async () => {
       try {
-        const [botResponse, ratingResponse, globalResponse] = await Promise.all([
+        const [botResponse, ratingResponse, globalResponse, notificationResponse] = await Promise.all([
           fetch('/api/bot-settings'),
           fetch('/api/rating-settings'),
-          fetch('/api/global-rating-config')
+          fetch('/api/global-rating-config'),
+          fetch('/api/notification-settings')
         ]);
         
         const settings = await botResponse.json();
         const ratings = await ratingResponse.json();
         const global = await globalResponse.json();
+        const notifications = await notificationResponse.json();
         
         // Update state with loaded settings, keep defaults for missing keys
         setBotConfig(prev => ({
@@ -82,6 +94,7 @@ export default function BotSettings() {
         if (global) {
           setGlobalConfig(global);
         }
+        setNotificationSettings(notifications);
       } catch (error) {
         console.error('Error loading settings:', error);
         toast({
@@ -175,6 +188,38 @@ export default function BotSettings() {
     setRatingSettings(updated);
   };
 
+  const saveNotificationSettings = async (serverId: string, channelId: string) => {
+    setSaving(true);
+    try {
+      const method = notificationSettings ? 'PUT' : 'POST';
+      const response = await fetch('/api/notification-settings', {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          notificationServerId: serverId,
+          notificationChannelId: channelId,
+        }),
+      });
+
+      const result = await response.json();
+      setNotificationSettings(result);
+      
+      toast({
+        title: "Сохранено",
+        description: "Настройки каналов уведомлений обновлены",
+      });
+    } catch (error) {
+      console.error('Error saving notification settings:', error);
+      toast({
+        title: "Ошибка",
+        description: "Не удалось сохранить настройки каналов",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const updateGlobalConfig = (field: keyof GlobalRatingConfig, value: any) => {
     if (field === 'id') return; // Don't allow changing ID
     setGlobalConfig(prev => ({
@@ -203,9 +248,12 @@ export default function BotSettings() {
         </div>
 
         <Tabs defaultValue="basic" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 bg-[#1a1a1a] border-gray-700">
+          <TabsList className="grid w-full grid-cols-3 bg-[#1a1a1a] border-gray-700">
             <TabsTrigger value="basic" className="text-white data-[state=active]:bg-blue-600">
               Основные настройки
+            </TabsTrigger>
+            <TabsTrigger value="notifications" className="text-white data-[state=active]:bg-blue-600">
+              Каналы уведомлений
             </TabsTrigger>
             <TabsTrigger value="performance" className="text-white data-[state=active]:bg-blue-600">
               Оценка производительности
@@ -449,6 +497,127 @@ export default function BotSettings() {
                 {saving ? "Сохранение..." : "Сохранить основные настройки"}
               </Button>
             </div>
+          </TabsContent>
+
+          <TabsContent value="notifications" className="space-y-6">
+            <Card className="bg-[#1a1a1a] border-gray-700">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <MessageSquare className="h-5 w-5 text-blue-500" />
+                  Настройка каналов уведомлений
+                </CardTitle>
+                <CardDescription className="text-gray-400">
+                  Выберите Discord сервер и канал для отправки уведомлений кураторам
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <Label htmlFor="notification-server" className="text-white">
+                      ID Discord сервера
+                    </Label>
+                    <Input
+                      id="notification-server"
+                      value={notificationSettings?.notificationServerId || "805026457327108126"}
+                      onChange={(e) => {
+                        const serverId = e.target.value;
+                        setNotificationSettings(prev => prev ? 
+                          { ...prev, notificationServerId: serverId } : 
+                          { 
+                            id: 0, 
+                            notificationServerId: serverId, 
+                            notificationChannelId: "974783377465036861", 
+                            isActive: true, 
+                            createdAt: new Date().toISOString(),
+                            updatedAt: new Date().toISOString()
+                          }
+                        );
+                      }}
+                      className="bg-[#2a2a2a] border-gray-600 text-white mt-1"
+                      placeholder="Введите ID сервера Discord"
+                    />
+                    <p className="text-xs text-gray-400 mt-1">
+                      Сервер, куда будут отправляться уведомления
+                    </p>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="notification-channel" className="text-white">
+                      ID канала уведомлений
+                    </Label>
+                    <Input
+                      id="notification-channel"
+                      value={notificationSettings?.notificationChannelId || "974783377465036861"}
+                      onChange={(e) => {
+                        const channelId = e.target.value;
+                        setNotificationSettings(prev => prev ? 
+                          { ...prev, notificationChannelId: channelId } : 
+                          { 
+                            id: 0, 
+                            notificationServerId: "805026457327108126", 
+                            notificationChannelId: channelId, 
+                            isActive: true, 
+                            createdAt: new Date().toISOString(),
+                            updatedAt: new Date().toISOString()
+                          }
+                        );
+                      }}
+                      className="bg-[#2a2a2a] border-gray-600 text-white mt-1"
+                      placeholder="Введите ID канала"
+                    />
+                    <p className="text-xs text-gray-400 mt-1">
+                      Конкретный канал в сервере для уведомлений
+                    </p>
+                  </div>
+                </div>
+
+                <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <MessageSquare className="h-4 w-4 text-blue-400" />
+                    <span className="text-blue-400 font-medium">Предварительный просмотр</span>
+                  </div>
+                  <div className="bg-[#0a0a0a] rounded p-3 font-mono text-sm text-gray-300">
+                    @here https://discord.com/channels/SERVER_ID/CHANNEL_ID/MESSAGE_ID без ответа уже 5 мин.
+                  </div>
+                  <p className="text-xs text-gray-400 mt-2">
+                    Сервер: {notificationSettings?.notificationServerId || "не установлен"}<br />
+                    Канал: {notificationSettings?.notificationChannelId || "не установлен"}
+                  </p>
+                </div>
+
+                <div className="flex gap-3">
+                  <Button 
+                    onClick={() => saveNotificationSettings(
+                      notificationSettings?.notificationServerId || "805026457327108126",
+                      notificationSettings?.notificationChannelId || "974783377465036861"
+                    )}
+                    disabled={saving}
+                    className="bg-blue-600 hover:bg-blue-700"
+                  >
+                    {saving ? "Сохранение..." : "Сохранить настройки"}
+                  </Button>
+                  
+                  {notificationSettings && (
+                    <Badge variant="outline" className="text-green-400 border-green-400 h-10 px-3 flex items-center">
+                      <div className="w-2 h-2 bg-green-400 rounded-full mr-2" />
+                      Настроено
+                    </Badge>
+                  )}
+                </div>
+
+                <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Target className="h-4 w-4 text-yellow-400" />
+                    <span className="text-yellow-400 font-medium">Как получить ID</span>
+                  </div>
+                  <div className="space-y-2 text-sm text-gray-300">
+                    <p>1. Включите режим разработчика в Discord: Настройки → Продвинутые → Режим разработчика</p>
+                    <p>2. Для ID сервера: Правый клик на сервер → Копировать ID</p>
+                    <p>3. Для ID канала: Правый клик на канал → Копировать ID</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="performance" className="space-y-6">

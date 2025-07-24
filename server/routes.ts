@@ -555,6 +555,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Notification settings routes
+  app.get('/api/notification-settings', async (req, res) => {
+    try {
+      const settings = await storage.getNotificationSettings();
+      res.json(settings || null);
+    } catch (error) {
+      console.error('Error getting notification settings:', error);
+      res.status(500).json({ error: 'Failed to get notification settings' });
+    }
+  });
+
+  app.post('/api/notification-settings', async (req, res) => {
+    try {
+      const settings = await storage.setNotificationSettings(req.body);
+      res.json(settings);
+    } catch (error) {
+      console.error('Error setting notification settings:', error);
+      res.status(500).json({ error: 'Failed to set notification settings' });
+    }
+  });
+
+  app.put('/api/notification-settings', async (req, res) => {
+    try {
+      const settings = await storage.updateNotificationSettings(req.body);
+      if (!settings) {
+        return res.status(404).json({ error: 'No notification settings found' });
+      }
+      res.json(settings);
+    } catch (error) {
+      console.error('Error updating notification settings:', error);
+      res.status(500).json({ error: 'Failed to update notification settings' });
+    }
+  });
+
   // Start Discord bot
   startDiscordBot();
 

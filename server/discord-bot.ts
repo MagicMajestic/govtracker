@@ -24,6 +24,32 @@ const pendingNotifications = new Map();
 // Set to track connected servers
 export const connectedServers = new Set<string>();
 
+// Global reference to the Discord client
+let discordClient: Client | null = null;
+
+// Function to update connected servers list
+export async function updateConnectedServers() {
+  if (!discordClient) {
+    console.log('Discord client not ready yet');
+    return;
+  }
+
+  const servers = await storage.getDiscordServers();
+  console.log(`🔄 Updating connected servers list (${servers.length} servers in database)`);
+  
+  connectedServers.clear();
+  servers.forEach(server => {
+    const guild = discordClient!.guilds.cache.get(server.serverId);
+    const isConnected = !!guild;
+    console.log(`- ${server.name} (${server.serverId}): ${isConnected ? 'Connected' : 'Not Found'}`);
+    if (isConnected) {
+      connectedServers.add(server.serverId);
+    }
+  });
+  
+  console.log(`✅ Connected servers updated: ${Array.from(connectedServers)}`);
+}
+
 export function startDiscordBot() {
   if (!DISCORD_TOKEN) {
     console.error('DISCORD_BOT_TOKEN environment variable is required');
@@ -39,6 +65,9 @@ export function startDiscordBot() {
     ],
   });
 
+  // Store client reference for later use
+  discordClient = client;
+
   client.once(Events.ClientReady, async (readyClient) => {
     console.log(`Discord bot ready! Logged in as ${readyClient.user.tag}`);
     
@@ -52,6 +81,22 @@ export function startDiscordBot() {
       console.log(`- ${server.name}: ${isConnected ? 'Connected' : 'Not Found'}`);
       if (isConnected) {
         connectedServers.add(server.serverId);
+        
+        // Check permissions for Test server specifically
+        if (server.name === 'Test' && server.completedTasksChannelId) {
+          const channel = guild.channels.cache.get(server.completedTasksChannelId);
+          if (channel) {
+            console.log(`✅ Found Test server completed-tasks channel: ${channel.name}`);
+            const permissions = channel.permissionsFor(client.user!);
+            console.log(`📝 Bot permissions in completed-tasks channel:
+              - View Channel: ${permissions?.has('ViewChannel')}
+              - Read Message History: ${permissions?.has('ReadMessageHistory')}
+              - Send Messages: ${permissions?.has('SendMessages')}
+              - Add Reactions: ${permissions?.has('AddReactions')}`);
+          } else {
+            console.log(`❌ Cannot find completed-tasks channel ${server.completedTasksChannelId} in Test server`);
+          }
+        }
       }
     });
 
@@ -157,7 +202,11 @@ export function startDiscordBot() {
   client.on(Events.MessageCreate, async (message) => {
     if (message.author.bot) return;
 
-    console.log(`[BOT] Message received from ${message.author.username} (${message.author.id}) in guild ${message.guildId} - Content: "${message.content}"`);
+    console.log(`🔔 [BOT] NEW MESSAGE EVENT: ${message.author.username} (${message.author.id}) in guild ${message.guildId}`);
+    console.log(`📝 Message content: "${message.content}"`);
+    console.log(`📍 Channel ID: ${message.channelId}`);
+    console.log(`🆔 Message ID: ${message.id}`);
+    console.log(`⏰ Timestamp: ${message.createdAt}`);
 
     try {
       // First, get server info
@@ -229,17 +278,25 @@ export function startDiscordBot() {
         message.channel.name?.toLowerCase().includes('completed-tasks')) ||
         (server.completedTasksChannelId && message.channelId === server.completedTasksChannelId);
 
+      console.log(`🔍 COMPLETED TASKS CHANNEL CHECK:
+        - Channel ID: ${message.channelId}
+        - Server completed tasks channel: ${server.completedTasksChannelId}
+        - Channel name: ${message.channel && 'name' in message.channel ? message.channel.name : 'Unknown'}
+        - Is completed tasks channel: ${isCompletedTasksChannel}
+        - Has reference (is reply): ${message.reference ? 'YES' : 'NO'}
+        - Reference ID: ${message.reference?.messageId || 'None'}`);
+
       // Handle task submissions in completed-tasks channels (from non-curators AND curators in test server)
       if (isCompletedTasksChannel && !message.reference) {
+        const isTestServer = server.name === 'Test Server' || server.name === 'Test';
         console.log(`🔍 TASK CHANNEL CHECK:
           - Channel ID: ${message.channelId}
           - Server completed tasks channel: ${server.completedTasksChannelId}
           - Channel name: ${message.channel && 'name' in message.channel ? message.channel.name : 'Unknown'}
-          - Is test server: ${server.name === 'Test Server'}
+          - Is test server: ${isTestServer} (server name: ${server.name})
           - Author is curator: ${curator ? curator.name : 'No'}
           - Message content: "${message.content}"`);
         
-        const isTestServer = server.name === 'Test Server';
         if (!curator || isTestServer) {
           await handleTaskSubmission(message, server, curator);
         } else {
@@ -478,10 +535,26 @@ export function startDiscordBot() {
         return;
       }
 
+      // Get notification settings from database
+      const notificationSettings = await storage.getNotificationSettings();
+      let serverId = CURATOR_NOTIFICATION_SERVER_ID;
+      let channelId = CURATOR_NOTIFICATION_CHANNEL_ID;
+      
+      if (notificationSettings) {
+        serverId = notificationSettings.notificationServerId;
+        channelId = notificationSettings.notificationChannelId;
+        console.log(`📡 Using notification settings from database:`, {
+          serverId,
+          channelId
+        });
+      } else {
+        console.log(`📡 Using default notification settings`);
+      }
+
       // Normal handling for other servers
-      const curatorServer = client.guilds.cache.get(CURATOR_NOTIFICATION_SERVER_ID);
+      const curatorServer = client.guilds.cache.get(serverId);
       if (!curatorServer) {
-        console.log(`❌ Curator notification server ${CURATOR_NOTIFICATION_SERVER_ID} not found`);
+        console.log(`❌ Curator notification server ${serverId} not found`);
         console.log(`Available servers:`, client.guilds.cache.map(g => `${g.name} (${g.id})`));
         return;
       }
@@ -489,10 +562,10 @@ export function startDiscordBot() {
       console.log(`✅ Found curator server: ${curatorServer.name}`);
 
       // Find the specific notification channel
-      const notificationChannel = curatorServer.channels.cache.get(CURATOR_NOTIFICATION_CHANNEL_ID);
+      const notificationChannel = curatorServer.channels.cache.get(channelId);
 
       if (!notificationChannel || !notificationChannel.isTextBased()) {
-        console.log(`❌ Curator notification channel ${CURATOR_NOTIFICATION_CHANNEL_ID} not found or not text-based`);
+        console.log(`❌ Curator notification channel ${channelId} not found or not text-based`);
         console.log(`Available channels:`, curatorServer.channels.cache.map(c => `${c.name} (${c.id})`));
         return;
       }
@@ -594,9 +667,10 @@ export function startDiscordBot() {
       }
       
       // Only faction leaders (non-curators) can submit tasks, EXCEPT in test server
-      const isTestServer = server.name === 'Test Server';
+      const isTestServer = server.name === 'Test Server' || server.name === 'Test';
+      console.log(`🔍 Server check: ${server.name} - isTestServer: ${isTestServer}, hasCurator: ${!!curator}`);
       if (curator && !isTestServer) {
-        console.log(`⚠️ Curator ${curator.name} posted in completed-tasks channel - not a task submission (not test server)`);
+        console.log(`⚠️ Non-test server curator ${curator.name} posted in completed-tasks - skipping task submission`);
         return;
       }
 
@@ -604,8 +678,11 @@ export function startDiscordBot() {
       const content = message.content;
       const taskCount = extractTaskCount(content);
       
+      console.log(`🔢 TASK COUNT EXTRACTION: "${content}" → ${taskCount} tasks`);
+      
       if (taskCount === 0) {
-        console.log(`⚠️ Could not extract task count from message: ${content}`);
+        console.log(`⚠️ Could not extract task count from message: "${content}"`);
+        console.log(`📝 Supported patterns: "5 задач", "10 заданий", "15 тасков", "20 tasks", или число от 1-50`);
         return;
       }
 

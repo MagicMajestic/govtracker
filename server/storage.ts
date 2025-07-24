@@ -8,6 +8,7 @@ import {
   ratingSettings,
   globalRatingConfig,
   taskReports,
+  notificationSettings,
   type Curator, 
   type InsertCurator,
   type Activity,
@@ -25,11 +26,13 @@ import {
   type GlobalRatingConfig,
   type InsertGlobalRatingConfig,
   type TaskReport,
-  type InsertTaskReport
+  type InsertTaskReport,
+  type NotificationSettings,
+  type InsertNotificationSettings
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, sql, count } from "drizzle-orm";
-import { connectedServers } from "./discord-bot";
+import { connectedServers, updateConnectedServers } from "./discord-bot";
 
 export interface IStorage {
   // User methods
@@ -98,6 +101,11 @@ export interface IStorage {
     totalApproved: number;
     averageApprovalRate: number;
   }>;
+  
+  // Notification settings methods
+  getNotificationSettings(): Promise<NotificationSettings | undefined>;
+  setNotificationSettings(settings: InsertNotificationSettings): Promise<NotificationSettings>;
+  updateNotificationSettings(settings: Partial<InsertNotificationSettings>): Promise<NotificationSettings | undefined>;
   
   // Statistics methods
   getCuratorStats(curatorId?: number): Promise<any>;
@@ -744,6 +752,9 @@ export class DatabaseStorage implements IStorage {
 
   async getServerStats(): Promise<any> {
     try {
+      // Update connected servers list to include newly added servers
+      await updateConnectedServers();
+      
       const servers = await this.getDiscordServers();
       const serverStatsPromises = servers.map(async (server) => {
         // Get activities for this server
@@ -797,6 +808,10 @@ export class DatabaseStorage implements IStorage {
           })
         );
 
+        const isConnected = connectedServers.has(server.serverId);
+        console.log(`🔍 Server connection check: ${server.name} (${server.serverId}) - Connected: ${isConnected}`);
+        console.log(`🔍 Connected servers set:`, Array.from(connectedServers));
+
         return {
           id: server.id,
           serverId: server.serverId,
@@ -816,7 +831,7 @@ export class DatabaseStorage implements IStorage {
           reactions,
           replies,
           avgResponseTime,
-          connected: connectedServers.has(server.serverId),
+          connected: isConnected,
           topCurators
         };
       });
@@ -919,6 +934,44 @@ export class DatabaseStorage implements IStorage {
       totalApproved: result.totalApproved || 0,
       averageApprovalRate
     };
+  }
+
+  // Notification settings methods
+  async getNotificationSettings(): Promise<NotificationSettings | undefined> {
+    const [settings] = await db
+      .select()
+      .from(notificationSettings)
+      .where(eq(notificationSettings.isActive, true))
+      .limit(1);
+    return settings || undefined;
+  }
+
+  async setNotificationSettings(settings: InsertNotificationSettings): Promise<NotificationSettings> {
+    // Deactivate all existing settings first
+    await db
+      .update(notificationSettings)
+      .set({ isActive: false });
+    
+    // Insert new settings
+    const [newSettings] = await db
+      .insert(notificationSettings)
+      .values({ ...settings, isActive: true })
+      .returning();
+    return newSettings;
+  }
+
+  async updateNotificationSettings(settings: Partial<InsertNotificationSettings>): Promise<NotificationSettings | undefined> {
+    const currentSettings = await this.getNotificationSettings();
+    if (!currentSettings) {
+      return undefined;
+    }
+
+    const [updated] = await db
+      .update(notificationSettings)
+      .set({ ...settings, updatedAt: new Date() })
+      .where(eq(notificationSettings.id, currentSettings.id))
+      .returning();
+    return updated || undefined;
   }
 }
 

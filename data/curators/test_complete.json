@@ -1,10 +1,13 @@
 {
-  "server": {
-    "id": 6,
-    "name": "EMS",
-    "serverId": "728354410832330782",
-    "roleTagId": null,
-    "completedTasksChannelId": null
+  "curator": {
+    "id": 4,
+    "name": "Test",
+    "discordId": "-",
+    "factions": [
+      "detectives"
+    ],
+    "curatorType": "government",
+    "subdivision": "government"
   },
   "summary": {
     "totalActivities": 0,
@@ -13,7 +16,6 @@
     "replies": 0,
     "taskVerifications": 0,
     "totalTaskReports": 0,
-    "pendingTasks": 0,
     "verifiedTasks": 0,
     "avgResponseTime": null,
     "responseTrackingCount": 0
@@ -22,10 +24,13 @@
     "activitiesByDay": {},
     "avgResponseTimeByDay": {}
   },
+  "serverStats": {
+    "activitiesByServer": {}
+  },
   "fullData": {
     "activities": [],
     "taskReports": [],
     "responseTracking": []
   },
-  "exportedAt": "2025-07-24T22:35:46.974Z"
+  "exportedAt": "2025-07-24T22:35:46.981Z"
 }

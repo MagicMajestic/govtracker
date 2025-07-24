@@ -1,7 +1,7 @@
 [
   {
-    "id": 2,
-    "serverId": 9,
+    "id": 1,
+    "serverId": 19,
     "authorId": "318071839329091584",
     "authorName": "5_2hz",
     "messageId": "1398061381219123304",
@@ -18,8 +18,8 @@
     "weekStart": "2025-07-21T00:00:00.000Z"
   },
   {
-    "id": 1,
-    "serverId": 9,
+    "id": 2,
+    "serverId": 19,
     "authorId": "318071839329091584",
     "authorName": "5_2hz",
     "messageId": "1398054939292598334",

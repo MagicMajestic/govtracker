@@ -47,17 +47,153 @@
       "notificationServerId": "805026457327108126",
       "notificationChannelId": "1397751897632280717",
       "isActive": true,
-      "updatedAt": "2025-07-24T21:29:52.457Z"
+      "updatedAt": "2025-07-24T22:19:43.015Z"
     }
   ],
   "ratingSettings": [
+    {
+      "id": 31,
+      "ratingName": "terrible",
+      "ratingText": "Ужасно",
+      "minScore": 0,
+      "color": "bg-red-500",
+      "updatedAt": "2025-07-24T22:14:37.780Z"
+    },
     {
       "id": 5,
       "ratingName": "terrible",
       "ratingText": "Ужасно",
       "minScore": 0,
       "color": "bg-red-500",
-      "updatedAt": "2025-07-24T21:12:57.164Z"
+      "updatedAt": "2025-07-24T22:04:38.796Z"
+    },
+    {
+      "id": 26,
+      "ratingName": "terrible",
+      "ratingText": "Ужасно",
+      "minScore": 0,
+      "color": "bg-red-500",
+      "updatedAt": "2025-07-24T22:14:18.533Z"
+    },
+    {
+      "id": 6,
+      "ratingName": "terrible",
+      "ratingText": "Ужасно",
+      "minScore": 0,
+      "color": "bg-red-500",
+      "updatedAt": "2025-07-24T22:13:25.891Z"
+    },
+    {
+      "id": 46,
+      "ratingName": "terrible",
+      "ratingText": "Ужасно",
+      "minScore": 0,
+      "color": "bg-red-500",
+      "updatedAt": "2025-07-24T22:19:43.106Z"
+    },
+    {
+      "id": 11,
+      "ratingName": "terrible",
+      "ratingText": "Ужасно",
+      "minScore": 0,
+      "color": "bg-red-500",
+      "updatedAt": "2025-07-24T22:13:43.880Z"
+    },
+    {
+      "id": 41,
+      "ratingName": "terrible",
+      "ratingText": "Ужасно",
+      "minScore": 0,
+      "color": "bg-red-500",
+      "updatedAt": "2025-07-24T22:18:56.402Z"
+    },
+    {
+      "id": 36,
+      "ratingName": "terrible",
+      "ratingText": "Ужасно",
+      "minScore": 0,
+      "color": "bg-red-500",
+      "updatedAt": "2025-07-24T22:14:52.903Z"
+    },
+    {
+      "id": 16,
+      "ratingName": "terrible",
+      "ratingText": "Ужасно",
+      "minScore": 0,
+      "color": "bg-red-500",
+      "updatedAt": "2025-07-24T22:13:56.870Z"
+    },
+    {
+      "id": 21,
+      "ratingName": "terrible",
+      "ratingText": "Ужасно",
+      "minScore": 0,
+      "color": "bg-red-500",
+      "updatedAt": "2025-07-24T22:14:09.086Z"
+    },
+    {
+      "id": 32,
+      "ratingName": "poor",
+      "ratingText": "Плохо",
+      "minScore": 10,
+      "color": "bg-orange-500",
+      "updatedAt": "2025-07-24T22:14:37.848Z"
+    },
+    {
+      "id": 22,
+      "ratingName": "poor",
+      "ratingText": "Плохо",
+      "minScore": 10,
+      "color": "bg-orange-500",
+      "updatedAt": "2025-07-24T22:14:09.144Z"
+    },
+    {
+      "id": 12,
+      "ratingName": "poor",
+      "ratingText": "Плохо",
+      "minScore": 10,
+      "color": "bg-orange-500",
+      "updatedAt": "2025-07-24T22:13:43.944Z"
+    },
+    {
+      "id": 27,
+      "ratingName": "poor",
+      "ratingText": "Плохо",
+      "minScore": 10,
+      "color": "bg-orange-500",
+      "updatedAt": "2025-07-24T22:14:18.595Z"
+    },
+    {
+      "id": 17,
+      "ratingName": "poor",
+      "ratingText": "Плохо",
+      "minScore": 10,
+      "color": "bg-orange-500",
+      "updatedAt": "2025-07-24T22:13:56.928Z"
+    },
+    {
+      "id": 37,
+      "ratingName": "poor",
+      "ratingText": "Плохо",
+      "minScore": 10,
+      "color": "bg-orange-500",
+      "updatedAt": "2025-07-24T22:14:52.965Z"
+    },
+    {
+      "id": 7,
+      "ratingName": "poor",
+      "ratingText": "Плохо",
+      "minScore": 10,
+      "color": "bg-orange-500",
+      "updatedAt": "2025-07-24T22:13:25.950Z"
+    },
+    {
+      "id": 47,
+      "ratingName": "poor",
+      "ratingText": "Плохо",
+      "minScore": 10,
+      "color": "bg-orange-500",
+      "updatedAt": "2025-07-24T22:19:43.169Z"
     },
     {
       "id": 4,
@@ -65,7 +201,23 @@
       "ratingText": "Плохо",
       "minScore": 10,
       "color": "bg-orange-500",
-      "updatedAt": "2025-07-24T21:12:57.125Z"
+      "updatedAt": "2025-07-24T22:04:38.737Z"
+    },
+    {
+      "id": 42,
+      "ratingName": "poor",
+      "ratingText": "Плохо",
+      "minScore": 10,
+      "color": "bg-orange-500",
+      "updatedAt": "2025-07-24T22:18:56.465Z"
+    },
+    {
+      "id": 13,
+      "ratingName": "normal",
+      "ratingText": "Нормально",
+      "minScore": 20,
+      "color": "bg-yellow-500",
+      "updatedAt": "2025-07-24T22:13:44.002Z"
     },
     {
       "id": 3,
@@ -73,7 +225,71 @@
       "ratingText": "Нормально",
       "minScore": 20,
       "color": "bg-yellow-500",
-      "updatedAt": "2025-07-24T21:12:57.087Z"
+      "updatedAt": "2025-07-24T22:04:38.679Z"
+    },
+    {
+      "id": 8,
+      "ratingName": "normal",
+      "ratingText": "Нормально",
+      "minScore": 20,
+      "color": "bg-yellow-500",
+      "updatedAt": "2025-07-24T22:13:26.009Z"
+    },
+    {
+      "id": 18,
+      "ratingName": "normal",
+      "ratingText": "Нормально",
+      "minScore": 20,
+      "color": "bg-yellow-500",
+      "updatedAt": "2025-07-24T22:13:56.987Z"
+    },
+    {
+      "id": 23,
+      "ratingName": "normal",
+      "ratingText": "Нормально",
+      "minScore": 20,
+      "color": "bg-yellow-500",
+      "updatedAt": "2025-07-24T22:14:09.203Z"
+    },
+    {
+      "id": 28,
+      "ratingName": "normal",
+      "ratingText": "Нормально",
+      "minScore": 20,
+      "color": "bg-yellow-500",
+      "updatedAt": "2025-07-24T22:14:18.654Z"
+    },
+    {
+      "id": 33,
+      "ratingName": "normal",
+      "ratingText": "Нормально",
+      "minScore": 20,
+      "color": "bg-yellow-500",
+      "updatedAt": "2025-07-24T22:14:37.907Z"
+    },
+    {
+      "id": 38,
+      "ratingName": "normal",
+      "ratingText": "Нормально",
+      "minScore": 20,
+      "color": "bg-yellow-500",
+      "updatedAt": "2025-07-24T22:14:53.025Z"
+    },
+    {
+      "id": 43,
+      "ratingName": "normal",
+      "ratingText": "Нормально",
+      "minScore": 20,
+      "color": "bg-yellow-500",
+      "updatedAt": "2025-07-24T22:18:56.523Z"
+    },
+    {
+      "id": 48,
+      "ratingName": "normal",
+      "ratingText": "Нормально",
+      "minScore": 20,
+      "color": "bg-yellow-500",
+      "updatedAt": "2025-07-24T22:19:43.228Z"
     },
     {
       "id": 2,
@@ -81,7 +297,119 @@
       "ratingText": "Хорошо",
       "minScore": 35,
       "color": "bg-blue-500",
-      "updatedAt": "2025-07-24T21:12:57.049Z"
+      "updatedAt": "2025-07-24T22:04:38.620Z"
+    },
+    {
+      "id": 14,
+      "ratingName": "good",
+      "ratingText": "Хорошо",
+      "minScore": 35,
+      "color": "bg-blue-500",
+      "updatedAt": "2025-07-24T22:13:44.061Z"
+    },
+    {
+      "id": 49,
+      "ratingName": "good",
+      "ratingText": "Хорошо",
+      "minScore": 35,
+      "color": "bg-blue-500",
+      "updatedAt": "2025-07-24T22:19:43.287Z"
+    },
+    {
+      "id": 44,
+      "ratingName": "good",
+      "ratingText": "Хорошо",
+      "minScore": 35,
+      "color": "bg-blue-500",
+      "updatedAt": "2025-07-24T22:18:56.581Z"
+    },
+    {
+      "id": 34,
+      "ratingName": "good",
+      "ratingText": "Хорошо",
+      "minScore": 35,
+      "color": "bg-blue-500",
+      "updatedAt": "2025-07-24T22:14:37.965Z"
+    },
+    {
+      "id": 39,
+      "ratingName": "good",
+      "ratingText": "Хорошо",
+      "minScore": 35,
+      "color": "bg-blue-500",
+      "updatedAt": "2025-07-24T22:14:53.084Z"
+    },
+    {
+      "id": 24,
+      "ratingName": "good",
+      "ratingText": "Хорошо",
+      "minScore": 35,
+      "color": "bg-blue-500",
+      "updatedAt": "2025-07-24T22:14:09.261Z"
+    },
+    {
+      "id": 9,
+      "ratingName": "good",
+      "ratingText": "Хорошо",
+      "minScore": 35,
+      "color": "bg-blue-500",
+      "updatedAt": "2025-07-24T22:13:26.067Z"
+    },
+    {
+      "id": 29,
+      "ratingName": "good",
+      "ratingText": "Хорошо",
+      "minScore": 35,
+      "color": "bg-blue-500",
+      "updatedAt": "2025-07-24T22:14:18.713Z"
+    },
+    {
+      "id": 19,
+      "ratingName": "good",
+      "ratingText": "Хорошо",
+      "minScore": 35,
+      "color": "bg-blue-500",
+      "updatedAt": "2025-07-24T22:13:57.046Z"
+    },
+    {
+      "id": 30,
+      "ratingName": "excellent",
+      "ratingText": "Великолепно",
+      "minScore": 50,
+      "color": "bg-green-500",
+      "updatedAt": "2025-07-24T22:14:18.771Z"
+    },
+    {
+      "id": 35,
+      "ratingName": "excellent",
+      "ratingText": "Великолепно",
+      "minScore": 50,
+      "color": "bg-green-500",
+      "updatedAt": "2025-07-24T22:14:38.023Z"
+    },
+    {
+      "id": 15,
+      "ratingName": "excellent",
+      "ratingText": "Великолепно",
+      "minScore": 50,
+      "color": "bg-green-500",
+      "updatedAt": "2025-07-24T22:13:44.119Z"
+    },
+    {
+      "id": 50,
+      "ratingName": "excellent",
+      "ratingText": "Великолепно",
+      "minScore": 50,
+      "color": "bg-green-500",
+      "updatedAt": "2025-07-24T22:19:43.346Z"
+    },
+    {
+      "id": 40,
+      "ratingName": "excellent",
+      "ratingText": "Великолепно",
+      "minScore": 50,
+      "color": "bg-green-500",
+      "updatedAt": "2025-07-24T22:14:53.143Z"
     },
     {
       "id": 1,
@@ -89,7 +417,39 @@
       "ratingText": "Великолепно",
       "minScore": 50,
       "color": "bg-green-500",
-      "updatedAt": "2025-07-24T21:12:57.009Z"
+      "updatedAt": "2025-07-24T22:04:38.560Z"
+    },
+    {
+      "id": 10,
+      "ratingName": "excellent",
+      "ratingText": "Великолепно",
+      "minScore": 50,
+      "color": "bg-green-500",
+      "updatedAt": "2025-07-24T22:13:26.126Z"
+    },
+    {
+      "id": 45,
+      "ratingName": "excellent",
+      "ratingText": "Великолепно",
+      "minScore": 50,
+      "color": "bg-green-500",
+      "updatedAt": "2025-07-24T22:18:56.641Z"
+    },
+    {
+      "id": 25,
+      "ratingName": "excellent",
+      "ratingText": "Великолепно",
+      "minScore": 50,
+      "color": "bg-green-500",
+      "updatedAt": "2025-07-24T22:14:09.320Z"
+    },
+    {
+      "id": 20,
+      "ratingName": "excellent",
+      "ratingText": "Великолепно",
+      "minScore": 50,
+      "color": "bg-green-500",
+      "updatedAt": "2025-07-24T22:13:57.105Z"
     }
   ],
   "globalRatingConfig": [
@@ -101,7 +461,7 @@
       "activityPointsTaskVerification": 5,
       "responseTimeGoodSeconds": 60,
       "responseTimePoorSeconds": 300,
-      "updatedAt": "2025-07-24T21:12:57.281Z"
+      "updatedAt": "2025-07-24T22:04:38.971Z"
     }
   ],
   "discordServers": [
@@ -165,12 +525,12 @@
       "id": 8,
       "serverId": "825137602553708544",
       "name": "Detectives",
-      "roleTagId": "1397531360180047882",
-      "completedTasksChannelId": "-",
+      "roleTagId": null,
+      "completedTasksChannelId": null,
       "isActive": true
     },
     {
-      "id": 9,
+      "id": 19,
       "serverId": "1369298072647106641",
       "name": "TEST",
       "roleTagId": "1369299977494466651",
@@ -190,33 +550,59 @@
         "fib"
       ],
       "curatorType": "government",
+      "subdivision": null,
+      "isActive": true,
+      "createdAt": "2025-07-24T22:14:54.832Z"
+    },
+    {
+      "id": 4,
+      "discordId": "-",
+      "name": "Test",
+      "factions": [
+        "detectives"
+      ],
+      "curatorType": "government",
       "subdivision": "government",
       "isActive": true,
-      "createdAt": "2025-07-24T21:14:29.020Z"
+      "createdAt": "2025-07-24T22:35:34.948Z"
     }
   ],
   "activities": [
     {
-      "id": 17,
+      "id": 1,
       "curatorId": 1,
-      "serverId": 9,
+      "serverId": 19,
       "type": "reaction",
       "channelId": "1397712218228789289",
-      "channelName": "⚡│completed-tasks",
+      "channelName": null,
       "messageId": null,
       "content": null,
-      "reactionEmoji": "✅",
-      "targetMessageId": "1398061561050042440",
-      "targetMessageContent": "123",
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
       "timestamp": "2025-07-24T21:57:33.785Z"
     },
     {
-      "id": 16,
+      "id": 18,
       "curatorId": 1,
-      "serverId": 9,
+      "serverId": 19,
+      "type": "reaction",
+      "channelId": "1397712218228789289",
+      "channelName": null,
+      "messageId": null,
+      "content": null,
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
+      "timestamp": "2025-07-24T21:57:33.785Z"
+    },
+    {
+      "id": 19,
+      "curatorId": 1,
+      "serverId": 19,
       "type": "message",
       "channelId": "1397712218228789289",
-      "channelName": "⚡│completed-tasks",
+      "channelName": null,
       "messageId": "1398061561050042440",
       "content": "123",
       "reactionEmoji": null,
@@ -225,54 +611,110 @@
       "timestamp": "2025-07-24T21:57:31.026Z"
     },
     {
-      "id": 15,
+      "id": 2,
       "curatorId": 1,
-      "serverId": 9,
+      "serverId": 19,
+      "type": "message",
+      "channelId": "1397712218228789289",
+      "channelName": null,
+      "messageId": "1398061561050042440",
+      "content": "123",
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
+      "timestamp": "2025-07-24T21:57:31.026Z"
+    },
+    {
+      "id": 3,
+      "curatorId": 1,
+      "serverId": 19,
       "type": "reply",
       "channelId": "1397712218228789289",
-      "channelName": "⚡│completed-tasks",
+      "channelName": null,
       "messageId": "1398061414710640680",
       "content": "+",
       "reactionEmoji": null,
-      "targetMessageId": "1398061381219123304",
-      "targetMessageContent": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
+      "targetMessageId": null,
+      "targetMessageContent": null,
       "timestamp": "2025-07-24T21:56:56.283Z"
     },
     {
-      "id": 14,
+      "id": 20,
       "curatorId": 1,
-      "serverId": 9,
+      "serverId": 19,
+      "type": "reply",
+      "channelId": "1397712218228789289",
+      "channelName": null,
+      "messageId": "1398061414710640680",
+      "content": "+",
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
+      "timestamp": "2025-07-24T21:56:56.283Z"
+    },
+    {
+      "id": 21,
+      "curatorId": 1,
+      "serverId": 19,
       "type": "task_verification",
       "channelId": "1397712218228789289",
-      "channelName": "⚡│completed-tasks",
+      "channelName": null,
       "messageId": "1398061414710640680",
       "content": "Verified 1/1 tasks",
       "reactionEmoji": null,
-      "targetMessageId": "1398061381219123304",
-      "targetMessageContent": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
+      "targetMessageId": null,
+      "targetMessageContent": null,
       "timestamp": "2025-07-24T21:56:56.199Z"
     },
     {
-      "id": 13,
+      "id": 4,
       "curatorId": 1,
-      "serverId": 9,
+      "serverId": 19,
+      "type": "task_verification",
+      "channelId": "1397712218228789289",
+      "channelName": null,
+      "messageId": "1398061414710640680",
+      "content": "Verified 1/1 tasks",
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
+      "timestamp": "2025-07-24T21:56:56.199Z"
+    },
+    {
+      "id": 5,
+      "curatorId": 1,
+      "serverId": 19,
       "type": "reaction",
       "channelId": "1397712218228789289",
-      "channelName": "⚡│completed-tasks",
+      "channelName": null,
       "messageId": null,
       "content": null,
-      "reactionEmoji": "✅",
-      "targetMessageId": "1398061381219123304",
-      "targetMessageContent": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
       "timestamp": "2025-07-24T21:56:51.658Z"
     },
     {
-      "id": 12,
+      "id": 22,
       "curatorId": 1,
-      "serverId": 9,
+      "serverId": 19,
+      "type": "reaction",
+      "channelId": "1397712218228789289",
+      "channelName": null,
+      "messageId": null,
+      "content": null,
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
+      "timestamp": "2025-07-24T21:56:51.658Z"
+    },
+    {
+      "id": 23,
+      "curatorId": 1,
+      "serverId": 19,
       "type": "message",
       "channelId": "1397712218228789289",
-      "channelName": "⚡│completed-tasks",
+      "channelName": null,
       "messageId": "1398061381219123304",
       "content": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
       "reactionEmoji": null,
@@ -281,68 +723,138 @@
       "timestamp": "2025-07-24T21:56:48.385Z"
     },
     {
-      "id": 11,
+      "id": 6,
       "curatorId": 1,
-      "serverId": 9,
+      "serverId": 19,
+      "type": "message",
+      "channelId": "1397712218228789289",
+      "channelName": null,
+      "messageId": "1398061381219123304",
+      "content": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
+      "timestamp": "2025-07-24T21:56:48.385Z"
+    },
+    {
+      "id": 24,
+      "curatorId": 1,
+      "serverId": 19,
       "type": "reply",
       "channelId": "1397712218228789289",
-      "channelName": "⚡│completed-tasks",
+      "channelName": null,
       "messageId": "1398055091294044261",
       "content": "+",
       "reactionEmoji": null,
-      "targetMessageId": "1398054939292598334",
-      "targetMessageContent": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
+      "targetMessageId": null,
+      "targetMessageContent": null,
       "timestamp": "2025-07-24T21:31:48.750Z"
-    },
-    {
-      "id": 10,
-      "curatorId": 1,
-      "serverId": 9,
-      "type": "task_verification",
-      "channelId": "1397712218228789289",
-      "channelName": "⚡│completed-tasks",
-      "messageId": "1398055091294044261",
-      "content": "Verified 1/1 tasks",
-      "reactionEmoji": null,
-      "targetMessageId": "1398054939292598334",
-      "targetMessageContent": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
-      "timestamp": "2025-07-24T21:31:48.668Z"
-    },
-    {
-      "id": 9,
-      "curatorId": 1,
-      "serverId": 9,
-      "type": "reaction",
-      "channelId": "1397712218228789289",
-      "channelName": "⚡│completed-tasks",
-      "messageId": null,
-      "content": null,
-      "reactionEmoji": "✅",
-      "targetMessageId": "1398054939292598334",
-      "targetMessageContent": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
-      "timestamp": "2025-07-24T21:31:43.381Z"
-    },
-    {
-      "id": 8,
-      "curatorId": 1,
-      "serverId": 9,
-      "type": "reaction",
-      "channelId": "1397712218228789289",
-      "channelName": "⚡│completed-tasks",
-      "messageId": null,
-      "content": null,
-      "reactionEmoji": "✅",
-      "targetMessageId": "1398054939292598334",
-      "targetMessageContent": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
-      "timestamp": "2025-07-24T21:31:33.709Z"
     },
     {
       "id": 7,
       "curatorId": 1,
-      "serverId": 9,
+      "serverId": 19,
+      "type": "reply",
+      "channelId": "1397712218228789289",
+      "channelName": null,
+      "messageId": "1398055091294044261",
+      "content": "+",
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
+      "timestamp": "2025-07-24T21:31:48.750Z"
+    },
+    {
+      "id": 8,
+      "curatorId": 1,
+      "serverId": 19,
+      "type": "task_verification",
+      "channelId": "1397712218228789289",
+      "channelName": null,
+      "messageId": "1398055091294044261",
+      "content": "Verified 1/1 tasks",
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
+      "timestamp": "2025-07-24T21:31:48.668Z"
+    },
+    {
+      "id": 25,
+      "curatorId": 1,
+      "serverId": 19,
+      "type": "task_verification",
+      "channelId": "1397712218228789289",
+      "channelName": null,
+      "messageId": "1398055091294044261",
+      "content": "Verified 1/1 tasks",
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
+      "timestamp": "2025-07-24T21:31:48.668Z"
+    },
+    {
+      "id": 26,
+      "curatorId": 1,
+      "serverId": 19,
+      "type": "reaction",
+      "channelId": "1397712218228789289",
+      "channelName": null,
+      "messageId": null,
+      "content": null,
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
+      "timestamp": "2025-07-24T21:31:43.381Z"
+    },
+    {
+      "id": 9,
+      "curatorId": 1,
+      "serverId": 19,
+      "type": "reaction",
+      "channelId": "1397712218228789289",
+      "channelName": null,
+      "messageId": null,
+      "content": null,
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
+      "timestamp": "2025-07-24T21:31:43.381Z"
+    },
+    {
+      "id": 10,
+      "curatorId": 1,
+      "serverId": 19,
+      "type": "reaction",
+      "channelId": "1397712218228789289",
+      "channelName": null,
+      "messageId": null,
+      "content": null,
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
+      "timestamp": "2025-07-24T21:31:33.709Z"
+    },
+    {
+      "id": 27,
+      "curatorId": 1,
+      "serverId": 19,
+      "type": "reaction",
+      "channelId": "1397712218228789289",
+      "channelName": null,
+      "messageId": null,
+      "content": null,
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
+      "timestamp": "2025-07-24T21:31:33.709Z"
+    },
+    {
+      "id": 28,
+      "curatorId": 1,
+      "serverId": 19,
       "type": "message",
       "channelId": "1397712218228789289",
-      "channelName": "⚡│completed-tasks",
+      "channelName": null,
       "messageId": "1398054939292598334",
       "content": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
       "reactionEmoji": null,
@@ -351,26 +863,54 @@
       "timestamp": "2025-07-24T21:31:12.409Z"
     },
     {
-      "id": 6,
+      "id": 11,
+      "curatorId": 1,
+      "serverId": 19,
+      "type": "message",
+      "channelId": "1397712218228789289",
+      "channelName": null,
+      "messageId": "1398054939292598334",
+      "content": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
+      "timestamp": "2025-07-24T21:31:12.409Z"
+    },
+    {
+      "id": 29,
       "curatorId": 1,
       "serverId": 8,
       "type": "reaction",
       "channelId": "1250796228032200859",
-      "channelName": "🤖│bot-logs",
+      "channelName": null,
       "messageId": null,
       "content": null,
-      "reactionEmoji": "✅",
-      "targetMessageId": "1398050975490506894",
-      "targetMessageContent": "<@&1397531360180047882> test",
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
       "timestamp": "2025-07-24T21:15:29.749Z"
     },
     {
-      "id": 5,
+      "id": 12,
+      "curatorId": 1,
+      "serverId": 8,
+      "type": "reaction",
+      "channelId": "1250796228032200859",
+      "channelName": null,
+      "messageId": null,
+      "content": null,
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
+      "timestamp": "2025-07-24T21:15:29.749Z"
+    },
+    {
+      "id": 13,
       "curatorId": 1,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
-      "channelName": "🤖│bot-logs",
+      "channelName": null,
       "messageId": "1398050975490506894",
       "content": "<@&1397531360180047882> test",
       "reactionEmoji": null,
@@ -379,26 +919,54 @@
       "timestamp": "2025-07-24T21:15:27.792Z"
     },
     {
-      "id": 4,
-      "curatorId": 1,
-      "serverId": 8,
-      "type": "reaction",
-      "channelId": "1250796228032200859",
-      "channelName": "🤖│bot-logs",
-      "messageId": null,
-      "content": null,
-      "reactionEmoji": "❌",
-      "targetMessageId": "1398050792165998752",
-      "targetMessageContent": "+",
-      "timestamp": "2025-07-24T21:14:45.751Z"
-    },
-    {
-      "id": 3,
+      "id": 30,
       "curatorId": 1,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
-      "channelName": "🤖│bot-logs",
+      "channelName": null,
+      "messageId": "1398050975490506894",
+      "content": "<@&1397531360180047882> test",
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
+      "timestamp": "2025-07-24T21:15:27.792Z"
+    },
+    {
+      "id": 14,
+      "curatorId": 1,
+      "serverId": 8,
+      "type": "reaction",
+      "channelId": "1250796228032200859",
+      "channelName": null,
+      "messageId": null,
+      "content": null,
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
+      "timestamp": "2025-07-24T21:14:45.751Z"
+    },
+    {
+      "id": 31,
+      "curatorId": 1,
+      "serverId": 8,
+      "type": "reaction",
+      "channelId": "1250796228032200859",
+      "channelName": null,
+      "messageId": null,
+      "content": null,
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
+      "timestamp": "2025-07-24T21:14:45.751Z"
+    },
+    {
+      "id": 32,
+      "curatorId": 1,
+      "serverId": 8,
+      "type": "message",
+      "channelId": "1250796228032200859",
+      "channelName": null,
       "messageId": "1398050792165998752",
       "content": "+",
       "reactionEmoji": null,
@@ -407,12 +975,26 @@
       "timestamp": "2025-07-24T21:14:43.507Z"
     },
     {
-      "id": 2,
+      "id": 15,
       "curatorId": 1,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
-      "channelName": "🤖│bot-logs",
+      "channelName": null,
+      "messageId": "1398050792165998752",
+      "content": "+",
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
+      "timestamp": "2025-07-24T21:14:43.507Z"
+    },
+    {
+      "id": 33,
+      "curatorId": 1,
+      "serverId": 8,
+      "type": "message",
+      "channelId": "1250796228032200859",
+      "channelName": null,
       "messageId": "1398050786356891859",
       "content": "1",
       "reactionEmoji": null,
@@ -421,12 +1003,40 @@
       "timestamp": "2025-07-24T21:14:42.219Z"
     },
     {
-      "id": 1,
+      "id": 16,
       "curatorId": 1,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
-      "channelName": "🤖│bot-logs",
+      "channelName": null,
+      "messageId": "1398050786356891859",
+      "content": "1",
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
+      "timestamp": "2025-07-24T21:14:42.219Z"
+    },
+    {
+      "id": 34,
+      "curatorId": 1,
+      "serverId": 8,
+      "type": "message",
+      "channelId": "1250796228032200859",
+      "channelName": null,
+      "messageId": "1398050782724624387",
+      "content": "1",
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
+      "timestamp": "2025-07-24T21:14:41.362Z"
+    },
+    {
+      "id": 17,
+      "curatorId": 1,
+      "serverId": 8,
+      "type": "message",
+      "channelId": "1250796228032200859",
+      "channelName": null,
       "messageId": "1398050782724624387",
       "content": "1",
       "reactionEmoji": null,
@@ -437,8 +1047,8 @@
   ],
   "responseTracking": [
     {
-      "id": 3,
-      "serverId": 9,
+      "id": 1,
+      "serverId": 19,
       "curatorId": 1,
       "mentionMessageId": "1398061381219123304",
       "mentionTimestamp": "2025-07-24T21:56:48.007Z",
@@ -448,8 +1058,30 @@
       "responseTimeSeconds": 4
     },
     {
-      "id": 2,
-      "serverId": 9,
+      "id": 4,
+      "serverId": 19,
+      "curatorId": 1,
+      "mentionMessageId": "1398061381219123304",
+      "mentionTimestamp": "2025-07-24T21:56:48.007Z",
+      "responseMessageId": "reaction_1398061381219123304_318071839329091584",
+      "responseTimestamp": "2025-07-24T21:56:51.601Z",
+      "responseType": "reaction",
+      "responseTimeSeconds": 4
+    },
+    {
+      "id": 7,
+      "serverId": 19,
+      "curatorId": 1,
+      "mentionMessageId": "1398061381219123304",
+      "mentionTimestamp": "2025-07-24T21:56:48.007Z",
+      "responseMessageId": "reaction_1398061381219123304_318071839329091584",
+      "responseTimestamp": "2025-07-24T21:56:51.601Z",
+      "responseType": "reaction",
+      "responseTimeSeconds": 4
+    },
+    {
+      "id": 5,
+      "serverId": 19,
       "curatorId": 1,
       "mentionMessageId": "1398054939292598334",
       "mentionTimestamp": "2025-07-24T21:31:12.132Z",
@@ -459,7 +1091,51 @@
       "responseTimeSeconds": 22
     },
     {
-      "id": 1,
+      "id": 8,
+      "serverId": 19,
+      "curatorId": 1,
+      "mentionMessageId": "1398054939292598334",
+      "mentionTimestamp": "2025-07-24T21:31:12.132Z",
+      "responseMessageId": "reaction_1398054939292598334_318071839329091584",
+      "responseTimestamp": "2025-07-24T21:31:33.652Z",
+      "responseType": "reaction",
+      "responseTimeSeconds": 22
+    },
+    {
+      "id": 2,
+      "serverId": 19,
+      "curatorId": 1,
+      "mentionMessageId": "1398054939292598334",
+      "mentionTimestamp": "2025-07-24T21:31:12.132Z",
+      "responseMessageId": "reaction_1398054939292598334_318071839329091584",
+      "responseTimestamp": "2025-07-24T21:31:33.652Z",
+      "responseType": "reaction",
+      "responseTimeSeconds": 22
+    },
+    {
+      "id": 9,
+      "serverId": 8,
+      "curatorId": 1,
+      "mentionMessageId": "1398050975490506894",
+      "mentionTimestamp": "2025-07-24T21:15:27.088Z",
+      "responseMessageId": "reaction_1398050975490506894_318071839329091584",
+      "responseTimestamp": "2025-07-24T21:15:29.688Z",
+      "responseType": "reaction",
+      "responseTimeSeconds": 3
+    },
+    {
+      "id": 3,
+      "serverId": 8,
+      "curatorId": 1,
+      "mentionMessageId": "1398050975490506894",
+      "mentionTimestamp": "2025-07-24T21:15:27.088Z",
+      "responseMessageId": "reaction_1398050975490506894_318071839329091584",
+      "responseTimestamp": "2025-07-24T21:15:29.688Z",
+      "responseType": "reaction",
+      "responseTimeSeconds": 3
+    },
+    {
+      "id": 6,
       "serverId": 8,
       "curatorId": 1,
       "mentionMessageId": "1398050975490506894",
@@ -472,8 +1148,8 @@
   ],
   "taskReports": [
     {
-      "id": 2,
-      "serverId": 9,
+      "id": 1,
+      "serverId": 19,
       "authorId": "318071839329091584",
       "authorName": "5_2hz",
       "messageId": "1398061381219123304",
@@ -490,8 +1166,8 @@
       "weekStart": "2025-07-21T00:00:00.000Z"
     },
     {
-      "id": 1,
-      "serverId": 9,
+      "id": 2,
+      "serverId": 19,
       "authorId": "318071839329091584",
       "authorName": "5_2hz",
       "messageId": "1398054939292598334",

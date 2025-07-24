@@ -4,6 +4,8 @@ import { storage } from "./storage";
 import { insertCuratorSchema, insertDiscordServerSchema } from "@shared/schema";
 import { startDiscordBot } from "./discord-bot";
 import { setupBackupRoutes } from "./backup-routes.js";
+import { importFromBackup } from "./import-backup.js";
+import { archiveCurator, archiveServer, getArchives, restoreFromArchive } from "./archive-storage.js";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize Discord servers
@@ -146,6 +148,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/curators/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
+      // Архивируем данные куратора перед удалением
+      try {
+        const archiveResult = await archiveCurator(id);
+        console.log(`📦 Куратор архивирован: ${archiveResult.archivePath}`);
+      } catch (archiveError) {
+        console.error("⚠️ Ошибка архивирования куратора:", archiveError);
+      }
+      
       const success = await storage.deleteCurator(id);
       if (!success) {
         return res.status(404).json({ error: "Curator not found" });
@@ -653,6 +663,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
 
   // Start Discord bot
+  // Import data endpoint
+  app.post('/api/import-backup', async (req, res) => {
+    try {
+      console.log('🔄 Starting backup import...');
+      const success = await importFromBackup();
+      if (success) {
+        res.json({ success: true, message: 'Data imported successfully' });
+      } else {
+        res.status(500).json({ success: false, message: 'Import failed' });
+      }
+    } catch (error) {
+      console.error('Error importing backup:', error);
+      res.status(500).json({ success: false, message: 'Import failed', error: error.message });
+    }
+  });
+
+  // Archive management routes
+  app.get('/api/archives', async (req, res) => {
+    try {
+      const archives = await getArchives();
+      res.json(archives);
+    } catch (error) {
+      console.error('Error getting archives:', error);
+      res.status(500).json({ error: 'Failed to get archives' });
+    }
+  });
+
+  app.post('/api/archives/restore/:filename', async (req, res) => {
+    try {
+      const filename = req.params.filename;
+      const result = await restoreFromArchive(filename);
+      res.json(result);
+    } catch (error) {
+      console.error('Error restoring from archive:', error);
+      res.status(500).json({ error: 'Failed to restore from archive' });
+    }
+  });
+
+  // Modified delete routes with archiving
+  app.delete('/api/servers/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      
+      // Архивируем данные сервера перед удалением
+      try {
+        const archiveResult = await archiveServer(id);
+        console.log(`📦 Сервер архивирован: ${archiveResult.archivePath}`);
+      } catch (archiveError) {
+        console.error("⚠️ Ошибка архивирования сервера:", archiveError);
+      }
+      
+      const success = await storage.deleteDiscordServer(id);
+      if (!success) {
+        return res.status(404).json({ error: 'Server not found' });
+      }
+      
+      res.json({ success: true, archived: true });
+    } catch (error) {
+      console.error('Error deleting server:', error);
+      res.status(500).json({ error: 'Failed to delete server' });
+    }
+  });
+
   // Setup backup routes
   setupBackupRoutes(app, storage);
 

@@ -1,10 +1,10 @@
 {
   "server": {
-    "id": 6,
-    "name": "EMS",
-    "serverId": "728354410832330782",
-    "roleTagId": null,
-    "completedTasksChannelId": null
+    "id": 38,
+    "name": "TEST2",
+    "serverId": "-",
+    "roleTagId": "-",
+    "completedTasksChannelId": "-"
   },
   "summary": {
     "totalActivities": 0,
@@ -27,5 +27,5 @@
     "taskReports": [],
     "responseTracking": []
   },
-  "exportedAt": "2025-07-24T22:35:46.974Z"
+  "exportedAt": "2025-07-24T22:27:19.443Z"
 }

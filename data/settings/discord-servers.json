@@ -59,12 +59,12 @@
     "id": 8,
     "serverId": "825137602553708544",
     "name": "Detectives",
-    "roleTagId": "1397531360180047882",
-    "completedTasksChannelId": "-",
+    "roleTagId": null,
+    "completedTasksChannelId": null,
     "isActive": true
   },
   {
-    "id": 9,
+    "id": 19,
     "serverId": "1369298072647106641",
     "name": "TEST",
     "roleTagId": "1369299977494466651",

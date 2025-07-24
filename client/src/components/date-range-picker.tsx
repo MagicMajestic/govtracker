@@ -244,7 +244,17 @@ export function QuickDateRanges({ onDateChange }: { onDateChange: (date: DateRan
           variant="outline"
           size="sm"
           className="bg-gray-800 border-gray-600 text-white hover:bg-gray-700 text-xs"
-          onClick={() => onDateChange(range.days === 0 ? { from: new Date(), to: new Date() } : getDateRange(range.days))}
+          onClick={() => {
+          if (range.days === 0) {
+            // Сегодня: с 00:00 до 23:59
+            const today = new Date();
+            const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0);
+            const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59);
+            onDateChange({ from: startOfDay, to: endOfDay });
+          } else {
+            onDateChange(getDateRange(range.days));
+          }
+        }}
         >
           {range.label}
         </Button>

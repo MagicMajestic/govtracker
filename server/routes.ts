@@ -484,10 +484,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const weekStart = new Date(week as string);
         taskReports = await storage.getTaskReportsByWeek(weekStart);
       } else {
-        // Get recent reports from all servers
+        // Get recent reports from all servers, excluding Detectives
         const allServers = await storage.getDiscordServers();
+        const filteredServers = allServers.filter(server => 
+          !server.name.toLowerCase().includes('detective') && 
+          !server.name.toLowerCase().includes('детектив')
+        );
         const allReports = await Promise.all(
-          allServers.map(server => storage.getTaskReportsForServer(server.id))
+          filteredServers.map(server => storage.getTaskReportsForServer(server.id))
         );
         taskReports = allReports.flat().sort((a, b) => 
           new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()
@@ -504,8 +508,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/task-reports/stats', async (req, res) => {
     try {
       const servers = await storage.getDiscordServers();
+      // Exclude Detectives servers from task report stats
+      const filteredServers = servers.filter(server => 
+        !server.name.toLowerCase().includes('detective') && 
+        !server.name.toLowerCase().includes('детектив')
+      );
+      
       const stats = await Promise.all(
-        servers.map(async (server) => {
+        filteredServers.map(async (server) => {
           const reports = await storage.getTaskReportsForServer(server.id);
           const pending = reports.filter(r => r.status === 'pending').length;
           const verified = reports.filter(r => r.status === 'verified').length;

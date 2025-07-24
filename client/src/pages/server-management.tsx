@@ -16,7 +16,8 @@ interface DiscordServer {
   id: number;
   serverId: string;
   name: string;
-  roleTagId: string;
+  roleTagId: string | null;
+  completedTasksChannelId: string | null;
   isActive: boolean;
 }
 
@@ -24,12 +25,21 @@ interface ServerStats {
   id: number;
   serverId: string;
   name: string;
-  roleTagId: string;
+  roleTagId: string | null;
+  completedTasksChannelId: string | null;
   isActive: boolean;
   totalActivities: number;
   todayActivities: number;
+  messages: number;
+  reactions: number;
+  replies: number;
   avgResponseTime: number | null;
   connected: boolean;
+  topCurators: {
+    name: string;
+    activities: number;
+    factions: string[];
+  }[];
 }
 
 export default function ServerManagement() {
@@ -39,6 +49,7 @@ export default function ServerManagement() {
     serverId: "",
     name: "",
     roleTagId: "",
+    completedTasksChannelId: "",
     isActive: true,
   });
   
@@ -62,6 +73,7 @@ export default function ServerManagement() {
       serverId: "",
       name: "",
       roleTagId: "",
+      completedTasksChannelId: "",
       isActive: true,
     });
     setEditingServer(null);
@@ -72,7 +84,8 @@ export default function ServerManagement() {
     setFormData({
       serverId: server.serverId,
       name: server.name,
-      roleTagId: server.roleTagId,
+      roleTagId: server.roleTagId || "",
+      completedTasksChannelId: server.completedTasksChannelId || "",
       isActive: server.isActive,
     });
     setShowAddDialog(true);
@@ -217,6 +230,17 @@ export default function ServerManagement() {
                   onChange={(e) => setFormData({ ...formData, roleTagId: e.target.value })}
                   className="bg-[#2a2a2a] border-gray-600 text-white mt-1"
                   placeholder="1329212725921976322"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="completedTasksChannelId" className="text-white">ID канала completed-tasks</Label>
+                <Input
+                  id="completedTasksChannelId"
+                  value={formData.completedTasksChannelId}
+                  onChange={(e) => setFormData({ ...formData, completedTasksChannelId: e.target.value })}
+                  className="bg-[#2a2a2a] border-gray-600 text-white mt-1"
+                  placeholder="1397712218228789289"
                 />
               </div>
               

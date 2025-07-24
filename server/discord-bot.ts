@@ -224,6 +224,29 @@ export function startDiscordBot() {
         }
       }
 
+      // Check if this is a completed-tasks channel first (for task submissions)
+      const isCompletedTasksChannel = (message.channel && 'name' in message.channel && 
+        message.channel.name?.toLowerCase().includes('completed-tasks')) ||
+        (server.completedTasksChannelId && message.channelId === server.completedTasksChannelId);
+
+      // Handle task submissions in completed-tasks channels (from non-curators AND curators in test server)
+      if (isCompletedTasksChannel && !message.reference) {
+        console.log(`🔍 TASK CHANNEL CHECK:
+          - Channel ID: ${message.channelId}
+          - Server completed tasks channel: ${server.completedTasksChannelId}
+          - Channel name: ${message.channel && 'name' in message.channel ? message.channel.name : 'Unknown'}
+          - Is test server: ${server.name === 'Test Server'}
+          - Author is curator: ${curator ? curator.name : 'No'}
+          - Message content: "${message.content}"`);
+        
+        const isTestServer = server.name === 'Test Server';
+        if (!curator || isTestServer) {
+          await handleTaskSubmission(message, server, curator);
+        } else {
+          console.log(`⚠️ Non-test server curator ${curator.name} posted in completed-tasks - skipping task submission`);
+        }
+      }
+
       // Process curator activities
       if (!curator) {
         console.log(`User ${message.author.username} is not a curator`);
@@ -232,15 +255,6 @@ export function startDiscordBot() {
 
       console.log(`Found curator: ${curator.name} (${curator.curatorType})`);
       console.log(`Found server: ${server.name}`);
-
-      // Check if this is a completed-tasks channel (task submission)
-      const isCompletedTasksChannel = message.channel && 'name' in message.channel && 
-        message.channel.name?.toLowerCase().includes('completed-tasks');
-
-      // Handle task submissions in completed-tasks channels
-      if (isCompletedTasksChannel && !message.reference) {
-        await handleTaskSubmission(message, server, curator);
-      }
 
       const isReply = message.reference?.messageId;
       let targetMessageContent = null;
@@ -251,8 +265,9 @@ export function startDiscordBot() {
           targetMessageContent = referencedMessage.content.substring(0, 500); // Limit length
           
           // Check if this is a completed-tasks channel (task verification)
-          const isCompletedTasksChannel = message.channel && 'name' in message.channel && 
-            message.channel.name?.toLowerCase().includes('completed-tasks');
+          const isCompletedTasksChannel = (message.channel && 'name' in message.channel && 
+            message.channel.name?.toLowerCase().includes('completed-tasks')) ||
+            (server.completedTasksChannelId && message.channelId === server.completedTasksChannelId);
 
           // ENHANCED: Check if replying to message with curator mention/keywords
           const needsResponse = referencedMessage.content && (
@@ -346,9 +361,10 @@ export function startDiscordBot() {
       console.log(`Found server: ${server.name}`);
 
       // Check if this is a task verification reaction in completed-tasks channel
-      const isCompletedTasksChannel = reaction.message.channel && 
+      const isCompletedTasksChannel = (reaction.message.channel && 
         'name' in reaction.message.channel && 
-        reaction.message.channel.name?.toLowerCase().includes('completed-tasks');
+        reaction.message.channel.name?.toLowerCase().includes('completed-tasks')) ||
+        (server.completedTasksChannelId && reaction.message.channelId === server.completedTasksChannelId);
 
       if (isCompletedTasksChannel) {
         await handleTaskReactionVerification(reaction, user, server, curator);
@@ -430,10 +446,39 @@ export function startDiscordBot() {
       console.log(`🚨 ATTEMPTING TO SEND CURATOR NOTIFICATION:`, {
         serverName,
         timeWithoutResponse: `${timeWithoutResponse/1000}s`,
-        notificationServerId: CURATOR_NOTIFICATION_SERVER_ID,
-        notificationChannelId: CURATOR_NOTIFICATION_CHANNEL_ID
+        guildId: messageInfo.guildId
       });
 
+      // Special handling for Test Server - send notifications to itself (no @here mention)
+      if (serverName === 'Test Server') {
+        console.log(`🧪 TEST SERVER NOTIFICATION: Sending to test server itself`);
+        
+        const testServer = client.guilds.cache.get(messageInfo.guildId);
+        if (!testServer) {
+          console.log(`❌ Test server ${messageInfo.guildId} not found`);
+          return;
+        }
+
+        // Get the test server's notification channel
+        const testNotificationChannel = testServer.channels.cache.get('1369298073661997114');
+        if (!testNotificationChannel || !testNotificationChannel.isTextBased()) {
+          console.log(`❌ Test server notification channel not found`);
+          return;
+        }
+
+        const messageLink = `https://discord.com/channels/${messageInfo.guildId}/${messageInfo.channelId}/${messageInfo.messageId}`;
+        const timeStr = timeWithoutResponse >= 60000 ? Math.floor(timeWithoutResponse / 60000) + ' мин' : Math.floor(timeWithoutResponse / 1000) + ' сек';
+        
+        const notificationText = `🧪 Тестовое уведомление: ${messageLink} без ответа уже ${timeStr}.`;
+        
+        console.log(`📤 Sending test notification:`, notificationText);
+        
+        await testNotificationChannel.send(notificationText);
+        console.log(`✅ TEST NOTIFICATION SENT: ${timeStr} without response`);
+        return;
+      }
+
+      // Normal handling for other servers
       const curatorServer = client.guilds.cache.get(CURATOR_NOTIFICATION_SERVER_ID);
       if (!curatorServer) {
         console.log(`❌ Curator notification server ${CURATOR_NOTIFICATION_SERVER_ID} not found`);
@@ -454,7 +499,7 @@ export function startDiscordBot() {
 
       console.log(`✅ Found notification channel: ${notificationChannel.name}`);
 
-      // Determine which curator role to mention based on server name
+      // Determine which curator role to mention based on server name (never @here for test server)
       let roleMention = "@here";
       for (const [roleName, roleId] of Object.entries(CURATOR_ROLES)) {
         if (serverName.toLowerCase().includes(roleName.toLowerCase()) || 
@@ -542,9 +587,16 @@ export function startDiscordBot() {
     try {
       console.log(`📋 TASK SUBMISSION: ${curator?.name || 'Non-curator'} posting in completed-tasks channel`);
       
-      // Only faction leaders (non-curators) can submit tasks
-      if (curator) {
-        console.log(`⚠️ Curator ${curator.name} posted in completed-tasks channel - not a task submission`);
+      // Detectives server doesn't process task reports  
+      if (server.name === 'Detectives') {
+        console.log(`⚠️ Detectives server excluded from task reports`);
+        return;
+      }
+      
+      // Only faction leaders (non-curators) can submit tasks, EXCEPT in test server
+      const isTestServer = server.name === 'Test Server';
+      if (curator && !isTestServer) {
+        console.log(`⚠️ Curator ${curator.name} posted in completed-tasks channel - not a task submission (not test server)`);
         return;
       }
 
@@ -566,8 +618,8 @@ export function startDiscordBot() {
       // Create task report entry
       await storage.createTaskReport({
         serverId: server.id,
-        submitterId: message.author.id,
-        submitterName: message.author.username,
+        authorId: message.author.id,
+        authorName: message.author.username,
         messageId: message.id,
         channelId: message.channelId,
         content: content.substring(0, 1000),
@@ -576,9 +628,8 @@ export function startDiscordBot() {
         submittedAt: message.createdAt,
         status: 'pending',
         curatorId: null,
-        verifiedAt: null,
-        approvedTasks: null,
-        curatorFaction: null
+        checkedAt: null,
+        approvedTasks: null
       });
 
       console.log(`✅ TASK REPORT CREATED: ${message.author.username} submitted ${taskCount} tasks for week ${weekStart.toISOString().split('T')[0]}`);
@@ -601,7 +652,7 @@ export function startDiscordBot() {
       }
 
       if (taskReport.status !== 'pending') {
-        console.log(`⚠️ Task report ${taskReport.id} already verified by ${taskReport.curatorFaction}`);
+        console.log(`⚠️ Task report ${taskReport.id} already verified`);
         return;
       }
 
@@ -611,10 +662,9 @@ export function startDiscordBot() {
       // Update task report with curator verification
       await storage.updateTaskReport(taskReport.id, {
         curatorId: curator.id,
-        verifiedAt: message.createdAt,
+        checkedAt: message.createdAt,
         status: 'verified',
-        approvedTasks: approvedTasks,
-        curatorFaction: curator.factions?.[0] || 'unknown'
+        approvedTasks: approvedTasks
       });
 
       console.log(`✅ TASK VERIFIED: ${curator.name} (${curator.factions?.[0]}) approved ${approvedTasks}/${taskReport.taskCount} tasks`);
@@ -664,10 +714,9 @@ export function startDiscordBot() {
       // Update task report with emoji verification
       await storage.updateTaskReport(taskReport.id, {
         curatorId: curator.id,
-        verifiedAt: new Date(),
+        checkedAt: new Date(),
         status: 'verified',
-        approvedTasks: emojiApprovals,
-        curatorFaction: curator.factions?.[0] || 'unknown'
+        approvedTasks: emojiApprovals
       });
 
       console.log(`✅ TASK VERIFIED VIA EMOJI: ${curator.name} (${curator.factions?.[0]}) approved ${emojiApprovals}/${taskReport.taskCount} tasks`);

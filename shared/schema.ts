@@ -12,6 +12,15 @@ export const botSettings = pgTable("bot_settings", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Notification settings
+export const notificationSettings = pgTable("notification_settings", {
+  id: serial("id").primaryKey(),
+  notificationServerId: text("notification_server_id").notNull(), // Discord server ID for notifications
+  notificationChannelId: text("notification_channel_id").notNull(), // Discord channel ID for notifications
+  isActive: boolean("is_active").default(true),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Performance rating thresholds - only min scores and colors
 export const ratingSettings = pgTable("rating_settings", {
   id: serial("id").primaryKey(),
@@ -200,6 +209,11 @@ export const insertTaskReportSchema = createInsertSchema(taskReports).omit({
   id: true,
 });
 
+export const insertNotificationSettingsSchema = createInsertSchema(notificationSettings).pick({
+  notificationServerId: true,
+  notificationChannelId: true,
+});
+
 // Types
 export type BotSettings = typeof botSettings.$inferSelect;
 export type InsertBotSettings = z.infer<typeof insertBotSettingsSchema>;
@@ -217,6 +231,8 @@ export type ResponseTracking = typeof responseTracking.$inferSelect;
 export type InsertResponseTracking = z.infer<typeof insertResponseTrackingSchema>;
 export type TaskReport = typeof taskReports.$inferSelect;
 export type InsertTaskReport = z.infer<typeof insertTaskReportSchema>;
+export type NotificationSettings = typeof notificationSettings.$inferSelect;
+export type InsertNotificationSettings = z.infer<typeof insertNotificationSettingsSchema>;
 
 // Users table (keeping original structure)
 export const users = pgTable("users", {

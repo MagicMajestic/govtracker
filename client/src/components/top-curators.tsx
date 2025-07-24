@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getRatingText, getRatingColor } from "@/lib/rating";
+import { DateRange } from "react-day-picker";
 
 interface TopCurator {
   id: number;
@@ -20,12 +21,26 @@ interface TopCurator {
   avgResponseTime: number;
 }
 
-export function TopCurators() {
+interface TopCuratorsProps {
+  dateRange?: DateRange;
+}
+
+export function TopCurators({ dateRange }: TopCuratorsProps) {
   const [showAll, setShowAll] = useState(false);
   
   const { data: topCurators, isLoading } = useQuery<TopCurator[]>({
-    queryKey: ["/api/top-curators"],
-    queryFn: () => fetch("/api/top-curators?limit=50").then(res => res.json())
+    queryKey: ["/api/top-curators", dateRange],
+    queryFn: () => {
+      const params = new URLSearchParams();
+      params.append('limit', '50');
+      if (dateRange?.from) {
+        params.append('dateFrom', dateRange.from.toISOString());
+      }
+      if (dateRange?.to) {
+        params.append('dateTo', dateRange.to.toISOString());
+      }
+      return fetch(`/api/top-curators?${params.toString()}`).then(res => res.json());
+    }
   });
 
   if (isLoading) {

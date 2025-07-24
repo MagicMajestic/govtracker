@@ -20,7 +20,7 @@ interface TaskReport {
   taskCount: number;
   weekStart: string;
   submittedAt: string;
-  status: 'pending' | 'verified';
+  status: 'pending' | 'reviewing' | 'verified';
   curatorId?: number;
   curatorName?: string;
   curatorDiscordId?: string;
@@ -32,6 +32,7 @@ interface TaskStats {
   serverId: number;
   serverName: string;
   pendingReports: number;
+  reviewingReports: number;
   verifiedReports: number;
   totalReports: number;
 }
@@ -53,9 +54,12 @@ function formatDate(dateString: string) {
   }).format(date);
 }
 
-function getStatusBadge(status: string) {
+function getStatusBadge(status: string, curatorName?: string) {
   if (status === 'pending') {
     return <Badge variant="outline" className="text-yellow-400 border-yellow-400">Ожидает</Badge>;
+  }
+  if (status === 'reviewing') {
+    return <Badge variant="outline" className="text-blue-400 border-blue-400">На проверке: {curatorName}</Badge>;
   }
   return <Badge className="bg-green-500">Проверено</Badge>;
 }
@@ -112,7 +116,17 @@ export default function TaskReports() {
 
   // Fetch task statistics
   const { data: taskStats = [], refetch: refetchStats } = useQuery<TaskStats[]>({
-    queryKey: ['/api/task-reports/stats'],
+    queryKey: ['/api/task-reports/stats', dateFromKey, dateToKey],
+    queryFn: () => {
+      const params = new URLSearchParams();
+      if (dateRange?.from) {
+        params.append('dateFrom', dateRange.from.toISOString());
+      }
+      if (dateRange?.to) {
+        params.append('dateTo', dateRange.to.toISOString());
+      }
+      return fetch(`/api/task-reports/stats?${params.toString()}`).then(res => res.json());
+    },
     staleTime: 30000,
     refetchInterval: 10000,
   });
@@ -130,6 +144,7 @@ export default function TaskReports() {
 
   // Calculate totals
   const totalPending = taskStats.reduce((sum, stat) => sum + stat.pendingReports, 0);
+  const totalReviewing = taskStats.reduce((sum, stat) => sum + (stat.reviewingReports || 0), 0);
   const totalVerified = taskStats.reduce((sum, stat) => sum + stat.verifiedReports, 0);
 
   return (
@@ -189,7 +204,7 @@ export default function TaskReports() {
       </div>
 
       {/* Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="bg-[#1a1a1a] border-gray-700">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -198,6 +213,18 @@ export default function TaskReports() {
                 <p className="text-2xl font-bold text-yellow-400">{totalPending}</p>
               </div>
               <Clock className="h-6 w-6 text-yellow-400" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-[#1a1a1a] border-gray-700">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-400">На проверке</p>
+                <p className="text-2xl font-bold text-blue-400">{totalReviewing}</p>
+              </div>
+              <User className="h-6 w-6 text-blue-400" />
             </div>
           </CardContent>
         </Card>
@@ -249,6 +276,7 @@ export default function TaskReports() {
               <SelectContent className="bg-[#1a1a1a] border-gray-700">
                 <SelectItem value="all">Все статусы</SelectItem>
                 <SelectItem value="pending">Ожидают</SelectItem>
+                <SelectItem value="reviewing">На проверке</SelectItem>
                 <SelectItem value="verified">Проверено</SelectItem>
               </SelectContent>
             </Select>
@@ -275,7 +303,7 @@ export default function TaskReports() {
                             <h3 className="font-semibold text-white">
                               {server?.name || 'Unknown Server'}
                             </h3>
-                            {getStatusBadge(report.status)}
+                            {getStatusBadge(report.status, report.curatorName)}
                           </div>
                           
                           <div className="text-sm text-gray-400 space-y-1">

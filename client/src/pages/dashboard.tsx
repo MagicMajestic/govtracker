@@ -151,7 +151,7 @@ export default function Dashboard() {
 
         {/* Top Curators & Recent Activity */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <TopCurators />
+          <TopCurators dateRange={dateRange} />
           <RecentActivity />
         </div>
       </main>

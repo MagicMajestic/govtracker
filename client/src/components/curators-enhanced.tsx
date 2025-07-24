@@ -8,7 +8,9 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { Link } from "wouter";
-import { Eye, Edit, Trash2, Clock, TrendingUp, Plus } from "lucide-react";
+import { Eye, Edit, Trash2, Clock, TrendingUp, Plus, RefreshCw } from "lucide-react";
+import { DatePickerWithRange, QuickDateRanges } from "@/components/date-range-picker";
+import { DateRange } from "react-day-picker";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getRatingText, getRatingColor, getActivityStatusText, getActivityStatusColor } from "@/lib/rating";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -49,6 +51,7 @@ export function CuratorsEnhanced() {
   const { toast } = useToast();
   const [isCreating, setIsCreating] = useState(false);
   const [editingCurator, setEditingCurator] = useState<Curator | null>(null);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [formData, setFormData] = useState<{
     discordId: string;
     name: string;
@@ -63,13 +66,32 @@ export function CuratorsEnhanced() {
     subdivision: "government"
   });
 
-  const { data: curators, isLoading } = useQuery<Curator[]>({
-    queryKey: ["/api/curators"]
+  const { data: curators, isLoading, refetch } = useQuery<Curator[]>({
+    queryKey: ["/api/curators", dateRange],
+    queryFn: () => {
+      const params = new URLSearchParams();
+      if (dateRange?.from) {
+        params.append('dateFrom', dateRange.from.toISOString());
+      }
+      if (dateRange?.to) {
+        params.append('dateTo', dateRange.to.toISOString());
+      }
+      return fetch(`/api/curators?${params.toString()}`).then(res => res.json());
+    }
   });
 
-  const { data: topCurators } = useQuery<CuratorWithStats[]>({
-    queryKey: ["/api/top-curators"],
-    queryFn: () => fetch("/api/top-curators?limit=50").then(res => res.json())
+  const { data: topCurators, refetch: refetchTop } = useQuery<CuratorWithStats[]>({
+    queryKey: ["/api/top-curators", dateRange],
+    queryFn: () => {
+      const params = new URLSearchParams({ limit: '50' });
+      if (dateRange?.from) {
+        params.append('dateFrom', dateRange.from.toISOString());
+      }
+      if (dateRange?.to) {
+        params.append('dateTo', dateRange.to.toISOString());
+      }
+      return fetch(`/api/top-curators?${params.toString()}`).then(res => res.json());
+    }
   });
 
   const createMutation = useMutation({
@@ -231,17 +253,44 @@ export function CuratorsEnhanced() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">Кураторы</h1>
-          <p className="text-muted-foreground">
-            Управление {curators?.length || 0} кураторами Discord серверов
-          </p>
+      <div className="flex flex-col space-y-4">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold">Кураторы</h1>
+            <p className="text-muted-foreground">
+              Управление {curators?.length || 0} кураторами Discord серверов
+            </p>
+          </div>
+          <div className="flex items-center space-x-4">
+            <Button 
+              onClick={() => {
+                refetch();
+                refetchTop();
+              }}
+              variant="outline"
+              size="sm"
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Обновить
+            </Button>
+            <Button onClick={() => setIsCreating(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Добавить куратора
+            </Button>
+          </div>
         </div>
-        <Button onClick={() => setIsCreating(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          Добавить куратора
-        </Button>
+
+        {/* Date Range Filters */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 bg-gray-800/50 rounded-lg p-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+            <span className="text-sm text-gray-300 font-medium">Период активности:</span>
+            <DatePickerWithRange 
+              date={dateRange}
+              onDateChange={setDateRange}
+            />
+          </div>
+          <QuickDateRanges onDateChange={setDateRange} />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

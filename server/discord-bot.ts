@@ -21,6 +21,9 @@ const CURATOR_ROLES: Record<string, string> = {
 // Map to track pending notifications
 const pendingNotifications = new Map();
 
+// Map to track repeat notification intervals
+const repeatNotificationIntervals = new Map();
+
 // Set to track connected servers
 export const connectedServers = new Set<string>();
 
@@ -600,6 +603,17 @@ export function startDiscordBot() {
 
   // Function to schedule curator notification with current settings
   async function scheduleCuratorNotification(messageInfo: any, serverName: string) {
+    // Check if curator notifications are enabled
+    try {
+      const notificationsEnabled = await storage.getBotSetting('curatorNotificationEnabled', 'true');
+      if (notificationsEnabled !== 'true') {
+        console.log(`🔇 Curator notifications disabled - skipping notification for ${serverName}`);
+        return;
+      }
+    } catch (error) {
+      console.error('Error checking notification settings:', error);
+    }
+
     // Load current notification delay from settings each time
     try {
       const currentDelay = await storage.getBotSetting('notificationDelay', '30');
@@ -614,7 +628,7 @@ export function startDiscordBot() {
   }
 
   // Function to schedule curator notification with custom delay
-  function scheduleNotificationWithDelay(messageInfo: any, serverName: string, delayMs: number) {
+  async function scheduleNotificationWithDelay(messageInfo: any, serverName: string, delayMs: number) {
     const notificationKey = `${messageInfo.guildId}_${messageInfo.messageId}`;
     
     console.log(`⏰ SCHEDULING CURATOR NOTIFICATION:`, {
@@ -631,15 +645,57 @@ export function startDiscordBot() {
       console.log(`🔄 Clearing existing notification for ${notificationKey}`);
       clearTimeout(pendingNotifications.get(notificationKey));
     }
+
+    // Check if repeat notifications are enabled
+    try {
+      const repeatEnabled = await storage.getBotSetting('repeatNotifications', 'false');
+      
+      if (repeatEnabled === 'true') {
+        console.log(`🔁 Repeat notifications enabled - setting up interval for ${notificationKey}`);
+        
+        // Clear existing repeat interval if any
+        if (repeatNotificationIntervals.has(notificationKey)) {
+          clearInterval(repeatNotificationIntervals.get(notificationKey));
+        }
+        
+        // Send first notification after delay
+        const timeoutId = setTimeout(async () => {
+          console.log(`⏱️ FIRST REPEAT NOTIFICATION for ${notificationKey}`);
+          await sendCuratorNotification(messageInfo, serverName, delayMs);
+          
+          // Set up interval for repeat notifications
+          const intervalId = setInterval(async () => {
+            console.log(`🔁 REPEAT NOTIFICATION for ${notificationKey}`);
+            await sendCuratorNotification(messageInfo, serverName, delayMs);
+          }, delayMs);
+          
+          repeatNotificationIntervals.set(notificationKey, intervalId);
+          pendingNotifications.delete(notificationKey);
+        }, delayMs);
+        
+        pendingNotifications.set(notificationKey, timeoutId);
+      } else {
+        // Single notification (original behavior)
+        const timeoutId = setTimeout(async () => {
+          console.log(`⏱️ SINGLE NOTIFICATION TIMEOUT TRIGGERED for ${notificationKey}`);
+          await sendCuratorNotification(messageInfo, serverName, delayMs);
+          pendingNotifications.delete(notificationKey);
+        }, delayMs);
+        
+        pendingNotifications.set(notificationKey, timeoutId);
+      }
+    } catch (error) {
+      console.error('Error checking repeat notification settings:', error);
+      // Fallback to single notification
+      const timeoutId = setTimeout(async () => {
+        console.log(`⏱️ FALLBACK NOTIFICATION TIMEOUT TRIGGERED for ${notificationKey}`);
+        await sendCuratorNotification(messageInfo, serverName, delayMs);
+        pendingNotifications.delete(notificationKey);
+      }, delayMs);
+      
+      pendingNotifications.set(notificationKey, timeoutId);
+    }
     
-    // Schedule new notification
-    const timeoutId = setTimeout(() => {
-      console.log(`⏱️ NOTIFICATION TIMEOUT TRIGGERED for ${notificationKey}`);
-      sendCuratorNotification(messageInfo, serverName, delayMs);
-      pendingNotifications.delete(notificationKey);
-    }, delayMs);
-    
-    pendingNotifications.set(notificationKey, timeoutId);
     console.log(`✅ NOTIFICATION SCHEDULED: ${serverName} - will notify in ${delayMs/1000} seconds`);
     console.log(`📋 Pending notifications count: ${pendingNotifications.size}`);
   }
@@ -648,10 +704,18 @@ export function startDiscordBot() {
   function cancelCuratorNotification(messageId: string, guildId: string) {
     const notificationKey = `${guildId}_${messageId}`;
     
+    // Cancel single notification
     if (pendingNotifications.has(notificationKey)) {
       clearTimeout(pendingNotifications.get(notificationKey));
       pendingNotifications.delete(notificationKey);
-      console.log(`❌ NOTIFICATION CANCELLED: Response received for ${messageId}`);
+      console.log(`❌ SINGLE NOTIFICATION CANCELLED: Response received for ${messageId}`);
+    }
+    
+    // Cancel repeat notification interval
+    if (repeatNotificationIntervals.has(notificationKey)) {
+      clearInterval(repeatNotificationIntervals.get(notificationKey));
+      repeatNotificationIntervals.delete(notificationKey);
+      console.log(`❌ REPEAT NOTIFICATIONS CANCELLED: Response received for ${messageId}`);
     }
   }
 

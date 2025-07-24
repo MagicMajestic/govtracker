@@ -136,7 +136,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Curator methods
-  async getCurators(): Promise<Curator[]> {
+  async getCurators(dateFrom?: Date, dateTo?: Date): Promise<Curator[]> {
     return await db.select().from(curators).where(eq(curators.isActive, true));
   }
 
@@ -583,8 +583,9 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async getDashboardStats(): Promise<any> {
+  async getDashboardStats(dateFrom?: Date, dateTo?: Date): Promise<any> {
     console.log("=== GET DASHBOARD STATS START ===");
+    console.log("Date range:", { dateFrom, dateTo });
     
     const [curators, allActivities, allServers] = await Promise.all([
       this.getCurators(),
@@ -592,47 +593,73 @@ export class DatabaseStorage implements IStorage {
       this.getDiscordServers()
     ]);
     
-    const today = new Date().toISOString().split('T')[0];
-    const todayActivities = allActivities.filter(a => {
-      if (!a.timestamp) return false;
-      const activityDate = a.timestamp instanceof Date 
-        ? a.timestamp.toISOString().split('T')[0] 
-        : new Date(a.timestamp).toISOString().split('T')[0];
-      return activityDate === today;
-    });
+    // Filter activities by date range if provided
+    let filteredActivities = allActivities;
+    if (dateFrom || dateTo) {
+      filteredActivities = allActivities.filter(a => {
+        if (!a.timestamp) return false;
+        const activityDate = a.timestamp instanceof Date ? a.timestamp : new Date(a.timestamp);
+        
+        if (dateFrom && activityDate < dateFrom) return false;
+        if (dateTo && activityDate > dateTo) return false;
+        
+        return true;
+      });
+      console.log("Filtered activities:", filteredActivities.length, "from", allActivities.length);
+    } else {
+      // Default to today's activities if no date range specified
+      const today = new Date().toISOString().split('T')[0];
+      filteredActivities = allActivities.filter(a => {
+        if (!a.timestamp) return false;
+        const activityDate = a.timestamp instanceof Date 
+          ? a.timestamp.toISOString().split('T')[0] 
+          : new Date(a.timestamp).toISOString().split('T')[0];
+        return activityDate === today;
+      });
+      console.log("Today:", today);
+    }
     
-    console.log("Today:", today);
     console.log("Total activities:", allActivities.length);
-    console.log("Today activities:", todayActivities.length);
+    console.log("Period activities:", filteredActivities.length);
     console.log("Total servers:", allServers.length);
     
-    // Calculate average response time using response tracking table
-    console.log("Calculating global average response time from response tracking...");
+    // Calculate average response time using response tracking table with date filter
+    console.log("Calculating average response time from response tracking...");
     
     let avgResponseTime = 0;
+    
+    // Build conditions for response tracking with date filter
+    const conditions = [
+      sql`${responseTracking.responseTimeSeconds} IS NOT NULL`,
+      sql`${responseTracking.curatorId} IS NOT NULL` // Only count responses that have actual curator assigned
+    ];
+    
+    if (dateFrom) {
+      conditions.push(sql`${responseTracking.responseTimestamp} >= ${dateFrom.toISOString()}`);
+    }
+    if (dateTo) {
+      conditions.push(sql`${responseTracking.responseTimestamp} <= ${dateTo.toISOString()}`);
+    }
     
     const responseStats = await db
       .select({
         avgTime: sql<number>`AVG(${responseTracking.responseTimeSeconds})`
       })
       .from(responseTracking)
-      .where(and(
-        sql`${responseTracking.responseTimeSeconds} IS NOT NULL`,
-        sql`${responseTracking.curatorId} IS NOT NULL` // Only count responses that have actual curator assigned
-      ));
+      .where(and(...conditions));
     
     if (responseStats[0]?.avgTime) {
       avgResponseTime = Math.round(responseStats[0].avgTime);
-      console.log(`Global average response time: ${avgResponseTime}s`);
+      console.log(`Average response time for period: ${avgResponseTime}s`);
     } else {
-      console.log("No response time data found in tracking table");
+      console.log("No response time data found in tracking table for the specified period");
     }
 
     const stats = {
       totalCurators: curators.filter(c => c.isActive).length,
-      todayMessages: todayActivities.filter(a => a.type === 'message').length.toString(),
-      todayReactions: todayActivities.filter(a => a.type === 'reaction').length.toString(),
-      todayReplies: todayActivities.filter(a => a.type === 'reply').length.toString(),
+      todayMessages: filteredActivities.filter(a => a.type === 'message').length.toString(),
+      todayReactions: filteredActivities.filter(a => a.type === 'reaction').length.toString(),
+      todayReplies: filteredActivities.filter(a => a.type === 'reply').length.toString(),
       avgResponseTime: avgResponseTime.toString()
     };
     
@@ -657,7 +684,7 @@ export class DatabaseStorage implements IStorage {
     return dailyStats;
   }
 
-  async getTopCurators(limit: number): Promise<any> {
+  async getTopCurators(limit: number, dateFrom?: Date, dateTo?: Date): Promise<any> {
     console.log("=== GET TOP CURATORS START ===");
     console.log("Limit:", limit);
     

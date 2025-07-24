@@ -1,22 +1,39 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Users, BarChart3, Heart, Clock, RefreshCw } from "lucide-react";
 import { ActivityChartEnhanced } from "@/components/activity-chart-enhanced";
-import { ServerStatus } from "@/components/server-status";
 import { TopCurators } from "@/components/top-curators";
 import { RecentActivity } from "@/components/recent-activity";
+import { DatePickerWithRange, QuickDateRanges } from "@/components/date-range-picker";
+import { useState } from "react";
+import { DateRange } from "react-day-picker";
+
+interface DashboardStats {
+  totalCurators: number;
+  todayMessages: string;
+  todayReactions: string;
+  todayReplies: string;
+  avgResponseTime: string;
+}
 
 export default function Dashboard() {
-  const { data: stats, refetch, isLoading } = useQuery({
-    queryKey: ["/api/dashboard/stats"],
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  
+  const { data: stats, refetch, isLoading } = useQuery<DashboardStats>({
+    queryKey: ["/api/dashboard/stats", dateRange],
+    queryFn: () => {
+      const params = new URLSearchParams();
+      if (dateRange?.from) {
+        params.append('dateFrom', dateRange.from.toISOString());
+      }
+      if (dateRange?.to) {
+        params.append('dateTo', dateRange.to.toISOString());
+      }
+      return fetch(`/api/dashboard/stats?${params.toString()}`).then(res => res.json());
+    },
     refetchInterval: 60000, // Refresh every minute
   });
-
-  const formatDate = () => {
-    return new Date().toLocaleDateString('ru-RU');
-  };
 
   const statsCards = [
     {
@@ -29,7 +46,7 @@ export default function Dashboard() {
     },
     {
       title: "Сообщений сегодня",
-      value: stats?.todayMessages || 0,
+      value: stats?.todayMessages || "0",
       change: "+12%",
       changeText: "чем вчера",
       icon: BarChart3,
@@ -37,7 +54,7 @@ export default function Dashboard() {
     },
     {
       title: "Реакций",
-      value: stats?.todayReactions || 0,
+      value: stats?.todayReactions || "0",
       change: "+8%",
       changeText: "за неделю",
       icon: Heart,
@@ -57,33 +74,42 @@ export default function Dashboard() {
     <div className="min-h-screen bg-[#121212]">
       {/* Header */}
       <header className="surface border-b border-gray-700 px-6 py-4 sticky top-0 z-10">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-semibold text-white">Панель управления</h2>
-            <p className="text-sm text-gray-400">
-              Последнее обновление: {new Date().toLocaleTimeString('ru-RU')}
-            </p>
+        <div className="flex flex-col space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-semibold text-white">Панель управления</h2>
+              <p className="text-sm text-gray-400">
+                Последнее обновление: {new Date().toLocaleTimeString('ru-RU')}
+              </p>
+            </div>
+            <div className="flex items-center space-x-4">
+              <Button 
+                onClick={() => refetch()} 
+                disabled={isLoading}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+                Обновить
+              </Button>
+            </div>
           </div>
-          <div className="flex items-center space-x-4">
-            <Input
-              type="date"
-              defaultValue={formatDate()}
-              className="bg-gray-800 border-gray-600 text-white"
-            />
-            <Button 
-              onClick={() => refetch()} 
-              disabled={isLoading}
-              className="bg-blue-600 hover:bg-blue-700"
-            >
-              <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-              Обновить
-            </Button>
+
+          {/* Date Range Filters */}
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+              <span className="text-sm text-gray-300 font-medium">Период активности:</span>
+              <DatePickerWithRange 
+                date={dateRange}
+                onDateChange={setDateRange}
+              />
+            </div>
+            <QuickDateRanges onDateChange={setDateRange} />
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="p-6">
+      <main className="p-6 space-y-8">
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {statsCards.map((card, index) => {
@@ -110,10 +136,11 @@ export default function Dashboard() {
           })}
         </div>
 
-        {/* Charts and Status */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
-          <ActivityChartEnhanced />
-          <ServerStatus />
+        {/* Charts Section - Убрали ServerStatus */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          <div className="lg:col-span-3">
+            <ActivityChartEnhanced />
+          </div>
         </div>
 
         {/* Top Curators & Recent Activity */}

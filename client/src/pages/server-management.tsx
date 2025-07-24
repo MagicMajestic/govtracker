@@ -7,10 +7,12 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Server, Plus, Edit, Trash2, CheckCircle, XCircle, Activity } from "lucide-react";
+import { Server, Plus, Edit, Trash2, CheckCircle, XCircle, Activity, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatTimeRussian } from "@/lib/timeFormat";
+import { DatePickerWithRange, QuickDateRanges } from "@/components/date-range-picker";
+import { DateRange } from "react-day-picker";
 
 interface DiscordServer {
   id: number;
@@ -45,6 +47,7 @@ interface ServerStats {
 export default function ServerManagement() {
   const [editingServer, setEditingServer] = useState<DiscordServer | null>(null);
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [formData, setFormData] = useState({
     serverId: "",
     name: "",
@@ -57,14 +60,34 @@ export default function ServerManagement() {
   const queryClient = useQueryClient();
 
   // Fetch servers
-  const { data: servers = [], isLoading: serversLoading } = useQuery<DiscordServer[]>({
-    queryKey: ['/api/servers'],
+  const { data: servers = [], isLoading: serversLoading, refetch: refetchServers } = useQuery<DiscordServer[]>({
+    queryKey: ['/api/servers', dateRange],
+    queryFn: () => {
+      const params = new URLSearchParams();
+      if (dateRange?.from) {
+        params.append('dateFrom', dateRange.from.toISOString());
+      }
+      if (dateRange?.to) {
+        params.append('dateTo', dateRange.to.toISOString());
+      }
+      return fetch(`/api/servers?${params.toString()}`).then(res => res.json());
+    },
     refetchInterval: 10000,
   });
 
   // Fetch server stats
-  const { data: serverStats = [], isLoading: statsLoading } = useQuery<ServerStats[]>({
-    queryKey: ['/api/servers/stats'],
+  const { data: serverStats = [], isLoading: statsLoading, refetch: refetchStats } = useQuery<ServerStats[]>({
+    queryKey: ['/api/servers/stats', dateRange],
+    queryFn: () => {
+      const params = new URLSearchParams();
+      if (dateRange?.from) {
+        params.append('dateFrom', dateRange.from.toISOString());
+      }
+      if (dateRange?.to) {
+        params.append('dateTo', dateRange.to.toISOString());
+      }
+      return fetch(`/api/servers/stats?${params.toString()}`).then(res => res.json());
+    },
     refetchInterval: 10000,
   });
 
@@ -174,13 +197,43 @@ export default function ServerManagement() {
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-white">Управление серверами Discord</h1>
-          <p className="text-gray-400 mt-2">
-            Настройка серверов для мониторинга активности кураторов
-          </p>
+      <div className="flex flex-col space-y-4">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-white">Управление серверами Discord</h1>
+            <p className="text-gray-400 mt-2">
+              Настройка серверов для мониторинга активности кураторов
+            </p>
+          </div>
+          <div className="flex items-center space-x-4">
+            <Button 
+              onClick={() => {
+                refetchServers();
+                refetchStats();
+              }}
+              variant="outline"
+              size="sm"
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Обновить
+            </Button>
+          </div>
         </div>
+
+        {/* Date Range Filters */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 bg-gray-800/50 rounded-lg p-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+            <span className="text-sm text-gray-300 font-medium">Период активности:</span>
+            <DatePickerWithRange 
+              date={dateRange}
+              onDateChange={setDateRange}
+            />
+          </div>
+          <QuickDateRanges onDateChange={setDateRange} />
+        </div>
+      </div>
+
+      <div className="flex justify-end">
         
         <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
           <DialogTrigger asChild>

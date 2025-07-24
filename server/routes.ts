@@ -28,7 +28,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Dashboard stats
   app.get("/api/dashboard/stats", async (req, res) => {
     try {
-      const stats = await storage.getDashboardStats();
+      const { dateFrom, dateTo } = req.query;
+      const stats = await storage.getDashboardStats(
+        dateFrom ? new Date(dateFrom as string) : undefined,
+        dateTo ? new Date(dateTo as string) : undefined
+      );
       res.json(stats);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch dashboard stats" });
@@ -45,7 +49,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
       console.log("Limit:", limit);
       
-      const topCurators = await storage.getTopCurators(limit);
+      const { dateFrom, dateTo } = req.query;
+      const topCurators = await storage.getTopCurators(
+        limit,
+        dateFrom ? new Date(dateFrom as string) : undefined,
+        dateTo ? new Date(dateTo as string) : undefined
+      );
       console.log("=== SENDING TOP CURATORS ===");
       console.log("Count:", topCurators.length);
       console.log("Data:", JSON.stringify(topCurators, null, 2));
@@ -578,10 +587,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put('/api/notification-settings', async (req, res) => {
     try {
-      const settings = await storage.updateNotificationSettings(req.body);
+      // Try to update first
+      let settings = await storage.updateNotificationSettings(req.body);
+      
+      // If no settings found, create new ones
       if (!settings) {
-        return res.status(404).json({ error: 'No notification settings found' });
+        settings = await storage.setNotificationSettings(req.body);
       }
+      
       res.json(settings);
     } catch (error) {
       console.error('Error updating notification settings:', error);

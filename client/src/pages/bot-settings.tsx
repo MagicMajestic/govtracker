@@ -46,7 +46,7 @@ export default function BotSettings() {
     notificationDelay: "300", // 5 минут по умолчанию
     keywordDetection: "true",
     logLevel: "info",
-    maxResponseTime: "300",
+    repeatNotifications: "false", // Повторные уведомления выключены по умолчанию
     allowedChannels: "",
     customKeywords: "куратор, curator, помощь, help, вопрос, question",
     curatorServerId: "805026457327108126",
@@ -359,18 +359,19 @@ export default function BotSettings() {
               </div>
 
               <div>
-                <Label htmlFor="max-response" className="text-white">
-                  Максимальное время ответа (сек)
+                <Label htmlFor="repeat-notifications" className="text-white flex items-center gap-2">
+                  <Switch
+                    id="repeat-notifications"
+                    checked={botConfig.repeatNotifications === "true"}
+                    onCheckedChange={(checked) =>
+                      setBotConfig({ ...botConfig, repeatNotifications: checked ? "true" : "false" })
+                    }
+                  />
+                  Повторные уведомления
                 </Label>
-                <Input
-                  id="max-response"
-                  type="number"
-                  value={botConfig.maxResponseTime}
-                  onChange={(e) =>
-                    setBotConfig({ ...botConfig, maxResponseTime: e.target.value })
-                  }
-                  className="bg-[#2a2a2a] border-gray-600 text-white mt-1"
-                />
+                <p className="text-xs text-gray-400 mt-1">
+                  Отправлять уведомления каждые N секунд до получения ответа (интервал - "Время до уведомления")
+                </p>
               </div>
             </CardContent>
           </Card>

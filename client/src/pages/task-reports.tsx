@@ -5,7 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle, Clock, User, Calendar, MessageSquare } from "lucide-react";
+import { CheckCircle, Clock, User, Calendar, MessageSquare, RefreshCw } from "lucide-react";
+import { DatePickerWithRange, QuickDateRanges } from "@/components/date-range-picker";
+import { DateRange } from "react-day-picker";
 
 interface TaskReport {
   id: number;
@@ -58,21 +60,48 @@ function getStatusBadge(status: string) {
 export default function TaskReports() {
   const [selectedServer, setSelectedServer] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
 
   // Fetch servers
-  const { data: servers = [] } = useQuery<Server[]>({
-    queryKey: ['/api/servers'],
+  const { data: servers = [], refetch: refetchServers } = useQuery<Server[]>({
+    queryKey: ['/api/servers', dateRange],
+    queryFn: () => {
+      const params = new URLSearchParams();
+      if (dateRange?.from) {
+        params.append('dateFrom', dateRange.from.toISOString());
+      }
+      if (dateRange?.to) {
+        params.append('dateTo', dateRange.to.toISOString());
+      }
+      return fetch(`/api/servers?${params.toString()}`).then(res => res.json());
+    },
     refetchInterval: 30000,
   });
 
   // Fetch task reports
-  const { data: taskReports = [] } = useQuery<TaskReport[]>({
-    queryKey: ['/api/task-reports'],
+  const { data: taskReports = [], refetch: refetchReports } = useQuery<TaskReport[]>({
+    queryKey: ['/api/task-reports', dateRange, selectedServer, statusFilter],
+    queryFn: () => {
+      const params = new URLSearchParams();
+      if (dateRange?.from) {
+        params.append('dateFrom', dateRange.from.toISOString());
+      }
+      if (dateRange?.to) {
+        params.append('dateTo', dateRange.to.toISOString());
+      }
+      if (selectedServer !== 'all') {
+        params.append('serverId', selectedServer);
+      }
+      if (statusFilter !== 'all') {
+        params.append('status', statusFilter);
+      }
+      return fetch(`/api/task-reports?${params.toString()}`).then(res => res.json());
+    },
     refetchInterval: 10000,
   });
 
   // Fetch task statistics
-  const { data: taskStats = [] } = useQuery<TaskStats[]>({
+  const { data: taskStats = [], refetch: refetchStats } = useQuery<TaskStats[]>({
     queryKey: ['/api/task-reports/stats'],
     refetchInterval: 10000,
   });
@@ -94,12 +123,38 @@ export default function TaskReports() {
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-white">Отчеты о задачах</h1>
-          <p className="text-gray-400 mt-2">
-            Мониторинг и верификация выполненных задач в каналах completed-tasks
-          </p>
+      <div className="flex flex-col space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-white">Отчеты о задачах</h1>
+            <p className="text-gray-400 mt-2">
+              Мониторинг и верификация выполненных задач в каналах completed-tasks
+            </p>
+          </div>
+          <Button 
+            onClick={() => {
+              refetchServers();
+              refetchReports();
+              refetchStats();
+            }}
+            variant="outline"
+            size="sm"
+          >
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Обновить
+          </Button>
+        </div>
+
+        {/* Date Range Filters */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 bg-gray-800/50 rounded-lg p-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+            <span className="text-sm text-gray-300 font-medium">Период отчетов:</span>
+            <DatePickerWithRange 
+              date={dateRange}
+              onDateChange={setDateRange}
+            />
+          </div>
+          <QuickDateRanges onDateChange={setDateRange} />
         </div>
       </div>
 

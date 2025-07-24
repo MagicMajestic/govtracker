@@ -69,13 +69,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   app.get("/api/curators", async (req, res) => {
     try {
-      const { type } = req.query;
+      const { type, dateFrom, dateTo } = req.query;
       let curators;
       
       if (type === 'government' || type === 'crime') {
         curators = await storage.getCuratorsByType(type);
       } else {
-        curators = await storage.getCurators();
+        curators = await storage.getCurators(
+          dateFrom ? new Date(dateFrom as string) : undefined,
+          dateTo ? new Date(dateTo as string) : undefined
+        );
       }
       
       res.json(curators);
@@ -246,17 +249,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
 
 
-  // Server status with connection info
+  // Server status with connection info and date filtering
   app.get("/api/servers/status", async (req, res) => {
     try {
-      const servers = await storage.getDiscordServers();
-      const serversWithStatus = servers.map(server => ({
-        ...server,
-        isConnected: server.serverId === "825137602553708544", // Only Detectives is connected
-        lastActivity: null,
-        totalActivities: 0
-      }));
-      res.json(serversWithStatus);
+      const { dateFrom, dateTo } = req.query;
+      const servers = await storage.getServerStats(
+        dateFrom ? new Date(dateFrom as string) : undefined,
+        dateTo ? new Date(dateTo as string) : undefined
+      );
+      res.json(servers);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch server status" });
     }
@@ -323,6 +324,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get individual curator detailed stats with task verification count
+  app.get('/api/curators/:id/detailed-stats', async (req, res) => {
+    try {
+      const curatorId = parseInt(req.params.id);
+      const { from, to } = req.query;
+      
+      let dateFrom: Date | undefined;
+      let dateTo: Date | undefined;
+      
+      if (from && typeof from === 'string') {
+        dateFrom = new Date(from);
+      }
+      if (to && typeof to === 'string') {
+        dateTo = new Date(to);
+      }
+      
+      const curatorStats = await storage.getCuratorDetailedStats(curatorId, dateFrom, dateTo);
+      res.json(curatorStats);
+    } catch (error) {
+      console.error('Error getting curator detailed stats:', error);
+      res.status(500).json({ error: 'Failed to get curator detailed stats' });
+    }
+  });
+
   // Curator stats
   app.get("/api/curators/:id/stats", async (req, res) => {
     try {
@@ -337,7 +362,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Server stats with activity details
   app.get("/api/servers/stats", async (req, res) => {
     try {
-      const serverStats = await storage.getServerStats();
+      const { dateFrom, dateTo } = req.query;
+      const serverStats = await storage.getServerStats(
+        dateFrom ? new Date(dateFrom as string) : undefined,
+        dateTo ? new Date(dateTo as string) : undefined
+      );
       res.json(serverStats);
     } catch (error) {
       console.error("Error getting server stats:", error);

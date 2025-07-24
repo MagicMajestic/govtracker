@@ -108,11 +108,11 @@ export interface IStorage {
   updateNotificationSettings(settings: Partial<InsertNotificationSettings>): Promise<NotificationSettings | undefined>;
   
   // Statistics methods
-  getCuratorStats(curatorId?: number): Promise<any>;
-  getDashboardStats(): Promise<any>;
+  getCuratorStats(curatorId?: number, dateFrom?: Date, dateTo?: Date): Promise<any>;
+  getDashboardStats(dateFrom?: Date, dateTo?: Date): Promise<any>;
   getDailyActivityStats(days: number): Promise<any>;
-  getTopCurators(limit: number): Promise<any>;
-  getServerStats(): Promise<any>;
+  getTopCurators(limit: number, dateFrom?: Date, dateTo?: Date): Promise<any>;
+  getServerStats(dateFrom?: Date, dateTo?: Date): Promise<any>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -687,6 +687,7 @@ export class DatabaseStorage implements IStorage {
   async getTopCurators(limit: number, dateFrom?: Date, dateTo?: Date): Promise<any> {
     console.log("=== GET TOP CURATORS START ===");
     console.log("Limit:", limit);
+    console.log("Date filter:", { dateFrom, dateTo });
     
     try {
       // Get all active curators
@@ -698,13 +699,6 @@ export class DatabaseStorage implements IStorage {
         console.log("No curators found - returning empty array");
         return [];
       }
-      
-      // console.log("Curators found:", allCurators.map(c => ({ id: c.id, name: c.name, isActive: c.isActive })));
-      
-      if (!allCurators || allCurators.length === 0) {
-        console.log("No curators found");
-        return [];
-      }
 
       // Build stats for each curator
       const curatorsWithStats = [];
@@ -714,9 +708,27 @@ export class DatabaseStorage implements IStorage {
         
         console.log(`Processing curator: ${curator.name}`);
         
-        // Get activities for this curator
+        // Get activities for this curator with date filtering
         console.log(`Getting activities for curator ID: ${curator.id}`);
-        const curatorActivities = await this.getActivitiesByCurator(curator.id, 1000);
+        let curatorActivities;
+        
+        if (dateFrom || dateTo) {
+          // Filter activities by date range
+          const allActivities = await this.getActivitiesByCurator(curator.id, 1000);
+          curatorActivities = allActivities.filter(a => {
+            if (!a.timestamp) return false;
+            const activityDate = a.timestamp instanceof Date ? a.timestamp : new Date(a.timestamp);
+            
+            if (dateFrom && activityDate < dateFrom) return false;
+            if (dateTo && activityDate > dateTo) return false;
+            
+            return true;
+          });
+          console.log(`Filtered ${allActivities.length} -> ${curatorActivities.length} activities for ${curator.name}`);
+        } else {
+          curatorActivities = await this.getActivitiesByCurator(curator.id, 1000);
+        }
+        
         console.log(`Found ${curatorActivities.length} activities for ${curator.name}`);
         
         const totalActivities = curatorActivities.length;
@@ -777,48 +789,84 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async getServerStats(): Promise<any> {
+  async getServerStats(dateFrom?: Date, dateTo?: Date): Promise<any> {
     try {
+      console.log("=== GET SERVER STATS START ===");
+      console.log("Date range:", { dateFrom, dateTo });
+      
       // Update connected servers list to include newly added servers
       await updateConnectedServers();
       
       const servers = await this.getDiscordServers();
       const serverStatsPromises = servers.map(async (server) => {
         // Get activities for this server
-        const serverActivities = await db
+        let query = db
           .select()
           .from(activities)
           .where(eq(activities.serverId, server.id));
+        
+        // Apply date filters if provided
+        const conditions = [eq(activities.serverId, server.id)];
+        if (dateFrom) {
+          conditions.push(sql`${activities.timestamp} >= ${dateFrom.toISOString()}`);
+        }
+        if (dateTo) {
+          conditions.push(sql`${activities.timestamp} <= ${dateTo.toISOString()}`);
+        }
+        
+        const serverActivities = await db
+          .select()
+          .from(activities)
+          .where(and(...conditions));
 
         const totalActivities = serverActivities.length;
         const messages = serverActivities.filter(a => a.type === 'message').length;
         const reactions = serverActivities.filter(a => a.type === 'reaction').length;
         const replies = serverActivities.filter(a => a.type === 'reply').length;
+        
+        console.log(`Server ${server.name}: found ${totalActivities} activities (${messages} messages, ${reactions} reactions, ${replies} replies)`);
 
         // Get average response time for this server - only for messages that were actually answered
+        const responseConditions = [
+          eq(responseTracking.serverId, server.id),
+          sql`${responseTracking.responseTimeSeconds} IS NOT NULL`,
+          sql`${responseTracking.curatorId} IS NOT NULL` // Only count responses that have actual curator assigned
+        ];
+        
+        if (dateFrom) {
+          responseConditions.push(sql`${responseTracking.mentionTimestamp} >= ${dateFrom.toISOString()}`);
+        }
+        if (dateTo) {
+          responseConditions.push(sql`${responseTracking.mentionTimestamp} <= ${dateTo.toISOString()}`);
+        }
+        
         const serverResponseTime = await db
           .select({
             avgTime: sql<number>`AVG(${responseTracking.responseTimeSeconds})`
           })
           .from(responseTracking)
-          .where(and(
-            eq(responseTracking.serverId, server.id),
-            sql`${responseTracking.responseTimeSeconds} IS NOT NULL`,
-            sql`${responseTracking.curatorId} IS NOT NULL` // Only count responses that have actual curator assigned
-          ));
+          .where(and(...responseConditions));
 
         const avgResponseTime = serverResponseTime[0]?.avgTime 
           ? Math.round(serverResponseTime[0].avgTime) 
           : null;
 
-        // Get top curators for this server (curators with most activities)
+        // Get top curators for this server (curators with most activities) - with date filtering
+        let curatorConditions = [eq(activities.serverId, server.id)];
+        if (dateFrom) {
+          curatorConditions.push(sql`${activities.timestamp} >= ${dateFrom.toISOString()}`);
+        }
+        if (dateTo) {
+          curatorConditions.push(sql`${activities.timestamp} <= ${dateTo.toISOString()}`);
+        }
+        
         const curatorStats = await db
           .select({
             curatorId: activities.curatorId,
             count: sql<number>`count(*)`
           })
           .from(activities)
-          .where(eq(activities.serverId, server.id))
+          .where(and(...curatorConditions))
           .groupBy(activities.curatorId)
           .orderBy(sql`count(*) DESC`)
           .limit(3);
@@ -846,7 +894,7 @@ export class DatabaseStorage implements IStorage {
           roleTagId: server.roleTagId,
           isActive: server.isActive,
           totalActivities,
-          todayActivities: serverActivities.filter(a => {
+          todayActivities: dateFrom || dateTo ? totalActivities : serverActivities.filter(a => {
             if (!a.timestamp) return false;
             const today = new Date().toISOString().split('T')[0];
             const activityDate = a.timestamp instanceof Date 
@@ -886,6 +934,74 @@ export class DatabaseStorage implements IStorage {
       .where(eq(taskReports.id, id))
       .returning();
     return updated || undefined;
+  }
+
+  async getCuratorDetailedStats(curatorId: number, dateFrom?: Date, dateTo?: Date): Promise<any> {
+    // Get activities for this curator with date filtering
+    let curatorActivities;
+    
+    if (dateFrom || dateTo) {
+      const allActivities = await this.getActivitiesByCurator(curatorId, 1000);
+      curatorActivities = allActivities.filter(a => {
+        if (!a.timestamp) return false;
+        const activityDate = a.timestamp instanceof Date ? a.timestamp : new Date(a.timestamp);
+        
+        if (dateFrom && activityDate < dateFrom) return false;
+        if (dateTo && activityDate > dateTo) return false;
+        
+        return true;
+      });
+    } else {
+      curatorActivities = await this.getActivitiesByCurator(curatorId, 1000);
+    }
+    
+    const totalActivities = curatorActivities.length;
+    const messages = curatorActivities.filter(a => a.type === 'message').length;
+    const reactions = curatorActivities.filter(a => a.type === 'reaction').length;
+    const replies = curatorActivities.filter(a => a.type === 'reply').length;
+    const taskVerifications = curatorActivities.filter(a => a.type === 'task_verification').length;
+    
+    // Get task verifications count from taskReports table
+    const conditions = [eq(taskReports.curatorId, curatorId)];
+    if (dateFrom) {
+      conditions.push(sql`${taskReports.checkedAt} >= ${dateFrom.toISOString()}`);
+    }
+    if (dateTo) {
+      conditions.push(sql`${taskReports.checkedAt} <= ${dateTo.toISOString()}`);
+    }
+    
+    const taskVerificationsFromDB = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(taskReports)
+      .where(and(...conditions));
+    
+    const verifiedTasks = taskVerificationsFromDB[0]?.count || 0;
+    
+    // Calculate average response time
+    let avgResponseTime = await this.getCuratorAvgResponseTime(curatorId);
+    if (avgResponseTime) {
+      avgResponseTime = Math.round(avgResponseTime);
+    }
+    
+    // Get dynamic scoring configuration
+    const globalConfig = await this.getGlobalRatingConfig();
+    const messagePoints = globalConfig?.activityPointsMessage || 3;
+    const replyPoints = globalConfig?.activityPointsReply || 2;
+    const reactionPoints = globalConfig?.activityPointsReaction || 1;
+    const taskPoints = globalConfig?.activityPointsTaskVerification || 5;
+    
+    // Enhanced scoring with configurable points including verified tasks
+    const score = messages * messagePoints + replies * replyPoints + reactions * reactionPoints + verifiedTasks * taskPoints;
+    
+    return {
+      totalActivities,
+      messages,
+      reactions,
+      replies,
+      taskVerifications: verifiedTasks, // Use count from taskReports table
+      score,
+      avgResponseTime
+    };
   }
 
   async getTaskReportByMessageId(messageId: string): Promise<TaskReport | undefined> {

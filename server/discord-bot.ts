@@ -823,6 +823,8 @@ export function startDiscordBot() {
       // Update task report with curator verification
       await storage.updateTaskReport(taskReport.id, {
         curatorId: curator.id,
+        curatorDiscordId: curator.discordId,
+        curatorName: curator.name,
         checkedAt: message.createdAt,
         status: 'verified',
         approvedTasks: approvedTasks
@@ -875,6 +877,8 @@ export function startDiscordBot() {
       // Update task report with emoji verification
       await storage.updateTaskReport(taskReport.id, {
         curatorId: curator.id,
+        curatorDiscordId: curator.discordId,
+        curatorName: curator.name,
         checkedAt: new Date(),
         status: 'verified',
         approvedTasks: emojiApprovals

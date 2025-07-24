@@ -12,6 +12,7 @@ import CuratorDetails from "@/pages/curator-details";
 import ServerManagement from "@/pages/server-management";
 import BotSettings from "@/pages/bot-settings";
 import TaskReports from "@/pages/task-reports";
+import BackupManagement from "@/pages/backup-management";
 import Sidebar from "@/components/sidebar";
 
 function Router() {
@@ -26,6 +27,7 @@ function Router() {
           <Route path="/activity" component={Activity} />
           <Route path="/servers" component={ServerManagement} />
           <Route path="/tasks" component={TaskReports} />
+          <Route path="/backup" component={BackupManagement} />
           <Route path="/settings" component={BotSettings} />
           <Route component={NotFound} />
         </Switch>

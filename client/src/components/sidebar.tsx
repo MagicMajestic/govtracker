@@ -8,6 +8,7 @@ const navigation = [
   { name: "Серверы Discord", href: "/servers", icon: Server },
   { name: "История активности", href: "/activity", icon: History },
   { name: "Отчеты о задачах", href: "/tasks", icon: FileText },
+  { name: "Резервные копии", href: "/backup", icon: Download },
   { name: "Настройки бота", href: "/settings", icon: Settings },
 ];
 

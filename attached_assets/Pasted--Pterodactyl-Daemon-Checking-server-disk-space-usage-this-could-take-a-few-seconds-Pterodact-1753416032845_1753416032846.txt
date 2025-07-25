@@ -1,0 +1,56 @@
+[Pterodactyl Daemon]: Checking server disk space usage, this could take a few seconds...
+[Pterodactyl Daemon]: Updating process configuration files...
+[Pterodactyl Daemon]: Ensuring file permissions are set correctly, this could take a few seconds...
+[Pterodactyl Daemon]: Executing cautionary malware scan...
+customer@apollopanel~ Server marked as starting...
+[Pterodactyl Daemon]: Pulling Docker container image, this could take a few minutes to complete...
+[Pterodactyl Daemon]: Finished pulling Docker container image
+NodeJS version: v18.20.4
+customer@apollopanel~ Server marked as running...
+NPM version: 10.8.3
+Yarn version: 22.19
+Git version: 2.39.2
+Discord.js version: 14.21.0
+customer@apollopanel:~# if [[ -d .git ]]; then git pull; fi; if [[ ! -z ${NODE_PACKAGES} ]]; then npm install ${NODE_PACKAGES}; fi; if [ -f /home/container/package.json ]; then npm install --production; fi; node /home/container/${STARTUP_FILE}
+remote: Enumerating objects: 19, done.
+remote: Counting objects: 100% (19/19), done.
+remote: Compressing objects: 100% (16/16), done.
+remote: Total 16 (delta 9), reused 0 (delta 0), pack-reused 0 (from 0)
+Unpacking objects: 100% (16/16), 10.04 KiB | 514.00 KiB/s, done.
+From https://github.com/MagicMajestic/govtracker
+   94a1cd7..225c1c8  main       -> origin/main
+hint: You have divergent branches and need to specify how to reconcile them.
+hint: You can do so by running one of the following commands sometime before
+hint: your next pull:
+hint: 
+hint:   git config pull.rebase false  # merge
+hint:   git config pull.rebase true   # rebase
+hint:   git config pull.ff only       # fast-forward only
+hint: 
+hint: You can replace "git config" with "git config --global" to set a default
+hint: preference for all repositories. You can also pass --rebase, --no-rebase,
+hint: or --ff-only on the command line to override the configured default per
+hint: invocation.
+fatal: Need to specify how to reconcile divergent branches.
+npm warn config production Use `--omit=dev` instead.
+npm error code ENOTEMPTY
+npm error syscall rename
+npm error path /home/container/node_modules/drizzle-kit
+npm error dest /home/container/node_modules/.drizzle-kit-BeDejBHz
+npm error errno -39
+npm error ENOTEMPTY: directory not empty, rename '/home/container/node_modules/drizzle-kit' -> '/home/container/node_modules/.drizzle-kit-BeDejBHz'
+npm error A complete log of this run can be found in: /home/container/.npm/_logs/2025-07-25T04_00_49_966Z-debug-0.log
+🚀 Starting Discord Bot Curator Monitoring System...
+📦 Node.js version: v18.20.4
+🔧 Environment: development
+🔍 Checking environment variables...
+⚠️ DATABASE_URL not set - database connection may fail
+🔍 Checking dependencies...
+📦 node_modules exists: true
+📊 Packages installed: 355
+✅ All critical packages found
+🚀 Initializing application...
+🔄 Starting in development mode...
+📁 Running TypeScript server directly...
+❌ Failed to start application: Unknown file extension ".ts" for /home/container/server/index.ts
+customer@apollopanel~ Server marked as offline...

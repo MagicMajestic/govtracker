@@ -15,6 +15,11 @@ interface DashboardStats {
   todayReactions: string;
   todayReplies: string;
   avgResponseTime: string;
+  // Изменения по сравнению с предыдущими периодами
+  curatorsChange: number;
+  messagesChange: number;
+  reactionsChange: number;
+  responseTimeChange: number;
 }
 
 export default function Dashboard() {
@@ -36,36 +41,60 @@ export default function Dashboard() {
     refetchInterval: 60000, // Refresh every minute
   });
 
+  // Функция для форматирования изменений
+  const formatChange = (value: number, isPercent: boolean = true, isTime: boolean = false) => {
+    if (value === 0) return "0";
+    const prefix = value > 0 ? "+" : "";
+    if (isTime) {
+      return `${prefix}${value}с`;
+    }
+    return isPercent ? `${prefix}${value}%` : `${prefix}${value}`;
+  };
+
+  // Функция для определения цвета изменения
+  const getChangeColor = (value: number, reverseColors: boolean = false) => {
+    if (value === 0) return "text-gray-400";
+    const isPositive = value > 0;
+    if (reverseColors) {
+      return isPositive ? "text-red-400" : "text-green-400";
+    }
+    return isPositive ? "text-green-400" : "text-red-400";
+  };
+
   const statsCards = [
     {
       title: "Всего кураторов",
       value: stats?.totalCurators || 0,
-      change: "+3",
+      change: formatChange(stats?.curatorsChange || 0, false),
       changeText: "за месяц",
+      changeColor: getChangeColor(stats?.curatorsChange || 0),
       icon: Users,
       iconColor: "bg-blue-500/20 text-blue-500",
     },
     {
       title: "Сообщений сегодня",
       value: stats?.todayMessages || "0",
-      change: "+12%",
+      change: formatChange(stats?.messagesChange || 0),
       changeText: "чем вчера",
+      changeColor: getChangeColor(stats?.messagesChange || 0),
       icon: BarChart3,
       iconColor: "bg-green-500/20 text-green-500",
     },
     {
       title: "Реакций",
       value: stats?.todayReactions || "0",
-      change: "+8%",
+      change: formatChange(stats?.reactionsChange || 0),
       changeText: "за неделю",
+      changeColor: getChangeColor(stats?.reactionsChange || 0),
       icon: Heart,
       iconColor: "bg-orange-500/20 text-orange-500",
     },
     {
       title: "Среднее время ответа",
       value: `${stats?.avgResponseTime || 0}с`,
-      change: "-1.5с",
-      changeText: "быстрее",
+      change: formatChange(stats?.responseTimeChange || 0, false, true),
+      changeText: stats?.responseTimeChange && stats.responseTimeChange < 0 ? "быстрее" : "медленнее",
+      changeColor: getChangeColor(stats?.responseTimeChange || 0, true), // Обратные цвета для времени
       icon: Clock,
       iconColor: "bg-yellow-500/20 text-yellow-500",
     },
@@ -133,7 +162,7 @@ export default function Dashboard() {
                     </div>
                   </div>
                   <div className="flex items-center">
-                    <span className="text-green-400 text-sm font-medium">{card.change}</span>
+                    <span className={`${card.changeColor} text-sm font-medium`}>{card.change}</span>
                     <span className="text-gray-400 text-sm ml-1">{card.changeText}</span>
                   </div>
                 </CardContent>

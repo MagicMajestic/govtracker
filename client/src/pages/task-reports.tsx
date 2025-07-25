@@ -358,6 +358,10 @@ export default function TaskReports() {
                     <span className="text-yellow-400 font-semibold">{stat.pendingReports}</span>
                   </div>
                   <div className="flex justify-between">
+                    <span className="text-gray-400">На проверке:</span>
+                    <span className="text-blue-400 font-semibold">{stat.reviewingReports}</span>
+                  </div>
+                  <div className="flex justify-between">
                     <span className="text-gray-400">Проверено:</span>
                     <span className="text-green-400 font-semibold">{stat.verifiedReports}</span>
                   </div>

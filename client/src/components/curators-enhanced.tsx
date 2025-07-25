@@ -106,24 +106,27 @@ export function CuratorsEnhanced() {
     refetchInterval: 10000
   });
 
-  // Filter curators by type
-  const filteredCurators = curators?.filter(curator => {
+  // Filter curators by type - ensure curators is an array
+  const filteredCurators = Array.isArray(curators) ? curators.filter(curator => {
     if (curatorTypeFilter === "all") return true;
     if (curatorTypeFilter === "government") return curator.curatorType === "government";
     if (curatorTypeFilter === "criminal") return curator.curatorType === "criminal";
     return true;
-  });
+  }) : [];
 
-  const filteredTopCurators = topCurators?.filter(curator => {
+  const filteredTopCurators = Array.isArray(topCurators) ? topCurators.filter(curator => {
     if (curatorTypeFilter === "all") return true;
     if (curatorTypeFilter === "government") return curator.curatorType === "government";
     if (curatorTypeFilter === "criminal") return curator.curatorType === "criminal";
     return true;
-  });
+  }) : [];
 
   const createMutation = useMutation({
     mutationFn: async (data: InsertCurator) => {
-      const response = await apiRequest("POST", "/api/curators", data);
+      const response = await apiRequest("/api/curators", {
+        method: "POST",
+        body: JSON.stringify(data)
+      });
       return response.json();
     },
     onSuccess: () => {
@@ -140,7 +143,10 @@ export function CuratorsEnhanced() {
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: Partial<InsertCurator> }) => {
-      const response = await apiRequest("PUT", `/api/curators/${id}`, data);
+      const response = await apiRequest(`/api/curators/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(data)
+      });
       return response.json();
     },
     onSuccess: () => {
@@ -156,7 +162,7 @@ export function CuratorsEnhanced() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => apiRequest("DELETE", `/api/curators/${id}`),
+    mutationFn: (id: number) => apiRequest(`/api/curators/${id}`, { method: "DELETE" }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/curators"] });
       queryClient.invalidateQueries({ queryKey: ["/api/curators/top"] });

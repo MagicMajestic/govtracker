@@ -15,6 +15,7 @@ import TaskReports from "@/pages/task-reports";
 import BackupManagement from "@/pages/backup-management";
 import ExcludedCurators from "@/pages/excluded-curators";
 import Sidebar from "@/components/sidebar";
+import { AuthGuard } from "@/components/auth/auth-guard";
 
 function Router() {
   return (
@@ -43,7 +44,9 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <Router />
+        <AuthGuard>
+          <Router />
+        </AuthGuard>
       </TooltipProvider>
     </QueryClientProvider>
   );

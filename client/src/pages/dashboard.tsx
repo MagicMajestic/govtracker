@@ -19,7 +19,12 @@ interface DashboardStats {
   curatorsChange: number;
   messagesChange: number;
   reactionsChange: number;
+  repliesChange: number;
   responseTimeChange: number;
+  // Динамические метки периода
+  periodLabel: string;
+  comparisonLabel: string;
+  periodType: string;
 }
 
 export default function Dashboard() {
@@ -61,30 +66,37 @@ export default function Dashboard() {
     return isPositive ? "text-green-400" : "text-red-400";
   };
 
+  // Динамический заголовок для периода
+  const getPeriodTitle = (defaultTitle: string): string => {
+    if (stats?.periodType === 'today') return defaultTitle;
+    if (stats?.periodLabel) return `${defaultTitle} ${stats.periodLabel}`;
+    return defaultTitle;
+  };
+
   const statsCards = [
     {
       title: "Всего кураторов",
       value: stats?.totalCurators || 0,
       change: formatChange(stats?.curatorsChange || 0, false),
-      changeText: "за месяц",
+      changeText: stats?.comparisonLabel || "за месяц",
       changeColor: getChangeColor(stats?.curatorsChange || 0),
       icon: Users,
       iconColor: "bg-blue-500/20 text-blue-500",
     },
     {
-      title: "Сообщений сегодня",
+      title: getPeriodTitle("Сообщений"),
       value: stats?.todayMessages || "0",
       change: formatChange(stats?.messagesChange || 0),
-      changeText: "чем вчера",
+      changeText: stats?.comparisonLabel || "чем вчера",
       changeColor: getChangeColor(stats?.messagesChange || 0),
       icon: BarChart3,
       iconColor: "bg-green-500/20 text-green-500",
     },
     {
-      title: "Реакций",
+      title: getPeriodTitle("Реакций"),
       value: stats?.todayReactions || "0",
       change: formatChange(stats?.reactionsChange || 0),
-      changeText: "за неделю",
+      changeText: stats?.comparisonLabel || "за неделю",
       changeColor: getChangeColor(stats?.reactionsChange || 0),
       icon: Heart,
       iconColor: "bg-orange-500/20 text-orange-500",

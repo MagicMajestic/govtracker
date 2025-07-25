@@ -6,6 +6,8 @@ import { startDiscordBot } from "./discord-bot";
 import { setupBackupRoutes } from "./backup-routes.js";
 import { importFromBackup } from "./import-backup.js";
 import { archiveCurator, archiveServer, getArchives, restoreFromArchive } from "./archive-storage.js";
+import { requireAuth, requireAdmin } from "./middleware.js";
+import { setupAuthRoutes } from "./auth-routes.js";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize Discord servers

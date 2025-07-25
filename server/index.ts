@@ -1,12 +1,14 @@
 import express, { type Request, Response, NextFunction } from "express";
-import { registerRoutes } from "./routes";
+import { setupMainRoutes } from "./main-routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { initializeSystemDefaults } from "./initialization";
 import { importFromBackup } from "./import-backup";
+import cookieParser from "cookie-parser";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -42,7 +44,7 @@ app.use((req, res, next) => {
   // Initialize system defaults in PostgreSQL
   await initializeSystemDefaults();
   
-  const server = await registerRoutes(app);
+  const server = await setupMainRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;

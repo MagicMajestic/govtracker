@@ -1,6 +1,6 @@
 [
   {
-    "id": 1,
+    "id": 3,
     "discordId": "318071839329091584",
     "name": "Magic",
     "factions": [
@@ -12,6 +12,6 @@
     "curatorType": "government",
     "subdivision": null,
     "isActive": true,
-    "createdAt": "2025-07-24T22:50:03.999Z"
+    "createdAt": "2025-07-24T23:30:36.412Z"
   }
 ]

@@ -1,6 +1,24 @@
 [
   {
-    "id": 1,
+    "id": 15,
+    "serverId": 17,
+    "authorId": "318071839329091584",
+    "authorName": "5_2hz",
+    "messageId": "1398087369596604496",
+    "channelId": "1397712218228789289",
+    "content": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
+    "taskCount": 1,
+    "submittedAt": "2025-07-24T23:40:04.119Z",
+    "curatorId": 3,
+    "curatorDiscordId": "318071839329091584",
+    "curatorName": "Magic",
+    "checkedAt": "2025-07-24T23:41:00.627Z",
+    "approvedTasks": 1,
+    "status": "verified",
+    "weekStart": "2025-07-21T00:00:00.000Z"
+  },
+  {
+    "id": 16,
     "serverId": 17,
     "authorId": "318071839329091584",
     "authorName": "5_2hz",
@@ -9,7 +27,7 @@
     "content": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
     "taskCount": 1,
     "submittedAt": "2025-07-24T21:56:48.007Z",
-    "curatorId": 1,
+    "curatorId": 3,
     "curatorDiscordId": "318071839329091584",
     "curatorName": "Magic",
     "checkedAt": "2025-07-24T21:56:55.992Z",
@@ -18,7 +36,7 @@
     "weekStart": "2025-07-21T00:00:00.000Z"
   },
   {
-    "id": 2,
+    "id": 17,
     "serverId": 17,
     "authorId": "318071839329091584",
     "authorName": "5_2hz",
@@ -27,7 +45,7 @@
     "content": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
     "taskCount": 1,
     "submittedAt": "2025-07-24T21:31:12.132Z",
-    "curatorId": 1,
+    "curatorId": 3,
     "curatorDiscordId": "318071839329091584",
     "curatorName": "Magic",
     "checkedAt": "2025-07-24T21:31:48.372Z",

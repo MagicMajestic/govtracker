@@ -7,8 +7,8 @@
     "completedTasksChannelId": null
   },
   "summary": {
-    "totalActivities": 24,
-    "messages": 16,
+    "totalActivities": 29,
+    "messages": 21,
     "reactions": 8,
     "replies": 0,
     "taskVerifications": 0,
@@ -20,6 +20,13 @@
   },
   "dailyStats": {
     "activitiesByDay": {
+      "2025-07-25": {
+        "messages": 0,
+        "reactions": 0,
+        "replies": 0,
+        "task_verification": 0,
+        "message": 5
+      },
       "2025-07-24": {
         "messages": 0,
         "reactions": 0,
@@ -36,8 +43,193 @@
   "fullData": {
     "activities": [
       {
-        "id": 73,
-        "curatorId": 1,
+        "id": 220,
+        "curatorId": 3,
+        "serverId": 8,
+        "type": "message",
+        "channelId": "1250796228032200859",
+        "channelName": "🤖│bot-logs",
+        "messageId": "1398094397068935249",
+        "content": "1",
+        "reactionEmoji": null,
+        "targetMessageId": null,
+        "targetMessageContent": null,
+        "timestamp": "2025-07-25T00:08:00.015Z",
+        "curator": {
+          "id": 3,
+          "discordId": "318071839329091584",
+          "name": "Magic",
+          "factions": [
+            "detectives",
+            "sang",
+            "lspd",
+            "fib"
+          ],
+          "curatorType": "government",
+          "subdivision": null,
+          "isActive": true,
+          "createdAt": "2025-07-24T23:30:36.412Z"
+        },
+        "server": {
+          "id": 8,
+          "serverId": "825137602553708544",
+          "name": "Detectives",
+          "roleTagId": null,
+          "completedTasksChannelId": null,
+          "isActive": true
+        }
+      },
+      {
+        "id": 219,
+        "curatorId": 3,
+        "serverId": 8,
+        "type": "message",
+        "channelId": "1250796228032200859",
+        "channelName": "🤖│bot-logs",
+        "messageId": "1398094395106136155",
+        "content": "1",
+        "reactionEmoji": null,
+        "targetMessageId": null,
+        "targetMessageContent": null,
+        "timestamp": "2025-07-25T00:07:59.553Z",
+        "curator": {
+          "id": 3,
+          "discordId": "318071839329091584",
+          "name": "Magic",
+          "factions": [
+            "detectives",
+            "sang",
+            "lspd",
+            "fib"
+          ],
+          "curatorType": "government",
+          "subdivision": null,
+          "isActive": true,
+          "createdAt": "2025-07-24T23:30:36.412Z"
+        },
+        "server": {
+          "id": 8,
+          "serverId": "825137602553708544",
+          "name": "Detectives",
+          "roleTagId": null,
+          "completedTasksChannelId": null,
+          "isActive": true
+        }
+      },
+      {
+        "id": 218,
+        "curatorId": 3,
+        "serverId": 8,
+        "type": "message",
+        "channelId": "1250796228032200859",
+        "channelName": "🤖│bot-logs",
+        "messageId": "1398094393331814451",
+        "content": "1",
+        "reactionEmoji": null,
+        "targetMessageId": null,
+        "targetMessageContent": null,
+        "timestamp": "2025-07-25T00:07:59.124Z",
+        "curator": {
+          "id": 3,
+          "discordId": "318071839329091584",
+          "name": "Magic",
+          "factions": [
+            "detectives",
+            "sang",
+            "lspd",
+            "fib"
+          ],
+          "curatorType": "government",
+          "subdivision": null,
+          "isActive": true,
+          "createdAt": "2025-07-24T23:30:36.412Z"
+        },
+        "server": {
+          "id": 8,
+          "serverId": "825137602553708544",
+          "name": "Detectives",
+          "roleTagId": null,
+          "completedTasksChannelId": null,
+          "isActive": true
+        }
+      },
+      {
+        "id": 217,
+        "curatorId": 3,
+        "serverId": 8,
+        "type": "message",
+        "channelId": "1250796228032200859",
+        "channelName": "🤖│bot-logs",
+        "messageId": "1398094390739603597",
+        "content": "1",
+        "reactionEmoji": null,
+        "targetMessageId": null,
+        "targetMessageContent": null,
+        "timestamp": "2025-07-25T00:07:58.532Z",
+        "curator": {
+          "id": 3,
+          "discordId": "318071839329091584",
+          "name": "Magic",
+          "factions": [
+            "detectives",
+            "sang",
+            "lspd",
+            "fib"
+          ],
+          "curatorType": "government",
+          "subdivision": null,
+          "isActive": true,
+          "createdAt": "2025-07-24T23:30:36.412Z"
+        },
+        "server": {
+          "id": 8,
+          "serverId": "825137602553708544",
+          "name": "Detectives",
+          "roleTagId": null,
+          "completedTasksChannelId": null,
+          "isActive": true
+        }
+      },
+      {
+        "id": 216,
+        "curatorId": 3,
+        "serverId": 8,
+        "type": "message",
+        "channelId": "1250796228032200859",
+        "channelName": "🤖│bot-logs",
+        "messageId": "1398094333407920168",
+        "content": "1",
+        "reactionEmoji": null,
+        "targetMessageId": null,
+        "targetMessageContent": null,
+        "timestamp": "2025-07-25T00:07:44.843Z",
+        "curator": {
+          "id": 3,
+          "discordId": "318071839329091584",
+          "name": "Magic",
+          "factions": [
+            "detectives",
+            "sang",
+            "lspd",
+            "fib"
+          ],
+          "curatorType": "government",
+          "subdivision": null,
+          "isActive": true,
+          "createdAt": "2025-07-24T23:30:36.412Z"
+        },
+        "server": {
+          "id": 8,
+          "serverId": "825137602553708544",
+          "name": "Detectives",
+          "roleTagId": null,
+          "completedTasksChannelId": null,
+          "isActive": true
+        }
+      },
+      {
+        "id": 187,
+        "curatorId": 3,
         "serverId": 8,
         "type": "message",
         "channelId": "1250796228032200859",
@@ -49,7 +241,7 @@
         "targetMessageContent": null,
         "timestamp": "2025-07-24T23:01:44.003Z",
         "curator": {
-          "id": 1,
+          "id": 3,
           "discordId": "318071839329091584",
           "name": "Magic",
           "factions": [
@@ -61,7 +253,7 @@
           "curatorType": "government",
           "subdivision": null,
           "isActive": true,
-          "createdAt": "2025-07-24T22:50:03.999Z"
+          "createdAt": "2025-07-24T23:30:36.412Z"
         },
         "server": {
           "id": 8,
@@ -73,8 +265,8 @@
         }
       },
       {
-        "id": 72,
-        "curatorId": 1,
+        "id": 188,
+        "curatorId": 3,
         "serverId": 8,
         "type": "message",
         "channelId": "1250796228032200859",
@@ -86,7 +278,7 @@
         "targetMessageContent": null,
         "timestamp": "2025-07-24T23:01:43.890Z",
         "curator": {
-          "id": 1,
+          "id": 3,
           "discordId": "318071839329091584",
           "name": "Magic",
           "factions": [
@@ -98,7 +290,7 @@
           "curatorType": "government",
           "subdivision": null,
           "isActive": true,
-          "createdAt": "2025-07-24T22:50:03.999Z"
+          "createdAt": "2025-07-24T23:30:36.412Z"
         },
         "server": {
           "id": 8,
@@ -110,8 +302,8 @@
         }
       },
       {
-        "id": 71,
-        "curatorId": 1,
+        "id": 189,
+        "curatorId": 3,
         "serverId": 8,
         "type": "message",
         "channelId": "1250796228032200859",
@@ -123,7 +315,7 @@
         "targetMessageContent": null,
         "timestamp": "2025-07-24T23:01:43.778Z",
         "curator": {
-          "id": 1,
+          "id": 3,
           "discordId": "318071839329091584",
           "name": "Magic",
           "factions": [
@@ -135,7 +327,7 @@
           "curatorType": "government",
           "subdivision": null,
           "isActive": true,
-          "createdAt": "2025-07-24T22:50:03.999Z"
+          "createdAt": "2025-07-24T23:30:36.412Z"
         },
         "server": {
           "id": 8,
@@ -147,8 +339,8 @@
         }
       },
       {
-        "id": 70,
-        "curatorId": 1,
+        "id": 190,
+        "curatorId": 3,
         "serverId": 8,
         "type": "message",
         "channelId": "1250796228032200859",
@@ -160,7 +352,7 @@
         "targetMessageContent": null,
         "timestamp": "2025-07-24T23:01:43.665Z",
         "curator": {
-          "id": 1,
+          "id": 3,
           "discordId": "318071839329091584",
           "name": "Magic",
           "factions": [
@@ -172,7 +364,7 @@
           "curatorType": "government",
           "subdivision": null,
           "isActive": true,
-          "createdAt": "2025-07-24T22:50:03.999Z"
+          "createdAt": "2025-07-24T23:30:36.412Z"
         },
         "server": {
           "id": 8,
@@ -184,8 +376,8 @@
         }
       },
       {
-        "id": 69,
-        "curatorId": 1,
+        "id": 191,
+        "curatorId": 3,
         "serverId": 8,
         "type": "message",
         "channelId": "1250796228032200859",
@@ -197,7 +389,7 @@
         "targetMessageContent": null,
         "timestamp": "2025-07-24T23:01:43.552Z",
         "curator": {
-          "id": 1,
+          "id": 3,
           "discordId": "318071839329091584",
           "name": "Magic",
           "factions": [
@@ -209,7 +401,7 @@
           "curatorType": "government",
           "subdivision": null,
           "isActive": true,
-          "createdAt": "2025-07-24T22:50:03.999Z"
+          "createdAt": "2025-07-24T23:30:36.412Z"
         },
         "server": {
           "id": 8,
@@ -221,8 +413,8 @@
         }
       },
       {
-        "id": 68,
-        "curatorId": 1,
+        "id": 192,
+        "curatorId": 3,
         "serverId": 8,
         "type": "message",
         "channelId": "1250796228032200859",
@@ -234,7 +426,7 @@
         "targetMessageContent": null,
         "timestamp": "2025-07-24T23:01:43.439Z",
         "curator": {
-          "id": 1,
+          "id": 3,
           "discordId": "318071839329091584",
           "name": "Magic",
           "factions": [
@@ -246,7 +438,7 @@
           "curatorType": "government",
           "subdivision": null,
           "isActive": true,
-          "createdAt": "2025-07-24T22:50:03.999Z"
+          "createdAt": "2025-07-24T23:30:36.412Z"
         },
         "server": {
           "id": 8,
@@ -258,8 +450,8 @@
         }
       },
       {
-        "id": 67,
-        "curatorId": 1,
+        "id": 193,
+        "curatorId": 3,
         "serverId": 8,
         "type": "reaction",
         "channelId": "1250796228032200859",
@@ -271,7 +463,7 @@
         "targetMessageContent": null,
         "timestamp": "2025-07-24T23:01:43.327Z",
         "curator": {
-          "id": 1,
+          "id": 3,
           "discordId": "318071839329091584",
           "name": "Magic",
           "factions": [
@@ -283,7 +475,7 @@
           "curatorType": "government",
           "subdivision": null,
           "isActive": true,
-          "createdAt": "2025-07-24T22:50:03.999Z"
+          "createdAt": "2025-07-24T23:30:36.412Z"
         },
         "server": {
           "id": 8,
@@ -295,8 +487,8 @@
         }
       },
       {
-        "id": 66,
-        "curatorId": 1,
+        "id": 194,
+        "curatorId": 3,
         "serverId": 8,
         "type": "reaction",
         "channelId": "1250796228032200859",
@@ -308,7 +500,7 @@
         "targetMessageContent": null,
         "timestamp": "2025-07-24T23:01:43.214Z",
         "curator": {
-          "id": 1,
+          "id": 3,
           "discordId": "318071839329091584",
           "name": "Magic",
           "factions": [
@@ -320,7 +512,7 @@
           "curatorType": "government",
           "subdivision": null,
           "isActive": true,
-          "createdAt": "2025-07-24T22:50:03.999Z"
+          "createdAt": "2025-07-24T23:30:36.412Z"
         },
         "server": {
           "id": 8,
@@ -332,8 +524,8 @@
         }
       },
       {
-        "id": 65,
-        "curatorId": 1,
+        "id": 195,
+        "curatorId": 3,
         "serverId": 8,
         "type": "message",
         "channelId": "1250796228032200859",
@@ -345,7 +537,7 @@
         "targetMessageContent": null,
         "timestamp": "2025-07-24T23:01:43.099Z",
         "curator": {
-          "id": 1,
+          "id": 3,
           "discordId": "318071839329091584",
           "name": "Magic",
           "factions": [
@@ -357,7 +549,7 @@
           "curatorType": "government",
           "subdivision": null,
           "isActive": true,
-          "createdAt": "2025-07-24T22:50:03.999Z"
+          "createdAt": "2025-07-24T23:30:36.412Z"
         },
         "server": {
           "id": 8,
@@ -369,8 +561,8 @@
         }
       },
       {
-        "id": 64,
-        "curatorId": 1,
+        "id": 196,
+        "curatorId": 3,
         "serverId": 8,
         "type": "message",
         "channelId": "1250796228032200859",
@@ -382,7 +574,7 @@
         "targetMessageContent": null,
         "timestamp": "2025-07-24T23:01:42.986Z",
         "curator": {
-          "id": 1,
+          "id": 3,
           "discordId": "318071839329091584",
           "name": "Magic",
           "factions": [
@@ -394,7 +586,7 @@
           "curatorType": "government",
           "subdivision": null,
           "isActive": true,
-          "createdAt": "2025-07-24T22:50:03.999Z"
+          "createdAt": "2025-07-24T23:30:36.412Z"
         },
         "server": {
           "id": 8,
@@ -406,8 +598,8 @@
         }
       },
       {
-        "id": 63,
-        "curatorId": 1,
+        "id": 197,
+        "curatorId": 3,
         "serverId": 8,
         "type": "reaction",
         "channelId": "1250796228032200859",
@@ -419,7 +611,7 @@
         "targetMessageContent": null,
         "timestamp": "2025-07-24T23:01:42.873Z",
         "curator": {
-          "id": 1,
+          "id": 3,
           "discordId": "318071839329091584",
           "name": "Magic",
           "factions": [
@@ -431,7 +623,7 @@
           "curatorType": "government",
           "subdivision": null,
           "isActive": true,
-          "createdAt": "2025-07-24T22:50:03.999Z"
+          "createdAt": "2025-07-24T23:30:36.412Z"
         },
         "server": {
           "id": 8,
@@ -443,8 +635,8 @@
         }
       },
       {
-        "id": 62,
-        "curatorId": 1,
+        "id": 198,
+        "curatorId": 3,
         "serverId": 8,
         "type": "reaction",
         "channelId": "1250796228032200859",
@@ -456,7 +648,7 @@
         "targetMessageContent": null,
         "timestamp": "2025-07-24T23:01:42.761Z",
         "curator": {
-          "id": 1,
+          "id": 3,
           "discordId": "318071839329091584",
           "name": "Magic",
           "factions": [
@@ -468,7 +660,7 @@
           "curatorType": "government",
           "subdivision": null,
           "isActive": true,
-          "createdAt": "2025-07-24T22:50:03.999Z"
+          "createdAt": "2025-07-24T23:30:36.412Z"
         },
         "server": {
           "id": 8,
@@ -480,8 +672,8 @@
         }
       },
       {
-        "id": 23,
-        "curatorId": 1,
+        "id": 205,
+        "curatorId": 3,
         "serverId": 8,
         "type": "reaction",
         "channelId": "1250796228032200859",
@@ -493,7 +685,7 @@
         "targetMessageContent": null,
         "timestamp": "2025-07-24T21:15:29.749Z",
         "curator": {
-          "id": 1,
+          "id": 3,
           "discordId": "318071839329091584",
           "name": "Magic",
           "factions": [
@@ -505,7 +697,7 @@
           "curatorType": "government",
           "subdivision": null,
           "isActive": true,
-          "createdAt": "2025-07-24T22:50:03.999Z"
+          "createdAt": "2025-07-24T23:30:36.412Z"
         },
         "server": {
           "id": 8,
@@ -517,8 +709,8 @@
         }
       },
       {
-        "id": 24,
-        "curatorId": 1,
+        "id": 204,
+        "curatorId": 3,
         "serverId": 8,
         "type": "reaction",
         "channelId": "1250796228032200859",
@@ -530,7 +722,7 @@
         "targetMessageContent": null,
         "timestamp": "2025-07-24T21:15:29.749Z",
         "curator": {
-          "id": 1,
+          "id": 3,
           "discordId": "318071839329091584",
           "name": "Magic",
           "factions": [
@@ -542,7 +734,7 @@
           "curatorType": "government",
           "subdivision": null,
           "isActive": true,
-          "createdAt": "2025-07-24T22:50:03.999Z"
+          "createdAt": "2025-07-24T23:30:36.412Z"
         },
         "server": {
           "id": 8,
@@ -554,8 +746,8 @@
         }
       },
       {
-        "id": 26,
-        "curatorId": 1,
+        "id": 207,
+        "curatorId": 3,
         "serverId": 8,
         "type": "message",
         "channelId": "1250796228032200859",
@@ -567,7 +759,7 @@
         "targetMessageContent": null,
         "timestamp": "2025-07-24T21:15:27.792Z",
         "curator": {
-          "id": 1,
+          "id": 3,
           "discordId": "318071839329091584",
           "name": "Magic",
           "factions": [
@@ -579,7 +771,7 @@
           "curatorType": "government",
           "subdivision": null,
           "isActive": true,
-          "createdAt": "2025-07-24T22:50:03.999Z"
+          "createdAt": "2025-07-24T23:30:36.412Z"
         },
         "server": {
           "id": 8,
@@ -591,8 +783,8 @@
         }
       },
       {
-        "id": 25,
-        "curatorId": 1,
+        "id": 206,
+        "curatorId": 3,
         "serverId": 8,
         "type": "message",
         "channelId": "1250796228032200859",
@@ -604,7 +796,7 @@
         "targetMessageContent": null,
         "timestamp": "2025-07-24T21:15:27.792Z",
         "curator": {
-          "id": 1,
+          "id": 3,
           "discordId": "318071839329091584",
           "name": "Magic",
           "factions": [
@@ -616,7 +808,7 @@
           "curatorType": "government",
           "subdivision": null,
           "isActive": true,
-          "createdAt": "2025-07-24T22:50:03.999Z"
+          "createdAt": "2025-07-24T23:30:36.412Z"
         },
         "server": {
           "id": 8,
@@ -628,8 +820,8 @@
         }
       },
       {
-        "id": 27,
-        "curatorId": 1,
+        "id": 209,
+        "curatorId": 3,
         "serverId": 8,
         "type": "reaction",
         "channelId": "1250796228032200859",
@@ -641,7 +833,7 @@
         "targetMessageContent": null,
         "timestamp": "2025-07-24T21:14:45.751Z",
         "curator": {
-          "id": 1,
+          "id": 3,
           "discordId": "318071839329091584",
           "name": "Magic",
           "factions": [
@@ -653,7 +845,7 @@
           "curatorType": "government",
           "subdivision": null,
           "isActive": true,
-          "createdAt": "2025-07-24T22:50:03.999Z"
+          "createdAt": "2025-07-24T23:30:36.412Z"
         },
         "server": {
           "id": 8,
@@ -665,8 +857,8 @@
         }
       },
       {
-        "id": 28,
-        "curatorId": 1,
+        "id": 208,
+        "curatorId": 3,
         "serverId": 8,
         "type": "reaction",
         "channelId": "1250796228032200859",
@@ -678,7 +870,7 @@
         "targetMessageContent": null,
         "timestamp": "2025-07-24T21:14:45.751Z",
         "curator": {
-          "id": 1,
+          "id": 3,
           "discordId": "318071839329091584",
           "name": "Magic",
           "factions": [
@@ -690,7 +882,7 @@
           "curatorType": "government",
           "subdivision": null,
           "isActive": true,
-          "createdAt": "2025-07-24T22:50:03.999Z"
+          "createdAt": "2025-07-24T23:30:36.412Z"
         },
         "server": {
           "id": 8,
@@ -702,8 +894,8 @@
         }
       },
       {
-        "id": 29,
-        "curatorId": 1,
+        "id": 211,
+        "curatorId": 3,
         "serverId": 8,
         "type": "message",
         "channelId": "1250796228032200859",
@@ -715,7 +907,7 @@
         "targetMessageContent": null,
         "timestamp": "2025-07-24T21:14:43.507Z",
         "curator": {
-          "id": 1,
+          "id": 3,
           "discordId": "318071839329091584",
           "name": "Magic",
           "factions": [
@@ -727,7 +919,7 @@
           "curatorType": "government",
           "subdivision": null,
           "isActive": true,
-          "createdAt": "2025-07-24T22:50:03.999Z"
+          "createdAt": "2025-07-24T23:30:36.412Z"
         },
         "server": {
           "id": 8,
@@ -739,8 +931,8 @@
         }
       },
       {
-        "id": 30,
-        "curatorId": 1,
+        "id": 210,
+        "curatorId": 3,
         "serverId": 8,
         "type": "message",
         "channelId": "1250796228032200859",
@@ -752,7 +944,7 @@
         "targetMessageContent": null,
         "timestamp": "2025-07-24T21:14:43.507Z",
         "curator": {
-          "id": 1,
+          "id": 3,
           "discordId": "318071839329091584",
           "name": "Magic",
           "factions": [
@@ -764,7 +956,7 @@
           "curatorType": "government",
           "subdivision": null,
           "isActive": true,
-          "createdAt": "2025-07-24T22:50:03.999Z"
+          "createdAt": "2025-07-24T23:30:36.412Z"
         },
         "server": {
           "id": 8,
@@ -776,8 +968,8 @@
         }
       },
       {
-        "id": 31,
-        "curatorId": 1,
+        "id": 212,
+        "curatorId": 3,
         "serverId": 8,
         "type": "message",
         "channelId": "1250796228032200859",
@@ -789,7 +981,7 @@
         "targetMessageContent": null,
         "timestamp": "2025-07-24T21:14:42.219Z",
         "curator": {
-          "id": 1,
+          "id": 3,
           "discordId": "318071839329091584",
           "name": "Magic",
           "factions": [
@@ -801,7 +993,7 @@
           "curatorType": "government",
           "subdivision": null,
           "isActive": true,
-          "createdAt": "2025-07-24T22:50:03.999Z"
+          "createdAt": "2025-07-24T23:30:36.412Z"
         },
         "server": {
           "id": 8,
@@ -813,8 +1005,8 @@
         }
       },
       {
-        "id": 32,
-        "curatorId": 1,
+        "id": 213,
+        "curatorId": 3,
         "serverId": 8,
         "type": "message",
         "channelId": "1250796228032200859",
@@ -826,7 +1018,7 @@
         "targetMessageContent": null,
         "timestamp": "2025-07-24T21:14:42.219Z",
         "curator": {
-          "id": 1,
+          "id": 3,
           "discordId": "318071839329091584",
           "name": "Magic",
           "factions": [
@@ -838,7 +1030,7 @@
           "curatorType": "government",
           "subdivision": null,
           "isActive": true,
-          "createdAt": "2025-07-24T22:50:03.999Z"
+          "createdAt": "2025-07-24T23:30:36.412Z"
         },
         "server": {
           "id": 8,
@@ -850,8 +1042,8 @@
         }
       },
       {
-        "id": 33,
-        "curatorId": 1,
+        "id": 214,
+        "curatorId": 3,
         "serverId": 8,
         "type": "message",
         "channelId": "1250796228032200859",
@@ -863,7 +1055,7 @@
         "targetMessageContent": null,
         "timestamp": "2025-07-24T21:14:41.362Z",
         "curator": {
-          "id": 1,
+          "id": 3,
           "discordId": "318071839329091584",
           "name": "Magic",
           "factions": [
@@ -875,7 +1067,7 @@
           "curatorType": "government",
           "subdivision": null,
           "isActive": true,
-          "createdAt": "2025-07-24T22:50:03.999Z"
+          "createdAt": "2025-07-24T23:30:36.412Z"
         },
         "server": {
           "id": 8,
@@ -887,8 +1079,8 @@
         }
       },
       {
-        "id": 34,
-        "curatorId": 1,
+        "id": 215,
+        "curatorId": 3,
         "serverId": 8,
         "type": "message",
         "channelId": "1250796228032200859",
@@ -900,7 +1092,7 @@
         "targetMessageContent": null,
         "timestamp": "2025-07-24T21:14:41.362Z",
         "curator": {
-          "id": 1,
+          "id": 3,
           "discordId": "318071839329091584",
           "name": "Magic",
           "factions": [
@@ -912,7 +1104,7 @@
           "curatorType": "government",
           "subdivision": null,
           "isActive": true,
-          "createdAt": "2025-07-24T22:50:03.999Z"
+          "createdAt": "2025-07-24T23:30:36.412Z"
         },
         "server": {
           "id": 8,
@@ -927,9 +1119,9 @@
     "taskReports": [],
     "responseTracking": [
       {
-        "id": 18,
+        "id": 138,
         "serverId": 8,
-        "curatorId": 1,
+        "curatorId": 3,
         "mentionMessageId": "1398050975490506894",
         "mentionTimestamp": "2025-07-24T21:15:27.088Z",
         "responseMessageId": "reaction_1398050975490506894_318071839329091584",
@@ -938,9 +1130,9 @@
         "responseTimeSeconds": 3
       },
       {
-        "id": 19,
+        "id": 139,
         "serverId": 8,
-        "curatorId": 1,
+        "curatorId": 3,
         "mentionMessageId": "1398050975490506894",
         "mentionTimestamp": "2025-07-24T21:15:27.088Z",
         "responseMessageId": "reaction_1398050975490506894_318071839329091584",
@@ -949,9 +1141,9 @@
         "responseTimeSeconds": 3
       },
       {
-        "id": 20,
+        "id": 140,
         "serverId": 8,
-        "curatorId": 1,
+        "curatorId": 3,
         "mentionMessageId": "1398050975490506894",
         "mentionTimestamp": "2025-07-24T21:15:27.088Z",
         "responseMessageId": "reaction_1398050975490506894_318071839329091584",
@@ -960,9 +1152,9 @@
         "responseTimeSeconds": 3
       },
       {
-        "id": 9,
+        "id": 141,
         "serverId": 8,
-        "curatorId": 1,
+        "curatorId": 3,
         "mentionMessageId": "1398050975490506894",
         "mentionTimestamp": "2025-07-24T21:15:27.088Z",
         "responseMessageId": "reaction_1398050975490506894_318071839329091584",
@@ -971,9 +1163,9 @@
         "responseTimeSeconds": 3
       },
       {
-        "id": 8,
+        "id": 142,
         "serverId": 8,
-        "curatorId": 1,
+        "curatorId": 3,
         "mentionMessageId": "1398050975490506894",
         "mentionTimestamp": "2025-07-24T21:15:27.088Z",
         "responseMessageId": "reaction_1398050975490506894_318071839329091584",
@@ -982,9 +1174,9 @@
         "responseTimeSeconds": 3
       },
       {
-        "id": 7,
+        "id": 143,
         "serverId": 8,
-        "curatorId": 1,
+        "curatorId": 3,
         "mentionMessageId": "1398050975490506894",
         "mentionTimestamp": "2025-07-24T21:15:27.088Z",
         "responseMessageId": "reaction_1398050975490506894_318071839329091584",
@@ -994,5 +1186,5 @@
       }
     ]
   },
-  "exportedAt": "2025-07-24T23:05:11.954Z"
+  "exportedAt": "2025-07-25T00:08:18.844Z"
 }

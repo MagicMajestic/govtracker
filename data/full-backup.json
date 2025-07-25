@@ -47,281 +47,17 @@
       "notificationServerId": "805026457327108126",
       "notificationChannelId": "1397751897632280717",
       "isActive": true,
-      "updatedAt": "2025-07-24T23:01:32.454Z"
+      "updatedAt": "2025-07-25T00:06:19.175Z"
     }
   ],
   "ratingSettings": [
-    {
-      "id": 64,
-      "ratingName": "terrible",
-      "ratingText": "Ужасно",
-      "minScore": 0,
-      "color": "bg-red-500",
-      "updatedAt": "2025-07-24T23:01:33.540Z"
-    },
-    {
-      "id": 65,
-      "ratingName": "terrible",
-      "ratingText": "Ужасно",
-      "minScore": 0,
-      "color": "bg-red-500",
-      "updatedAt": "2025-07-24T23:01:33.653Z"
-    },
-    {
-      "id": 13,
-      "ratingName": "terrible",
-      "ratingText": "Ужасно",
-      "minScore": 0,
-      "color": "bg-red-500",
-      "updatedAt": "2025-07-24T22:49:53.208Z"
-    },
-    {
-      "id": 14,
-      "ratingName": "terrible",
-      "ratingText": "Ужасно",
-      "minScore": 0,
-      "color": "bg-red-500",
-      "updatedAt": "2025-07-24T22:49:53.323Z"
-    },
-    {
-      "id": 15,
-      "ratingName": "terrible",
-      "ratingText": "Ужасно",
-      "minScore": 0,
-      "color": "bg-red-500",
-      "updatedAt": "2025-07-24T22:49:53.436Z"
-    },
     {
       "id": 5,
       "ratingName": "terrible",
       "ratingText": "Ужасно",
       "minScore": 0,
       "color": "bg-red-500",
-      "updatedAt": "2025-07-24T22:46:14.003Z"
-    },
-    {
-      "id": 6,
-      "ratingName": "terrible",
-      "ratingText": "Ужасно",
-      "minScore": 0,
-      "color": "bg-red-500",
-      "updatedAt": "2025-07-24T22:49:52.412Z"
-    },
-    {
-      "id": 7,
-      "ratingName": "terrible",
-      "ratingText": "Ужасно",
-      "minScore": 0,
-      "color": "bg-red-500",
-      "updatedAt": "2025-07-24T22:49:52.527Z"
-    },
-    {
-      "id": 8,
-      "ratingName": "terrible",
-      "ratingText": "Ужасно",
-      "minScore": 0,
-      "color": "bg-red-500",
-      "updatedAt": "2025-07-24T22:49:52.640Z"
-    },
-    {
-      "id": 9,
-      "ratingName": "terrible",
-      "ratingText": "Ужасно",
-      "minScore": 0,
-      "color": "bg-red-500",
-      "updatedAt": "2025-07-24T22:49:52.754Z"
-    },
-    {
-      "id": 10,
-      "ratingName": "terrible",
-      "ratingText": "Ужасно",
-      "minScore": 0,
-      "color": "bg-red-500",
-      "updatedAt": "2025-07-24T22:49:52.868Z"
-    },
-    {
-      "id": 11,
-      "ratingName": "terrible",
-      "ratingText": "Ужасно",
-      "minScore": 0,
-      "color": "bg-red-500",
-      "updatedAt": "2025-07-24T22:49:52.981Z"
-    },
-    {
-      "id": 12,
-      "ratingName": "terrible",
-      "ratingText": "Ужасно",
-      "minScore": 0,
-      "color": "bg-red-500",
-      "updatedAt": "2025-07-24T22:49:53.095Z"
-    },
-    {
-      "id": 56,
-      "ratingName": "terrible",
-      "ratingText": "Ужасно",
-      "minScore": 0,
-      "color": "bg-red-500",
-      "updatedAt": "2025-07-24T23:01:32.624Z"
-    },
-    {
-      "id": 57,
-      "ratingName": "terrible",
-      "ratingText": "Ужасно",
-      "minScore": 0,
-      "color": "bg-red-500",
-      "updatedAt": "2025-07-24T23:01:32.745Z"
-    },
-    {
-      "id": 58,
-      "ratingName": "terrible",
-      "ratingText": "Ужасно",
-      "minScore": 0,
-      "color": "bg-red-500",
-      "updatedAt": "2025-07-24T23:01:32.858Z"
-    },
-    {
-      "id": 59,
-      "ratingName": "terrible",
-      "ratingText": "Ужасно",
-      "minScore": 0,
-      "color": "bg-red-500",
-      "updatedAt": "2025-07-24T23:01:32.970Z"
-    },
-    {
-      "id": 60,
-      "ratingName": "terrible",
-      "ratingText": "Ужасно",
-      "minScore": 0,
-      "color": "bg-red-500",
-      "updatedAt": "2025-07-24T23:01:33.083Z"
-    },
-    {
-      "id": 61,
-      "ratingName": "terrible",
-      "ratingText": "Ужасно",
-      "minScore": 0,
-      "color": "bg-red-500",
-      "updatedAt": "2025-07-24T23:01:33.196Z"
-    },
-    {
-      "id": 62,
-      "ratingName": "terrible",
-      "ratingText": "Ужасно",
-      "minScore": 0,
-      "color": "bg-red-500",
-      "updatedAt": "2025-07-24T23:01:33.312Z"
-    },
-    {
-      "id": 63,
-      "ratingName": "terrible",
-      "ratingText": "Ужасно",
-      "minScore": 0,
-      "color": "bg-red-500",
-      "updatedAt": "2025-07-24T23:01:33.427Z"
-    },
-    {
-      "id": 22,
-      "ratingName": "poor",
-      "ratingText": "Плохо",
-      "minScore": 10,
-      "color": "bg-orange-500",
-      "updatedAt": "2025-07-24T22:49:54.231Z"
-    },
-    {
-      "id": 23,
-      "ratingName": "poor",
-      "ratingText": "Плохо",
-      "minScore": 10,
-      "color": "bg-orange-500",
-      "updatedAt": "2025-07-24T22:49:54.345Z"
-    },
-    {
-      "id": 66,
-      "ratingName": "poor",
-      "ratingText": "Плохо",
-      "minScore": 10,
-      "color": "bg-orange-500",
-      "updatedAt": "2025-07-24T23:01:33.766Z"
-    },
-    {
-      "id": 67,
-      "ratingName": "poor",
-      "ratingText": "Плохо",
-      "minScore": 10,
-      "color": "bg-orange-500",
-      "updatedAt": "2025-07-24T23:01:33.878Z"
-    },
-    {
-      "id": 68,
-      "ratingName": "poor",
-      "ratingText": "Плохо",
-      "minScore": 10,
-      "color": "bg-orange-500",
-      "updatedAt": "2025-07-24T23:01:33.991Z"
-    },
-    {
-      "id": 69,
-      "ratingName": "poor",
-      "ratingText": "Плохо",
-      "minScore": 10,
-      "color": "bg-orange-500",
-      "updatedAt": "2025-07-24T23:01:34.103Z"
-    },
-    {
-      "id": 70,
-      "ratingName": "poor",
-      "ratingText": "Плохо",
-      "minScore": 10,
-      "color": "bg-orange-500",
-      "updatedAt": "2025-07-24T23:01:34.218Z"
-    },
-    {
-      "id": 71,
-      "ratingName": "poor",
-      "ratingText": "Плохо",
-      "minScore": 10,
-      "color": "bg-orange-500",
-      "updatedAt": "2025-07-24T23:01:34.331Z"
-    },
-    {
-      "id": 72,
-      "ratingName": "poor",
-      "ratingText": "Плохо",
-      "minScore": 10,
-      "color": "bg-orange-500",
-      "updatedAt": "2025-07-24T23:01:34.443Z"
-    },
-    {
-      "id": 73,
-      "ratingName": "poor",
-      "ratingText": "Плохо",
-      "minScore": 10,
-      "color": "bg-orange-500",
-      "updatedAt": "2025-07-24T23:01:34.556Z"
-    },
-    {
-      "id": 74,
-      "ratingName": "poor",
-      "ratingText": "Плохо",
-      "minScore": 10,
-      "color": "bg-orange-500",
-      "updatedAt": "2025-07-24T23:01:34.668Z"
-    },
-    {
-      "id": 75,
-      "ratingName": "poor",
-      "ratingText": "Плохо",
-      "minScore": 10,
-      "color": "bg-orange-500",
-      "updatedAt": "2025-07-24T23:01:34.781Z"
-    },
-    {
-      "id": 24,
-      "ratingName": "poor",
-      "ratingText": "Плохо",
-      "minScore": 10,
-      "color": "bg-orange-500",
-      "updatedAt": "2025-07-24T22:49:54.458Z"
+      "updatedAt": "2025-07-24T23:15:28.472Z"
     },
     {
       "id": 4,
@@ -329,151 +65,7 @@
       "ratingText": "Плохо",
       "minScore": 10,
       "color": "bg-orange-500",
-      "updatedAt": "2025-07-24T22:46:13.891Z"
-    },
-    {
-      "id": 25,
-      "ratingName": "poor",
-      "ratingText": "Плохо",
-      "minScore": 10,
-      "color": "bg-orange-500",
-      "updatedAt": "2025-07-24T22:49:54.571Z"
-    },
-    {
-      "id": 16,
-      "ratingName": "poor",
-      "ratingText": "Плохо",
-      "minScore": 10,
-      "color": "bg-orange-500",
-      "updatedAt": "2025-07-24T22:49:53.549Z"
-    },
-    {
-      "id": 17,
-      "ratingName": "poor",
-      "ratingText": "Плохо",
-      "minScore": 10,
-      "color": "bg-orange-500",
-      "updatedAt": "2025-07-24T22:49:53.663Z"
-    },
-    {
-      "id": 18,
-      "ratingName": "poor",
-      "ratingText": "Плохо",
-      "minScore": 10,
-      "color": "bg-orange-500",
-      "updatedAt": "2025-07-24T22:49:53.777Z"
-    },
-    {
-      "id": 19,
-      "ratingName": "poor",
-      "ratingText": "Плохо",
-      "minScore": 10,
-      "color": "bg-orange-500",
-      "updatedAt": "2025-07-24T22:49:53.891Z"
-    },
-    {
-      "id": 20,
-      "ratingName": "poor",
-      "ratingText": "Плохо",
-      "minScore": 10,
-      "color": "bg-orange-500",
-      "updatedAt": "2025-07-24T22:49:54.004Z"
-    },
-    {
-      "id": 21,
-      "ratingName": "poor",
-      "ratingText": "Плохо",
-      "minScore": 10,
-      "color": "bg-orange-500",
-      "updatedAt": "2025-07-24T22:49:54.118Z"
-    },
-    {
-      "id": 78,
-      "ratingName": "normal",
-      "ratingText": "Нормально",
-      "minScore": 20,
-      "color": "bg-yellow-500",
-      "updatedAt": "2025-07-24T23:01:35.119Z"
-    },
-    {
-      "id": 26,
-      "ratingName": "normal",
-      "ratingText": "Нормально",
-      "minScore": 20,
-      "color": "bg-yellow-500",
-      "updatedAt": "2025-07-24T22:49:54.685Z"
-    },
-    {
-      "id": 27,
-      "ratingName": "normal",
-      "ratingText": "Нормально",
-      "minScore": 20,
-      "color": "bg-yellow-500",
-      "updatedAt": "2025-07-24T22:49:54.798Z"
-    },
-    {
-      "id": 28,
-      "ratingName": "normal",
-      "ratingText": "Нормально",
-      "minScore": 20,
-      "color": "bg-yellow-500",
-      "updatedAt": "2025-07-24T22:49:54.912Z"
-    },
-    {
-      "id": 29,
-      "ratingName": "normal",
-      "ratingText": "Нормально",
-      "minScore": 20,
-      "color": "bg-yellow-500",
-      "updatedAt": "2025-07-24T22:49:55.025Z"
-    },
-    {
-      "id": 30,
-      "ratingName": "normal",
-      "ratingText": "Нормально",
-      "minScore": 20,
-      "color": "bg-yellow-500",
-      "updatedAt": "2025-07-24T22:49:55.139Z"
-    },
-    {
-      "id": 31,
-      "ratingName": "normal",
-      "ratingText": "Нормально",
-      "minScore": 20,
-      "color": "bg-yellow-500",
-      "updatedAt": "2025-07-24T22:49:55.252Z"
-    },
-    {
-      "id": 32,
-      "ratingName": "normal",
-      "ratingText": "Нормально",
-      "minScore": 20,
-      "color": "bg-yellow-500",
-      "updatedAt": "2025-07-24T22:49:55.366Z"
-    },
-    {
-      "id": 33,
-      "ratingName": "normal",
-      "ratingText": "Нормально",
-      "minScore": 20,
-      "color": "bg-yellow-500",
-      "updatedAt": "2025-07-24T22:49:55.479Z"
-    },
-    {
-      "id": 34,
-      "ratingName": "normal",
-      "ratingText": "Нормально",
-      "minScore": 20,
-      "color": "bg-yellow-500",
-      "updatedAt": "2025-07-24T22:49:55.593Z"
-    },
-    {
-      "id": 35,
-      "ratingName": "normal",
-      "ratingText": "Нормально",
-      "minScore": 20,
-      "color": "bg-yellow-500",
-      "updatedAt": "2025-07-24T22:49:55.707Z"
+      "updatedAt": "2025-07-24T23:15:28.329Z"
     },
     {
       "id": 3,
@@ -481,87 +73,7 @@
       "ratingText": "Нормально",
       "minScore": 20,
       "color": "bg-yellow-500",
-      "updatedAt": "2025-07-24T22:46:13.778Z"
-    },
-    {
-      "id": 83,
-      "ratingName": "normal",
-      "ratingText": "Нормально",
-      "minScore": 20,
-      "color": "bg-yellow-500",
-      "updatedAt": "2025-07-24T23:01:35.684Z"
-    },
-    {
-      "id": 82,
-      "ratingName": "normal",
-      "ratingText": "Нормально",
-      "minScore": 20,
-      "color": "bg-yellow-500",
-      "updatedAt": "2025-07-24T23:01:35.570Z"
-    },
-    {
-      "id": 81,
-      "ratingName": "normal",
-      "ratingText": "Нормально",
-      "minScore": 20,
-      "color": "bg-yellow-500",
-      "updatedAt": "2025-07-24T23:01:35.458Z"
-    },
-    {
-      "id": 80,
-      "ratingName": "normal",
-      "ratingText": "Нормально",
-      "minScore": 20,
-      "color": "bg-yellow-500",
-      "updatedAt": "2025-07-24T23:01:35.345Z"
-    },
-    {
-      "id": 79,
-      "ratingName": "normal",
-      "ratingText": "Нормально",
-      "minScore": 20,
-      "color": "bg-yellow-500",
-      "updatedAt": "2025-07-24T23:01:35.232Z"
-    },
-    {
-      "id": 77,
-      "ratingName": "normal",
-      "ratingText": "Нормально",
-      "minScore": 20,
-      "color": "bg-yellow-500",
-      "updatedAt": "2025-07-24T23:01:35.006Z"
-    },
-    {
-      "id": 76,
-      "ratingName": "normal",
-      "ratingText": "Нормально",
-      "minScore": 20,
-      "color": "bg-yellow-500",
-      "updatedAt": "2025-07-24T23:01:34.894Z"
-    },
-    {
-      "id": 85,
-      "ratingName": "normal",
-      "ratingText": "Нормально",
-      "minScore": 20,
-      "color": "bg-yellow-500",
-      "updatedAt": "2025-07-24T23:01:35.909Z"
-    },
-    {
-      "id": 84,
-      "ratingName": "normal",
-      "ratingText": "Нормально",
-      "minScore": 20,
-      "color": "bg-yellow-500",
-      "updatedAt": "2025-07-24T23:01:35.796Z"
-    },
-    {
-      "id": 92,
-      "ratingName": "good",
-      "ratingText": "Хорошо",
-      "minScore": 35,
-      "color": "bg-blue-500",
-      "updatedAt": "2025-07-24T23:01:36.697Z"
+      "updatedAt": "2025-07-24T23:15:28.185Z"
     },
     {
       "id": 2,
@@ -569,215 +81,7 @@
       "ratingText": "Хорошо",
       "minScore": 35,
       "color": "bg-blue-500",
-      "updatedAt": "2025-07-24T22:46:13.665Z"
-    },
-    {
-      "id": 36,
-      "ratingName": "good",
-      "ratingText": "Хорошо",
-      "minScore": 35,
-      "color": "bg-blue-500",
-      "updatedAt": "2025-07-24T22:49:55.820Z"
-    },
-    {
-      "id": 37,
-      "ratingName": "good",
-      "ratingText": "Хорошо",
-      "minScore": 35,
-      "color": "bg-blue-500",
-      "updatedAt": "2025-07-24T22:49:55.934Z"
-    },
-    {
-      "id": 38,
-      "ratingName": "good",
-      "ratingText": "Хорошо",
-      "minScore": 35,
-      "color": "bg-blue-500",
-      "updatedAt": "2025-07-24T22:49:56.047Z"
-    },
-    {
-      "id": 39,
-      "ratingName": "good",
-      "ratingText": "Хорошо",
-      "minScore": 35,
-      "color": "bg-blue-500",
-      "updatedAt": "2025-07-24T22:49:56.161Z"
-    },
-    {
-      "id": 40,
-      "ratingName": "good",
-      "ratingText": "Хорошо",
-      "minScore": 35,
-      "color": "bg-blue-500",
-      "updatedAt": "2025-07-24T22:49:56.274Z"
-    },
-    {
-      "id": 41,
-      "ratingName": "good",
-      "ratingText": "Хорошо",
-      "minScore": 35,
-      "color": "bg-blue-500",
-      "updatedAt": "2025-07-24T22:49:56.387Z"
-    },
-    {
-      "id": 42,
-      "ratingName": "good",
-      "ratingText": "Хорошо",
-      "minScore": 35,
-      "color": "bg-blue-500",
-      "updatedAt": "2025-07-24T22:49:56.501Z"
-    },
-    {
-      "id": 43,
-      "ratingName": "good",
-      "ratingText": "Хорошо",
-      "minScore": 35,
-      "color": "bg-blue-500",
-      "updatedAt": "2025-07-24T22:49:56.614Z"
-    },
-    {
-      "id": 44,
-      "ratingName": "good",
-      "ratingText": "Хорошо",
-      "minScore": 35,
-      "color": "bg-blue-500",
-      "updatedAt": "2025-07-24T22:49:56.727Z"
-    },
-    {
-      "id": 45,
-      "ratingName": "good",
-      "ratingText": "Хорошо",
-      "minScore": 35,
-      "color": "bg-blue-500",
-      "updatedAt": "2025-07-24T22:49:56.841Z"
-    },
-    {
-      "id": 86,
-      "ratingName": "good",
-      "ratingText": "Хорошо",
-      "minScore": 35,
-      "color": "bg-blue-500",
-      "updatedAt": "2025-07-24T23:01:36.022Z"
-    },
-    {
-      "id": 87,
-      "ratingName": "good",
-      "ratingText": "Хорошо",
-      "minScore": 35,
-      "color": "bg-blue-500",
-      "updatedAt": "2025-07-24T23:01:36.134Z"
-    },
-    {
-      "id": 88,
-      "ratingName": "good",
-      "ratingText": "Хорошо",
-      "minScore": 35,
-      "color": "bg-blue-500",
-      "updatedAt": "2025-07-24T23:01:36.247Z"
-    },
-    {
-      "id": 89,
-      "ratingName": "good",
-      "ratingText": "Хорошо",
-      "minScore": 35,
-      "color": "bg-blue-500",
-      "updatedAt": "2025-07-24T23:01:36.359Z"
-    },
-    {
-      "id": 90,
-      "ratingName": "good",
-      "ratingText": "Хорошо",
-      "minScore": 35,
-      "color": "bg-blue-500",
-      "updatedAt": "2025-07-24T23:01:36.472Z"
-    },
-    {
-      "id": 91,
-      "ratingName": "good",
-      "ratingText": "Хорошо",
-      "minScore": 35,
-      "color": "bg-blue-500",
-      "updatedAt": "2025-07-24T23:01:36.585Z"
-    },
-    {
-      "id": 93,
-      "ratingName": "good",
-      "ratingText": "Хорошо",
-      "minScore": 35,
-      "color": "bg-blue-500",
-      "updatedAt": "2025-07-24T23:01:36.810Z"
-    },
-    {
-      "id": 94,
-      "ratingName": "good",
-      "ratingText": "Хорошо",
-      "minScore": 35,
-      "color": "bg-blue-500",
-      "updatedAt": "2025-07-24T23:01:36.924Z"
-    },
-    {
-      "id": 95,
-      "ratingName": "good",
-      "ratingText": "Хорошо",
-      "minScore": 35,
-      "color": "bg-blue-500",
-      "updatedAt": "2025-07-24T23:01:37.037Z"
-    },
-    {
-      "id": 46,
-      "ratingName": "excellent",
-      "ratingText": "Великолепно",
-      "minScore": 50,
-      "color": "bg-green-500",
-      "updatedAt": "2025-07-24T22:49:56.954Z"
-    },
-    {
-      "id": 97,
-      "ratingName": "excellent",
-      "ratingText": "Великолепно",
-      "minScore": 50,
-      "color": "bg-green-500",
-      "updatedAt": "2025-07-24T23:01:37.262Z"
-    },
-    {
-      "id": 98,
-      "ratingName": "excellent",
-      "ratingText": "Великолепно",
-      "minScore": 50,
-      "color": "bg-green-500",
-      "updatedAt": "2025-07-24T23:01:37.378Z"
-    },
-    {
-      "id": 99,
-      "ratingName": "excellent",
-      "ratingText": "Великолепно",
-      "minScore": 50,
-      "color": "bg-green-500",
-      "updatedAt": "2025-07-24T23:01:37.491Z"
-    },
-    {
-      "id": 100,
-      "ratingName": "excellent",
-      "ratingText": "Великолепно",
-      "minScore": 50,
-      "color": "bg-green-500",
-      "updatedAt": "2025-07-24T23:01:37.603Z"
-    },
-    {
-      "id": 101,
-      "ratingName": "excellent",
-      "ratingText": "Великолепно",
-      "minScore": 50,
-      "color": "bg-green-500",
-      "updatedAt": "2025-07-24T23:01:37.716Z"
-    },
-    {
-      "id": 102,
-      "ratingName": "excellent",
-      "ratingText": "Великолепно",
-      "minScore": 50,
-      "color": "bg-green-500",
-      "updatedAt": "2025-07-24T23:01:37.829Z"
+      "updatedAt": "2025-07-24T23:15:28.042Z"
     },
     {
       "id": 1,
@@ -785,111 +89,7 @@
       "ratingText": "Великолепно",
       "minScore": 50,
       "color": "bg-green-500",
-      "updatedAt": "2025-07-24T22:46:13.550Z"
-    },
-    {
-      "id": 103,
-      "ratingName": "excellent",
-      "ratingText": "Великолепно",
-      "minScore": 50,
-      "color": "bg-green-500",
-      "updatedAt": "2025-07-24T23:01:37.941Z"
-    },
-    {
-      "id": 104,
-      "ratingName": "excellent",
-      "ratingText": "Великолепно",
-      "minScore": 50,
-      "color": "bg-green-500",
-      "updatedAt": "2025-07-24T23:01:38.054Z"
-    },
-    {
-      "id": 105,
-      "ratingName": "excellent",
-      "ratingText": "Великолепно",
-      "minScore": 50,
-      "color": "bg-green-500",
-      "updatedAt": "2025-07-24T23:01:38.168Z"
-    },
-    {
-      "id": 96,
-      "ratingName": "excellent",
-      "ratingText": "Великолепно",
-      "minScore": 50,
-      "color": "bg-green-500",
-      "updatedAt": "2025-07-24T23:01:37.150Z"
-    },
-    {
-      "id": 55,
-      "ratingName": "excellent",
-      "ratingText": "Великолепно",
-      "minScore": 50,
-      "color": "bg-green-500",
-      "updatedAt": "2025-07-24T22:49:57.976Z"
-    },
-    {
-      "id": 54,
-      "ratingName": "excellent",
-      "ratingText": "Великолепно",
-      "minScore": 50,
-      "color": "bg-green-500",
-      "updatedAt": "2025-07-24T22:49:57.862Z"
-    },
-    {
-      "id": 53,
-      "ratingName": "excellent",
-      "ratingText": "Великолепно",
-      "minScore": 50,
-      "color": "bg-green-500",
-      "updatedAt": "2025-07-24T22:49:57.748Z"
-    },
-    {
-      "id": 52,
-      "ratingName": "excellent",
-      "ratingText": "Великолепно",
-      "minScore": 50,
-      "color": "bg-green-500",
-      "updatedAt": "2025-07-24T22:49:57.634Z"
-    },
-    {
-      "id": 51,
-      "ratingName": "excellent",
-      "ratingText": "Великолепно",
-      "minScore": 50,
-      "color": "bg-green-500",
-      "updatedAt": "2025-07-24T22:49:57.521Z"
-    },
-    {
-      "id": 50,
-      "ratingName": "excellent",
-      "ratingText": "Великолепно",
-      "minScore": 50,
-      "color": "bg-green-500",
-      "updatedAt": "2025-07-24T22:49:57.408Z"
-    },
-    {
-      "id": 49,
-      "ratingName": "excellent",
-      "ratingText": "Великолепно",
-      "minScore": 50,
-      "color": "bg-green-500",
-      "updatedAt": "2025-07-24T22:49:57.295Z"
-    },
-    {
-      "id": 48,
-      "ratingName": "excellent",
-      "ratingText": "Великолепно",
-      "minScore": 50,
-      "color": "bg-green-500",
-      "updatedAt": "2025-07-24T22:49:57.181Z"
-    },
-    {
-      "id": 47,
-      "ratingName": "excellent",
-      "ratingText": "Великолепно",
-      "minScore": 50,
-      "color": "bg-green-500",
-      "updatedAt": "2025-07-24T22:49:57.068Z"
+      "updatedAt": "2025-07-24T23:15:27.898Z"
     }
   ],
   "globalRatingConfig": [
@@ -901,7 +101,7 @@
       "activityPointsTaskVerification": 5,
       "responseTimeGoodSeconds": 60,
       "responseTimePoorSeconds": 300,
-      "updatedAt": "2025-07-24T22:46:14.341Z"
+      "updatedAt": "2025-07-24T23:15:28.900Z"
     }
   ],
   "discordServers": [
@@ -980,7 +180,7 @@
   ],
   "curators": [
     {
-      "id": 1,
+      "id": 3,
       "discordId": "318071839329091584",
       "name": "Magic",
       "factions": [
@@ -992,13 +192,139 @@
       "curatorType": "government",
       "subdivision": null,
       "isActive": true,
-      "createdAt": "2025-07-24T22:50:03.999Z"
+      "createdAt": "2025-07-24T23:30:36.412Z"
     }
   ],
   "activities": [
     {
-      "id": 73,
-      "curatorId": 1,
+      "id": 220,
+      "curatorId": 3,
+      "serverId": 8,
+      "type": "message",
+      "channelId": "1250796228032200859",
+      "channelName": "🤖│bot-logs",
+      "messageId": "1398094397068935249",
+      "content": "1",
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
+      "timestamp": "2025-07-25T00:08:00.015Z"
+    },
+    {
+      "id": 219,
+      "curatorId": 3,
+      "serverId": 8,
+      "type": "message",
+      "channelId": "1250796228032200859",
+      "channelName": "🤖│bot-logs",
+      "messageId": "1398094395106136155",
+      "content": "1",
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
+      "timestamp": "2025-07-25T00:07:59.553Z"
+    },
+    {
+      "id": 218,
+      "curatorId": 3,
+      "serverId": 8,
+      "type": "message",
+      "channelId": "1250796228032200859",
+      "channelName": "🤖│bot-logs",
+      "messageId": "1398094393331814451",
+      "content": "1",
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
+      "timestamp": "2025-07-25T00:07:59.124Z"
+    },
+    {
+      "id": 217,
+      "curatorId": 3,
+      "serverId": 8,
+      "type": "message",
+      "channelId": "1250796228032200859",
+      "channelName": "🤖│bot-logs",
+      "messageId": "1398094390739603597",
+      "content": "1",
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
+      "timestamp": "2025-07-25T00:07:58.532Z"
+    },
+    {
+      "id": 216,
+      "curatorId": 3,
+      "serverId": 8,
+      "type": "message",
+      "channelId": "1250796228032200859",
+      "channelName": "🤖│bot-logs",
+      "messageId": "1398094333407920168",
+      "content": "1",
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
+      "timestamp": "2025-07-25T00:07:44.843Z"
+    },
+    {
+      "id": 183,
+      "curatorId": 3,
+      "serverId": 17,
+      "type": "reply",
+      "channelId": "1397712218228789289",
+      "channelName": "⚡│completed-tasks",
+      "messageId": "1398087606608199760",
+      "content": "+",
+      "reactionEmoji": null,
+      "targetMessageId": "1398087369596604496",
+      "targetMessageContent": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
+      "timestamp": "2025-07-24T23:41:01.617Z"
+    },
+    {
+      "id": 184,
+      "curatorId": 3,
+      "serverId": 17,
+      "type": "task_verification",
+      "channelId": "1397712218228789289",
+      "channelName": "⚡│completed-tasks",
+      "messageId": "1398087606608199760",
+      "content": "Verified 1/1 tasks",
+      "reactionEmoji": null,
+      "targetMessageId": "1398087369596604496",
+      "targetMessageContent": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
+      "timestamp": "2025-07-24T23:41:01.331Z"
+    },
+    {
+      "id": 185,
+      "curatorId": 3,
+      "serverId": 17,
+      "type": "reaction",
+      "channelId": "1397712218228789289",
+      "channelName": "⚡│completed-tasks",
+      "messageId": null,
+      "content": null,
+      "reactionEmoji": "✅",
+      "targetMessageId": "1398087369596604496",
+      "targetMessageContent": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
+      "timestamp": "2025-07-24T23:40:11.017Z"
+    },
+    {
+      "id": 186,
+      "curatorId": 3,
+      "serverId": 17,
+      "type": "message",
+      "channelId": "1397712218228789289",
+      "channelName": "⚡│completed-tasks",
+      "messageId": "1398087369596604496",
+      "content": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
+      "reactionEmoji": null,
+      "targetMessageId": null,
+      "targetMessageContent": null,
+      "timestamp": "2025-07-24T23:40:05.002Z"
+    },
+    {
+      "id": 187,
+      "curatorId": 3,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -1011,8 +337,8 @@
       "timestamp": "2025-07-24T23:01:44.003Z"
     },
     {
-      "id": 72,
-      "curatorId": 1,
+      "id": 188,
+      "curatorId": 3,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -1025,8 +351,8 @@
       "timestamp": "2025-07-24T23:01:43.890Z"
     },
     {
-      "id": 71,
-      "curatorId": 1,
+      "id": 189,
+      "curatorId": 3,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -1039,8 +365,8 @@
       "timestamp": "2025-07-24T23:01:43.778Z"
     },
     {
-      "id": 70,
-      "curatorId": 1,
+      "id": 190,
+      "curatorId": 3,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -1053,8 +379,8 @@
       "timestamp": "2025-07-24T23:01:43.665Z"
     },
     {
-      "id": 69,
-      "curatorId": 1,
+      "id": 191,
+      "curatorId": 3,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -1067,8 +393,8 @@
       "timestamp": "2025-07-24T23:01:43.552Z"
     },
     {
-      "id": 68,
-      "curatorId": 1,
+      "id": 192,
+      "curatorId": 3,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -1081,8 +407,8 @@
       "timestamp": "2025-07-24T23:01:43.439Z"
     },
     {
-      "id": 67,
-      "curatorId": 1,
+      "id": 193,
+      "curatorId": 3,
       "serverId": 8,
       "type": "reaction",
       "channelId": "1250796228032200859",
@@ -1095,8 +421,8 @@
       "timestamp": "2025-07-24T23:01:43.327Z"
     },
     {
-      "id": 66,
-      "curatorId": 1,
+      "id": 194,
+      "curatorId": 3,
       "serverId": 8,
       "type": "reaction",
       "channelId": "1250796228032200859",
@@ -1109,8 +435,8 @@
       "timestamp": "2025-07-24T23:01:43.214Z"
     },
     {
-      "id": 65,
-      "curatorId": 1,
+      "id": 195,
+      "curatorId": 3,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -1123,8 +449,8 @@
       "timestamp": "2025-07-24T23:01:43.099Z"
     },
     {
-      "id": 64,
-      "curatorId": 1,
+      "id": 196,
+      "curatorId": 3,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -1137,8 +463,8 @@
       "timestamp": "2025-07-24T23:01:42.986Z"
     },
     {
-      "id": 63,
-      "curatorId": 1,
+      "id": 197,
+      "curatorId": 3,
       "serverId": 8,
       "type": "reaction",
       "channelId": "1250796228032200859",
@@ -1151,8 +477,8 @@
       "timestamp": "2025-07-24T23:01:42.873Z"
     },
     {
-      "id": 62,
-      "curatorId": 1,
+      "id": 198,
+      "curatorId": 3,
       "serverId": 8,
       "type": "reaction",
       "channelId": "1250796228032200859",
@@ -1165,8 +491,8 @@
       "timestamp": "2025-07-24T23:01:42.761Z"
     },
     {
-      "id": 35,
-      "curatorId": 1,
+      "id": 200,
+      "curatorId": 3,
       "serverId": 17,
       "type": "reaction",
       "channelId": "1397712218228789289",
@@ -1179,8 +505,8 @@
       "timestamp": "2025-07-24T21:57:33.785Z"
     },
     {
-      "id": 36,
-      "curatorId": 1,
+      "id": 199,
+      "curatorId": 3,
       "serverId": 17,
       "type": "reaction",
       "channelId": "1397712218228789289",
@@ -1193,8 +519,8 @@
       "timestamp": "2025-07-24T21:57:33.785Z"
     },
     {
-      "id": 37,
-      "curatorId": 1,
+      "id": 201,
+      "curatorId": 3,
       "serverId": 17,
       "type": "message",
       "channelId": "1397712218228789289",
@@ -1207,8 +533,8 @@
       "timestamp": "2025-07-24T21:57:31.026Z"
     },
     {
-      "id": 38,
-      "curatorId": 1,
+      "id": 202,
+      "curatorId": 3,
       "serverId": 17,
       "type": "task_verification",
       "channelId": "1397712218228789289",
@@ -1221,8 +547,8 @@
       "timestamp": "2025-07-24T21:56:55.992Z"
     },
     {
-      "id": 39,
-      "curatorId": 1,
+      "id": 203,
+      "curatorId": 3,
       "serverId": 17,
       "type": "task_verification",
       "channelId": "1397712218228789289",
@@ -1235,8 +561,8 @@
       "timestamp": "2025-07-24T21:31:48.372Z"
     },
     {
-      "id": 23,
-      "curatorId": 1,
+      "id": 205,
+      "curatorId": 3,
       "serverId": 8,
       "type": "reaction",
       "channelId": "1250796228032200859",
@@ -1249,8 +575,8 @@
       "timestamp": "2025-07-24T21:15:29.749Z"
     },
     {
-      "id": 24,
-      "curatorId": 1,
+      "id": 204,
+      "curatorId": 3,
       "serverId": 8,
       "type": "reaction",
       "channelId": "1250796228032200859",
@@ -1263,8 +589,8 @@
       "timestamp": "2025-07-24T21:15:29.749Z"
     },
     {
-      "id": 26,
-      "curatorId": 1,
+      "id": 207,
+      "curatorId": 3,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -1277,8 +603,8 @@
       "timestamp": "2025-07-24T21:15:27.792Z"
     },
     {
-      "id": 25,
-      "curatorId": 1,
+      "id": 206,
+      "curatorId": 3,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -1291,8 +617,8 @@
       "timestamp": "2025-07-24T21:15:27.792Z"
     },
     {
-      "id": 27,
-      "curatorId": 1,
+      "id": 209,
+      "curatorId": 3,
       "serverId": 8,
       "type": "reaction",
       "channelId": "1250796228032200859",
@@ -1305,8 +631,8 @@
       "timestamp": "2025-07-24T21:14:45.751Z"
     },
     {
-      "id": 28,
-      "curatorId": 1,
+      "id": 208,
+      "curatorId": 3,
       "serverId": 8,
       "type": "reaction",
       "channelId": "1250796228032200859",
@@ -1319,8 +645,8 @@
       "timestamp": "2025-07-24T21:14:45.751Z"
     },
     {
-      "id": 29,
-      "curatorId": 1,
+      "id": 211,
+      "curatorId": 3,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -1333,8 +659,8 @@
       "timestamp": "2025-07-24T21:14:43.507Z"
     },
     {
-      "id": 30,
-      "curatorId": 1,
+      "id": 210,
+      "curatorId": 3,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -1347,8 +673,8 @@
       "timestamp": "2025-07-24T21:14:43.507Z"
     },
     {
-      "id": 31,
-      "curatorId": 1,
+      "id": 212,
+      "curatorId": 3,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -1361,8 +687,8 @@
       "timestamp": "2025-07-24T21:14:42.219Z"
     },
     {
-      "id": 32,
-      "curatorId": 1,
+      "id": 213,
+      "curatorId": 3,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -1375,8 +701,8 @@
       "timestamp": "2025-07-24T21:14:42.219Z"
     },
     {
-      "id": 33,
-      "curatorId": 1,
+      "id": 214,
+      "curatorId": 3,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -1389,8 +715,8 @@
       "timestamp": "2025-07-24T21:14:41.362Z"
     },
     {
-      "id": 34,
-      "curatorId": 1,
+      "id": 215,
+      "curatorId": 3,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -1405,31 +731,31 @@
   ],
   "responseTracking": [
     {
-      "id": 13,
-      "serverId": 19,
-      "curatorId": 1,
-      "mentionMessageId": "1398061381219123304",
-      "mentionTimestamp": "2025-07-24T21:56:48.007Z",
-      "responseMessageId": "reaction_1398061381219123304_318071839329091584",
-      "responseTimestamp": "2025-07-24T21:56:51.601Z",
-      "responseType": "reaction",
-      "responseTimeSeconds": 4
-    },
-    {
-      "id": 12,
-      "serverId": 19,
-      "curatorId": 1,
-      "mentionMessageId": "1398061381219123304",
-      "mentionTimestamp": "2025-07-24T21:56:48.007Z",
-      "responseMessageId": "reaction_1398061381219123304_318071839329091584",
-      "responseTimestamp": "2025-07-24T21:56:51.601Z",
-      "responseType": "reaction",
-      "responseTimeSeconds": 4
-    },
-    {
-      "id": 10,
+      "id": 123,
       "serverId": 17,
-      "curatorId": 1,
+      "curatorId": 3,
+      "mentionMessageId": "1398087369596604496",
+      "mentionTimestamp": "2025-07-24T23:40:04.119Z",
+      "responseMessageId": "reaction_1398087369596604496_318071839329091584",
+      "responseTimestamp": "2025-07-24T23:40:10.799Z",
+      "responseType": "reaction",
+      "responseTimeSeconds": 7
+    },
+    {
+      "id": 124,
+      "serverId": 19,
+      "curatorId": 3,
+      "mentionMessageId": "1398061381219123304",
+      "mentionTimestamp": "2025-07-24T21:56:48.007Z",
+      "responseMessageId": "reaction_1398061381219123304_318071839329091584",
+      "responseTimestamp": "2025-07-24T21:56:51.601Z",
+      "responseType": "reaction",
+      "responseTimeSeconds": 4
+    },
+    {
+      "id": 125,
+      "serverId": 17,
+      "curatorId": 3,
       "mentionMessageId": "1398061381219123304",
       "mentionTimestamp": "2025-07-24T21:56:48.007Z",
       "responseMessageId": "1398061564611371038",
@@ -1438,9 +764,9 @@
       "responseTimeSeconds": 7
     },
     {
-      "id": 1,
+      "id": 126,
       "serverId": 19,
-      "curatorId": 1,
+      "curatorId": 3,
       "mentionMessageId": "1398061381219123304",
       "mentionTimestamp": "2025-07-24T21:56:48.007Z",
       "responseMessageId": "reaction_1398061381219123304_318071839329091584",
@@ -1449,9 +775,9 @@
       "responseTimeSeconds": 4
     },
     {
-      "id": 3,
+      "id": 127,
       "serverId": 19,
-      "curatorId": 1,
+      "curatorId": 3,
       "mentionMessageId": "1398061381219123304",
       "mentionTimestamp": "2025-07-24T21:56:48.007Z",
       "responseMessageId": "reaction_1398061381219123304_318071839329091584",
@@ -1460,9 +786,9 @@
       "responseTimeSeconds": 4
     },
     {
-      "id": 2,
+      "id": 128,
       "serverId": 19,
-      "curatorId": 1,
+      "curatorId": 3,
       "mentionMessageId": "1398061381219123304",
       "mentionTimestamp": "2025-07-24T21:56:48.007Z",
       "responseMessageId": "reaction_1398061381219123304_318071839329091584",
@@ -1471,9 +797,9 @@
       "responseTimeSeconds": 4
     },
     {
-      "id": 14,
+      "id": 129,
       "serverId": 19,
-      "curatorId": 1,
+      "curatorId": 3,
       "mentionMessageId": "1398061381219123304",
       "mentionTimestamp": "2025-07-24T21:56:48.007Z",
       "responseMessageId": "reaction_1398061381219123304_318071839329091584",
@@ -1482,9 +808,86 @@
       "responseTimeSeconds": 4
     },
     {
-      "id": 11,
+      "id": 130,
+      "serverId": 19,
+      "curatorId": 3,
+      "mentionMessageId": "1398061381219123304",
+      "mentionTimestamp": "2025-07-24T21:56:48.007Z",
+      "responseMessageId": "reaction_1398061381219123304_318071839329091584",
+      "responseTimestamp": "2025-07-24T21:56:51.601Z",
+      "responseType": "reaction",
+      "responseTimeSeconds": 4
+    },
+    {
+      "id": 131,
+      "serverId": 19,
+      "curatorId": 3,
+      "mentionMessageId": "1398054939292598334",
+      "mentionTimestamp": "2025-07-24T21:31:12.132Z",
+      "responseMessageId": "reaction_1398054939292598334_318071839329091584",
+      "responseTimestamp": "2025-07-24T21:31:33.652Z",
+      "responseType": "reaction",
+      "responseTimeSeconds": 22
+    },
+    {
+      "id": 132,
+      "serverId": 19,
+      "curatorId": 3,
+      "mentionMessageId": "1398054939292598334",
+      "mentionTimestamp": "2025-07-24T21:31:12.132Z",
+      "responseMessageId": "reaction_1398054939292598334_318071839329091584",
+      "responseTimestamp": "2025-07-24T21:31:33.652Z",
+      "responseType": "reaction",
+      "responseTimeSeconds": 22
+    },
+    {
+      "id": 133,
+      "serverId": 19,
+      "curatorId": 3,
+      "mentionMessageId": "1398054939292598334",
+      "mentionTimestamp": "2025-07-24T21:31:12.132Z",
+      "responseMessageId": "reaction_1398054939292598334_318071839329091584",
+      "responseTimestamp": "2025-07-24T21:31:33.652Z",
+      "responseType": "reaction",
+      "responseTimeSeconds": 22
+    },
+    {
+      "id": 134,
+      "serverId": 19,
+      "curatorId": 3,
+      "mentionMessageId": "1398054939292598334",
+      "mentionTimestamp": "2025-07-24T21:31:12.132Z",
+      "responseMessageId": "reaction_1398054939292598334_318071839329091584",
+      "responseTimestamp": "2025-07-24T21:31:33.652Z",
+      "responseType": "reaction",
+      "responseTimeSeconds": 22
+    },
+    {
+      "id": 135,
+      "serverId": 19,
+      "curatorId": 3,
+      "mentionMessageId": "1398054939292598334",
+      "mentionTimestamp": "2025-07-24T21:31:12.132Z",
+      "responseMessageId": "reaction_1398054939292598334_318071839329091584",
+      "responseTimestamp": "2025-07-24T21:31:33.652Z",
+      "responseType": "reaction",
+      "responseTimeSeconds": 22
+    },
+    {
+      "id": 136,
+      "serverId": 19,
+      "curatorId": 3,
+      "mentionMessageId": "1398054939292598334",
+      "mentionTimestamp": "2025-07-24T21:31:12.132Z",
+      "responseMessageId": "reaction_1398054939292598334_318071839329091584",
+      "responseTimestamp": "2025-07-24T21:31:33.652Z",
+      "responseType": "reaction",
+      "responseTimeSeconds": 22
+    },
+    {
+      "id": 137,
       "serverId": 17,
-      "curatorId": 1,
+      "curatorId": 3,
       "mentionMessageId": "1398054939292598334",
       "mentionTimestamp": "2025-07-24T21:31:12.132Z",
       "responseMessageId": "1398054964693983324",
@@ -1493,75 +896,9 @@
       "responseTimeSeconds": 36
     },
     {
-      "id": 4,
-      "serverId": 19,
-      "curatorId": 1,
-      "mentionMessageId": "1398054939292598334",
-      "mentionTimestamp": "2025-07-24T21:31:12.132Z",
-      "responseMessageId": "reaction_1398054939292598334_318071839329091584",
-      "responseTimestamp": "2025-07-24T21:31:33.652Z",
-      "responseType": "reaction",
-      "responseTimeSeconds": 22
-    },
-    {
-      "id": 5,
-      "serverId": 19,
-      "curatorId": 1,
-      "mentionMessageId": "1398054939292598334",
-      "mentionTimestamp": "2025-07-24T21:31:12.132Z",
-      "responseMessageId": "reaction_1398054939292598334_318071839329091584",
-      "responseTimestamp": "2025-07-24T21:31:33.652Z",
-      "responseType": "reaction",
-      "responseTimeSeconds": 22
-    },
-    {
-      "id": 6,
-      "serverId": 19,
-      "curatorId": 1,
-      "mentionMessageId": "1398054939292598334",
-      "mentionTimestamp": "2025-07-24T21:31:12.132Z",
-      "responseMessageId": "reaction_1398054939292598334_318071839329091584",
-      "responseTimestamp": "2025-07-24T21:31:33.652Z",
-      "responseType": "reaction",
-      "responseTimeSeconds": 22
-    },
-    {
-      "id": 15,
-      "serverId": 19,
-      "curatorId": 1,
-      "mentionMessageId": "1398054939292598334",
-      "mentionTimestamp": "2025-07-24T21:31:12.132Z",
-      "responseMessageId": "reaction_1398054939292598334_318071839329091584",
-      "responseTimestamp": "2025-07-24T21:31:33.652Z",
-      "responseType": "reaction",
-      "responseTimeSeconds": 22
-    },
-    {
-      "id": 16,
-      "serverId": 19,
-      "curatorId": 1,
-      "mentionMessageId": "1398054939292598334",
-      "mentionTimestamp": "2025-07-24T21:31:12.132Z",
-      "responseMessageId": "reaction_1398054939292598334_318071839329091584",
-      "responseTimestamp": "2025-07-24T21:31:33.652Z",
-      "responseType": "reaction",
-      "responseTimeSeconds": 22
-    },
-    {
-      "id": 17,
-      "serverId": 19,
-      "curatorId": 1,
-      "mentionMessageId": "1398054939292598334",
-      "mentionTimestamp": "2025-07-24T21:31:12.132Z",
-      "responseMessageId": "reaction_1398054939292598334_318071839329091584",
-      "responseTimestamp": "2025-07-24T21:31:33.652Z",
-      "responseType": "reaction",
-      "responseTimeSeconds": 22
-    },
-    {
-      "id": 18,
+      "id": 138,
       "serverId": 8,
-      "curatorId": 1,
+      "curatorId": 3,
       "mentionMessageId": "1398050975490506894",
       "mentionTimestamp": "2025-07-24T21:15:27.088Z",
       "responseMessageId": "reaction_1398050975490506894_318071839329091584",
@@ -1570,9 +907,9 @@
       "responseTimeSeconds": 3
     },
     {
-      "id": 19,
+      "id": 139,
       "serverId": 8,
-      "curatorId": 1,
+      "curatorId": 3,
       "mentionMessageId": "1398050975490506894",
       "mentionTimestamp": "2025-07-24T21:15:27.088Z",
       "responseMessageId": "reaction_1398050975490506894_318071839329091584",
@@ -1581,9 +918,9 @@
       "responseTimeSeconds": 3
     },
     {
-      "id": 20,
+      "id": 140,
       "serverId": 8,
-      "curatorId": 1,
+      "curatorId": 3,
       "mentionMessageId": "1398050975490506894",
       "mentionTimestamp": "2025-07-24T21:15:27.088Z",
       "responseMessageId": "reaction_1398050975490506894_318071839329091584",
@@ -1592,9 +929,9 @@
       "responseTimeSeconds": 3
     },
     {
-      "id": 9,
+      "id": 141,
       "serverId": 8,
-      "curatorId": 1,
+      "curatorId": 3,
       "mentionMessageId": "1398050975490506894",
       "mentionTimestamp": "2025-07-24T21:15:27.088Z",
       "responseMessageId": "reaction_1398050975490506894_318071839329091584",
@@ -1603,9 +940,9 @@
       "responseTimeSeconds": 3
     },
     {
-      "id": 8,
+      "id": 142,
       "serverId": 8,
-      "curatorId": 1,
+      "curatorId": 3,
       "mentionMessageId": "1398050975490506894",
       "mentionTimestamp": "2025-07-24T21:15:27.088Z",
       "responseMessageId": "reaction_1398050975490506894_318071839329091584",
@@ -1614,9 +951,9 @@
       "responseTimeSeconds": 3
     },
     {
-      "id": 7,
+      "id": 143,
       "serverId": 8,
-      "curatorId": 1,
+      "curatorId": 3,
       "mentionMessageId": "1398050975490506894",
       "mentionTimestamp": "2025-07-24T21:15:27.088Z",
       "responseMessageId": "reaction_1398050975490506894_318071839329091584",
@@ -1627,7 +964,25 @@
   ],
   "taskReports": [
     {
-      "id": 1,
+      "id": 15,
+      "serverId": 17,
+      "authorId": "318071839329091584",
+      "authorName": "5_2hz",
+      "messageId": "1398087369596604496",
+      "channelId": "1397712218228789289",
+      "content": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
+      "taskCount": 1,
+      "submittedAt": "2025-07-24T23:40:04.119Z",
+      "curatorId": 3,
+      "curatorDiscordId": "318071839329091584",
+      "curatorName": "Magic",
+      "checkedAt": "2025-07-24T23:41:00.627Z",
+      "approvedTasks": 1,
+      "status": "verified",
+      "weekStart": "2025-07-21T00:00:00.000Z"
+    },
+    {
+      "id": 16,
       "serverId": 17,
       "authorId": "318071839329091584",
       "authorName": "5_2hz",
@@ -1636,7 +991,7 @@
       "content": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
       "taskCount": 1,
       "submittedAt": "2025-07-24T21:56:48.007Z",
-      "curatorId": 1,
+      "curatorId": 3,
       "curatorDiscordId": "318071839329091584",
       "curatorName": "Magic",
       "checkedAt": "2025-07-24T21:56:55.992Z",
@@ -1645,7 +1000,7 @@
       "weekStart": "2025-07-21T00:00:00.000Z"
     },
     {
-      "id": 2,
+      "id": 17,
       "serverId": 17,
       "authorId": "318071839329091584",
       "authorName": "5_2hz",
@@ -1654,7 +1009,7 @@
       "content": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
       "taskCount": 1,
       "submittedAt": "2025-07-24T21:31:12.132Z",
-      "curatorId": 1,
+      "curatorId": 3,
       "curatorDiscordId": "318071839329091584",
       "curatorName": "Magic",
       "checkedAt": "2025-07-24T21:31:48.372Z",

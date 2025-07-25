@@ -40,9 +40,8 @@ export async function importFromBackup() {
     await storage.clearAllTaskReports();
     console.log('✅ Cleared all task reports');
     
-    // Удаляем всех кураторов (кроме исключенных в blacklist)
-    await storage.clearAllCurators();
-    console.log('✅ Cleared all curators');
+    // НЕ удаляем кураторов - будем обновлять существующих через createOrUpdate
+    console.log('⚠️ Skipping curator clearing to preserve data relationships');
     
     // Импортируем настройки бота
     console.log('📝 Importing bot settings...');
@@ -63,42 +62,27 @@ export async function importFromBackup() {
       }
     }
     
-    // Импортируем настройки рейтингов
-    if (backupData.ratingSettings && backupData.ratingSettings.length > 0) {
-      console.log('⭐ Importing rating settings...');
-      for (const rating of backupData.ratingSettings) {
-        await storage.createRatingSettings({
-          ratingName: rating.ratingName,
-          ratingText: rating.ratingText,
-          minScore: rating.minScore,
-          color: rating.color
-        });
-        console.log(`✅ Imported rating: ${rating.ratingText} (${rating.minScore}+ points)`);
-      }
-    }
+    // Пропускаем импорт настроек рейтингов - они уже существуют и не должны дублироваться
+    console.log('⚠️ Skipping rating settings import - using existing settings to prevent duplicates');
     
     // Пропускаем глобальную конфигурацию рейтингов - она будет создана автоматически
     console.log('⚠️ Skipping global rating config import - will use defaults');
     
-    // Импортируем Discord серверы
+    // Импортируем Discord серверы (обновляем существующие)
     if (backupData.discordServers && backupData.discordServers.length > 0) {
       console.log('🌐 Importing Discord servers...');
       for (const server of backupData.discordServers) {
         try {
-          // Пытаемся создать сервер, если уже существует - пропускаем
-          await storage.createDiscordServer({
+          // Используем createOrUpdate для перезаписи существующих данных
+          await storage.createOrUpdateDiscordServer({
             serverId: server.serverId,
             name: server.name,
             roleTagId: server.roleTagId,
             completedTasksChannelId: server.completedTasksChannelId
           });
-          console.log(`✅ Imported Discord server: ${server.name} (${server.serverId})`);
+          console.log(`✅ Imported/Updated Discord server: ${server.name} (${server.serverId})`);
         } catch (error: any) {
-          if (error.code === '23505') {
-            console.log(`⚠️ Discord server already exists: ${server.name} (${server.serverId})`);
-          } else {
-            console.log(`❌ Error importing server ${server.name}:`, error.message);
-          }
+          console.log(`❌ Error importing server ${server.name}:`, error.message);
         }
       }
     }
@@ -121,20 +105,18 @@ export async function importFromBackup() {
         }
         
         try {
-          await storage.createCurator({
+          // Используем createOrUpdate для перезаписи существующих данных
+          await storage.createOrUpdateCurator({
             discordId: curator.discordId,
             name: curator.name,
             factions: curator.factions || [],
-            curatorType: curator.curatorType || 'government'
+            curatorType: curator.curatorType || 'government',
+            subdivision: curator.subdivision
           });
-          console.log(`✅ Imported curator: ${curator.name} (${curator.discordId})`);
+          console.log(`✅ Imported/Updated curator: ${curator.name} (${curator.discordId})`);
           importedCount++;
         } catch (error: any) {
-          if (error.code === '23505') {
-            console.log(`⚠️ Curator already exists: ${curator.name} (${curator.discordId})`);
-          } else {
-            console.log(`❌ Error importing curator ${curator.name}:`, error.message);
-          }
+          console.log(`❌ Error importing curator ${curator.name}:`, error.message);
         }
       }
       

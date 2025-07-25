@@ -123,6 +123,17 @@ export interface IStorage {
   // Excluded curators methods
   getExcludedCurators(): Promise<ExcludedCurator[]>;
   addExcludedCurator(curator: InsertExcludedCurator): Promise<ExcludedCurator | undefined>;
+  
+  // Clear methods for import
+  clearAllActivities(): Promise<void>;
+  clearAllResponseTracking(): Promise<void>;
+  clearAllTaskReports(): Promise<void>;
+  clearAllCurators(): Promise<void>;
+  clearAllDiscordServers(): Promise<void>;
+  
+  // Create or update methods for import
+  createOrUpdateCurator(curator: InsertCurator): Promise<Curator>;
+  createOrUpdateDiscordServer(server: InsertDiscordServer): Promise<DiscordServer>;
   removeExcludedCurator(discordId: string): Promise<void>;
   
   // Statistics methods
@@ -314,6 +325,11 @@ export class DatabaseStorage implements IStorage {
     return await db.select().from(discordServers).where(eq(discordServers.isActive, true));
   }
 
+  async getDiscordServerByServerId(serverId: string): Promise<DiscordServer | undefined> {
+    const [server] = await db.select().from(discordServers).where(eq(discordServers.serverId, serverId));
+    return server;
+  }
+
   async createDiscordServer(server: InsertDiscordServer): Promise<DiscordServer> {
     const [newServer] = await db
       .insert(discordServers)
@@ -450,6 +466,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createRatingSettings(settings: InsertRatingSettings): Promise<RatingSettings> {
+    // Проверяем, существует ли уже настройка с таким именем
+    const existing = await db.select().from(ratingSettings).where(eq(ratingSettings.ratingName, settings.ratingName)).limit(1);
+    if (existing.length > 0) {
+      console.log(`⚠️ Rating setting already exists: ${settings.ratingName}`);
+      return existing[0];
+    }
+    
     const [newSettings] = await db
       .insert(ratingSettings)
       .values(settings)
@@ -673,12 +696,77 @@ export class DatabaseStorage implements IStorage {
       console.log("No response time data found in tracking table for the specified period");
     }
 
+    // Рассчитываем статистику для предыдущих периодов
+    const currentMessages = filteredActivities.filter(a => a.type === 'message').length;
+    const currentReactions = filteredActivities.filter(a => a.type === 'reaction').length;
+    
+    // Получаем вчерашние данные для сравнения
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString().split('T')[0];
+    
+    const yesterdayActivities = allActivities.filter(a => {
+      if (!a.timestamp) return false;
+      const activityDate = a.timestamp instanceof Date 
+        ? a.timestamp.toISOString().split('T')[0] 
+        : new Date(a.timestamp).toISOString().split('T')[0];
+      return activityDate === yesterdayStr;
+    });
+    
+    const yesterdayMessages = yesterdayActivities.filter(a => a.type === 'message').length;
+    const yesterdayReactions = yesterdayActivities.filter(a => a.type === 'reaction').length;
+    
+    // Получаем данные за прошлую неделю для сравнения
+    const weekAgo = new Date();
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    
+    const weekAgoActivities = allActivities.filter(a => {
+      if (!a.timestamp) return false;
+      const activityDate = a.timestamp instanceof Date ? a.timestamp : new Date(a.timestamp);
+      return activityDate >= weekAgo && activityDate < yesterday;
+    });
+    
+    const weekAgoReactions = weekAgoActivities.filter(a => a.type === 'reaction').length;
+    
+    // Рассчитываем среднее время ответа за прошлую неделю
+    const weekAgoResponseTimes = await db
+      .select({ responseTime: responseTracking.responseTimeSeconds })
+      .from(responseTracking)
+      .where(
+        and(
+          sql`${responseTracking.responseTimeSeconds} IS NOT NULL`,
+          sql`${responseTracking.mentionTimestamp} >= ${weekAgo.toISOString()}`,
+          sql`${responseTracking.mentionTimestamp} < ${yesterday.toISOString()}`
+        )
+      );
+    
+    const weekAgoResponseTime = weekAgoResponseTimes.length > 0 
+      ? weekAgoResponseTimes.reduce((sum, rt) => sum + (rt.responseTime || 0), 0) / weekAgoResponseTimes.length
+      : 0;
+    
+    // Рассчитываем изменения
+    const messagesChange = yesterdayMessages > 0 
+      ? Math.round(((currentMessages - yesterdayMessages) / yesterdayMessages) * 100)
+      : currentMessages > 0 ? 100 : 0;
+      
+    const reactionsChange = weekAgoReactions > 0 
+      ? Math.round(((currentReactions - weekAgoReactions) / weekAgoReactions) * 100)
+      : currentReactions > 0 ? 100 : 0;
+      
+    const responseTimeChange = weekAgoResponseTime > 0 
+      ? Math.round((weekAgoResponseTime - avgResponseTime) * 10) / 10
+      : 0;
+
     const stats = {
       totalCurators: curators.filter(c => c.isActive).length,
-      todayMessages: filteredActivities.filter(a => a.type === 'message').length.toString(),
-      todayReactions: filteredActivities.filter(a => a.type === 'reaction').length.toString(),
+      todayMessages: currentMessages.toString(),
+      todayReactions: currentReactions.toString(),
       todayReplies: filteredActivities.filter(a => a.type === 'reply').length.toString(),
-      avgResponseTime: avgResponseTime.toString()
+      avgResponseTime: avgResponseTime.toString(),
+      curatorsChange: 0, // Изменение кураторов за месяц (пока статичное)
+      messagesChange: messagesChange,
+      reactionsChange: reactionsChange,
+      responseTimeChange: responseTimeChange
     };
     
     console.log("Final dashboard stats:", stats);
@@ -1266,6 +1354,61 @@ export class DatabaseStorage implements IStorage {
     await db.delete(curators);
   }
 
+  async clearAllDiscordServers(): Promise<void> {
+    await db.delete(discordServers);
+  }
+
+  // Create or update methods for import - preserves existing ID
+  async createOrUpdateCurator(curator: InsertCurator): Promise<Curator> {
+    // Сначала проверяем, есть ли куратор с таким Discord ID
+    const existing = await this.getCuratorByDiscordId(curator.discordId);
+    
+    if (existing) {
+      // Обновляем существующего куратора
+      const updated = await this.updateCurator(existing.id, {
+        name: curator.name,
+        factions: curator.factions,
+        curatorType: curator.curatorType,
+        subdivision: curator.subdivision,
+      });
+      console.log(`🔄 Updated existing curator: ${curator.name} (ID: ${existing.id})`);
+      return updated!;
+    } else {
+      // Создаем нового куратора
+      const newCurator = await this.createCurator(curator);
+      console.log(`✨ Created new curator: ${curator.name} (ID: ${newCurator.id})`);
+      return newCurator;
+    }
+  }
+
+  async createOrUpdateDiscordServer(server: InsertDiscordServer): Promise<DiscordServer> {
+    // Сначала проверяем, есть ли сервер с таким Server ID
+    const existing = await this.getDiscordServerByServerId(server.serverId);
+    
+    if (existing) {
+      // Обновляем существующий сервер
+      const [updated] = await db
+        .update(discordServers)
+        .set({
+          name: server.name,
+          roleTagId: server.roleTagId,
+          completedTasksChannelId: server.completedTasksChannelId,
+        })
+        .where(eq(discordServers.id, existing.id))
+        .returning();
+      console.log(`🔄 Updated existing Discord server: ${server.name} (ID: ${existing.id})`);
+      return updated;
+    } else {
+      // Создаем новый сервер
+      const [newServer] = await db
+        .insert(discordServers)
+        .values(server)
+        .returning();
+      console.log(`✨ Created new Discord server: ${server.name} (ID: ${newServer.id})`);
+      return newServer;
+    }
+  }
+
   // Create activity with custom timestamp
   async createActivityWithTimestamp(activity: {
     curatorId: number;
@@ -1284,7 +1427,7 @@ export class DatabaseStorage implements IStorage {
       .insert(activities)
       .values({
         ...activity,
-        createdAt: activity.timestamp // Используем переданную временную метку
+        timestamp: activity.timestamp // Используем переданную временную метку
       })
       .returning();
     return newActivity;

@@ -673,7 +673,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } else {
         res.status(500).json({ success: false, message: 'Import failed' });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error importing backup:', error);
       res.status(500).json({ success: false, message: 'Import failed', error: error.message });
     }

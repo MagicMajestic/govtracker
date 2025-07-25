@@ -1,0 +1,45 @@
+[Pterodactyl Daemon]: Checking server disk space usage, this could take a few seconds...
+[Pterodactyl Daemon]: Updating process configuration files...
+[Pterodactyl Daemon]: Ensuring file permissions are set correctly, this could take a few seconds...
+[Pterodactyl Daemon]: Executing cautionary malware scan...
+customer@apollopanel~ Server marked as starting...
+[Pterodactyl Daemon]: Pulling Docker container image, this could take a few minutes to complete...
+[Pterodactyl Daemon]: Finished pulling Docker container image
+NodeJS version: v18.20.4
+customer@apollopanel~ Server marked as running...
+NPM version: 10.8.3
+Yarn version: 22.19
+Git version: 2.39.2
+Discord.js version: 14.21.0
+customer@apollopanel:~# if [[ -d .git ]]; then git pull; fi; if [[ ! -z ${NODE_PACKAGES} ]]; then npm install ${NODE_PACKAGES}; fi; if [ -f /home/container/package.json ]; then npm install --production; fi; node /home/container/${STARTUP_FILE}
+npm warn config production Use `--omit=dev` instead.
+npm error code ENOTEMPTY
+npm error syscall rename
+npm error path /home/container/node_modules/drizzle-kit
+npm error dest /home/container/node_modules/.drizzle-kit-BeDejBHz
+npm error errno -39
+npm error ENOTEMPTY: directory not empty, rename '/home/container/node_modules/drizzle-kit' -> '/home/container/node_modules/.drizzle-kit-BeDejBHz'
+npm error A complete log of this run can be found in: /home/container/.npm/_logs/2025-07-25T03_34_17_278Z-debug-0.log
+🚀 Starting Discord Bot Curator Monitoring System...
+📦 Node.js version: v18.20.4
+🔧 Environment: development
+🔍 Checking dependencies...
+📦 node_modules exists: true
+📊 Packages in node_modules: 355
+🏗️ dist folder exists: false
+✅ Dependencies already installed
+🔨 Building TypeScript project...
+🔄 Running: npm run build
+📁 Working directory: /home/container
+⏰ Started at: 3:34:54 AM
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+sh: 1: vite: not found
+✅ Command completed with exit code: 127 at 3:34:55 AM
+❌ Startup failed: Command failed with exit code 127
+💡 Make sure you have:
+   - Uploaded all project files (package.json, server/, client/, shared/)
+   - Set DATABASE_URL environment variable
+   - Set DISCORD_BOT_TOKEN environment variable
+   - Set NODE_ENV=production
+customer@apollopanel~ Server marked as offline...

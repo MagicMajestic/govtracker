@@ -61,23 +61,59 @@ if (fs.existsSync('./server/db.ts') && !fs.existsSync('./server/db-postgres-back
 fs.writeFileSync('./server/db.ts', mysqlDbContent);
 console.log('✅ Switched to MySQL configuration');
 
-// Start the server
+// Build and start the server
+console.log('🔧 Building server...');
+const { execSync } = require('child_process');
+
 try {
-  console.log('🚀 Starting main server...');
-  require('./server/index.ts');
+  // Install dependencies if needed
+  if (require('fs').existsSync('./package.json')) {
+    console.log('📦 Installing dependencies...');
+    execSync('npm install --production', { stdio: 'inherit' });
+  }
+  
+  // Try different build methods
+  let buildSuccess = false;
+  
+  // Method 1: Try esbuild
+  try {
+    console.log('🔨 Building with esbuild...');
+    execSync('npx esbuild server/index.ts --bundle --platform=node --format=cjs --outfile=dist/server.js --external:mysql2 --external:discord.js', { stdio: 'inherit' });
+    buildSuccess = true;
+  } catch (buildError) {
+    console.log('⚠️ esbuild failed, trying tsx...');
+  }
+  
+  // Method 2: Try tsx directly
+  if (!buildSuccess) {
+    console.log('🚀 Starting with tsx...');
+    const { spawn } = require('child_process');
+    const server = spawn('npx', ['tsx', 'server/index.ts'], {
+      stdio: 'inherit',
+      env: { ...process.env }
+    });
+    
+    server.on('error', (error) => {
+      console.error('❌ tsx failed:', error);
+      process.exit(1);
+    });
+    
+    process.on('SIGTERM', () => server.kill());
+    process.on('SIGINT', () => server.kill());
+    return;
+  }
+  
+  // Method 3: Run built file
+  if (buildSuccess && require('fs').existsSync('./dist/server.js')) {
+    console.log('✅ Running built server...');
+    require('./dist/server.js');
+  }
+  
 } catch (error) {
-  console.error('❌ Server startup failed:', error);
-  
-  // Try to use tsx if available
-  console.log('🔄 Trying with tsx...');
-  const { spawn } = require('child_process');
-  const server = spawn('npx', ['tsx', 'server/index.ts'], {
-    stdio: 'inherit',
-    env: { ...process.env }
-  });
-  
-  server.on('error', (error) => {
-    console.error('❌ Failed to start with tsx:', error);
-    process.exit(1);
-  });
+  console.error('❌ All build methods failed:', error);
+  console.log('📄 Environment info:');
+  console.log(`Node.js: ${process.version}`);
+  console.log(`Platform: ${process.platform}`);
+  console.log(`CWD: ${process.cwd()}`);
+  process.exit(1);
 }

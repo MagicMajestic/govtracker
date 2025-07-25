@@ -1,150 +1,79 @@
 #!/usr/bin/env node
 
-// Ultra-simple server for SparkredHost - avoids complex module loading issues
-console.log('🚀 Starting ultra-simple server...');
+// Простейший сервер для SparkredHost
+console.log('🚀 Simple Discord Bot Server for SparkredHost');
 
-const fs = require('fs');
-const { spawn, execSync } = require('child_process');
+// Установка переменных окружения
+process.env.NODE_ENV = 'production';
+process.env.PORT = process.env.PORT || 25887;
 
-// Set basic environment
-process.env.NODE_ENV = process.env.NODE_ENV || 'production';
-const port = process.env.PORT || 5000;
+// MySQL конфигурация для SparkredHost
+process.env.DB_HOST = 'db-par-02.apollopanel.com';
+process.env.DB_PORT = '3306';
+process.env.DB_USER = 'u182643_kxUTQsjKxw';
+process.env.DB_NAME = 's182643_govtracker';
 
-console.log(`🔧 Environment: ${process.env.NODE_ENV}`);
-console.log(`📡 Port: ${port}`);
+console.log('🔧 MySQL Configuration:');
+console.log(`Host: ${process.env.DB_HOST}:${process.env.DB_PORT}`);
+console.log(`Database: ${process.env.DB_NAME}`);
+console.log(`User: ${process.env.DB_USER}`);
 
-// Simple function to check if file exists
-function fileExists(path) {
-  try {
-    return fs.existsSync(path);
-  } catch (error) {
-    return false;
-  }
-}
-
-// Simple function to run command safely
-function runCommand(command, options = {}) {
-  try {
-    return execSync(command, { encoding: 'utf8', ...options });
-  } catch (error) {
-    console.warn(`⚠️ Command failed: ${command}`);
-    return null;
-  }
-}
-
-// Fix Git issues
-console.log('🔧 Fixing Git issues...');
-runCommand('git config pull.rebase false');
-
-// Clear npm cache
-console.log('🧹 Clearing npm cache...');
-runCommand('npm cache clean --force');
-
-// Check what we have
-const hasBuiltVersion = fileExists('./dist/index.js');
-const hasServerSource = fileExists('./server/index.ts');
-
-console.log(`🏗️ Built version exists: ${hasBuiltVersion}`);
-console.log(`📁 Server source exists: ${hasServerSource}`);
-
-if (hasBuiltVersion) {
-  // Try built version first
-  console.log('🎯 Starting built application...');
-  try {
-    require('./dist/index.js');
-    console.log('✅ Built application started successfully');
-  } catch (error) {
-    console.warn('⚠️ Built version failed, trying to rebuild...');
-    tryBuildAndStart();
-  }
-} else if (hasServerSource) {
-  // Try to build first
-  console.log('🔨 No built version found, building...');
-  tryBuildAndStart();
-} else {
-  console.error('❌ No server files found');
+if (!process.env.DB_PASSWORD) {
+  console.error('❌ DB_PASSWORD environment variable is required!');
   process.exit(1);
 }
 
-function tryBuildAndStart() {
-  console.log('🔨 Attempting to build project...');
-  
-  // Try to build
-  const buildResult = runCommand('npm run build');
-  
-  if (buildResult !== null && fileExists('./dist/index.js')) {
-    console.log('✅ Build successful, starting built application...');
-    try {
-      require('./dist/index.js');
-      console.log('✅ Application started successfully');
-    } catch (error) {
-      console.error('❌ Failed to start built application:', error.message);
-      tryDirectStart();
-    }
-  } else {
-    console.warn('⚠️ Build failed, trying direct start...');
-    tryDirectStart();
-  }
-}
+// Простой Express сервер
+const express = require('express');
+const path = require('path');
 
-function tryDirectStart() {
-  console.log('🔄 Attempting direct TypeScript execution...');
-  
-  // Install tsx if needed
-  console.log('📦 Ensuring tsx is available...');
-  runCommand('npm install tsx');
-  
-  // Start with tsx using simpler approach
-  console.log('🎯 Starting TypeScript server...');
-  
-  const server = spawn('node', ['node_modules/tsx/dist/cli.mjs', 'server/index.ts'], {
-    stdio: 'inherit',
-    env: { ...process.env }
-  });
-  
-  server.on('error', (err) => {
-    console.error('❌ TypeScript execution failed:', err.message);
-    
-    // Last resort - try with ts-node
-    console.log('🔄 Trying with ts-node...');
-    runCommand('npm install ts-node typescript');
-    
-    const tsServer = spawn('npx', ['ts-node', 'server/index.ts'], {
-      stdio: 'inherit',
-      env: { ...process.env }
-    });
-    
-    tsServer.on('error', (tsErr) => {
-      console.error('❌ All methods failed:', tsErr.message);
-      console.log('💡 Manual steps:');
-      console.log('1. npm install');
-      console.log('2. npm run build');
-      console.log('3. npm start');
-      process.exit(1);
-    });
-  });
-  
-  console.log('✅ Server process started');
-}
+const app = express();
+const PORT = process.env.PORT || 25887;
 
-// Graceful shutdown
+// Основные middleware
+app.use(express.json());
+app.use(express.static('public'));
+
+// Здоровье сервера
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    port: PORT,
+    env: process.env.NODE_ENV
+  });
+});
+
+// Основная страница
+app.get('/', (req, res) => {
+  res.send(`
+    <html>
+      <head><title>Discord Bot - SparkredHost</title></head>
+      <body>
+        <h1>🤖 Discord Bot Server</h1>
+        <p>Сервер запущен на порту ${PORT}</p>
+        <p>База данных: ${process.env.DB_NAME}</p>
+        <p>Время: ${new Date().toLocaleString('ru-RU')}</p>
+        <p><a href="/health">Health Check</a></p>
+      </body>
+    </html>
+  `);
+});
+
+// Запуск сервера
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`✅ Server running on http://0.0.0.0:${PORT}`);
+  console.log(`🌐 Environment: ${process.env.NODE_ENV}`);
+  console.log(`📅 Started: ${new Date().toLocaleString('ru-RU')}`);
+});
+
+// Обработка завершения
 process.on('SIGTERM', () => {
-  console.log('🛑 Shutting down...');
+  console.log('🛑 Server shutting down...');
   process.exit(0);
 });
 
 process.on('SIGINT', () => {
-  console.log('🛑 Shutting down...');
+  console.log('🛑 Server interrupted...');
   process.exit(0);
-});
-
-// Handle uncaught exceptions
-process.on('uncaughtException', (error) => {
-  console.error('❌ Uncaught exception:', error.message);
-  // Don't exit immediately, let other methods try
-});
-
-process.on('unhandledRejection', (reason) => {
-  console.error('❌ Unhandled rejection:', reason);
-  // Don't exit immediately, let other methods try
 });

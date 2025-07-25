@@ -47,7 +47,7 @@
       "notificationServerId": "805026457327108126",
       "notificationChannelId": "1397751897632280717",
       "isActive": true,
-      "updatedAt": "2025-07-25T00:06:19.175Z"
+      "updatedAt": "2025-07-25T01:16:14.541Z"
     }
   ],
   "ratingSettings": [
@@ -57,7 +57,7 @@
       "ratingText": "Ужасно",
       "minScore": 0,
       "color": "bg-red-500",
-      "updatedAt": "2025-07-24T23:15:28.472Z"
+      "updatedAt": "2025-07-25T01:11:52.072Z"
     },
     {
       "id": 4,
@@ -65,7 +65,7 @@
       "ratingText": "Плохо",
       "minScore": 10,
       "color": "bg-orange-500",
-      "updatedAt": "2025-07-24T23:15:28.329Z"
+      "updatedAt": "2025-07-25T01:11:52.056Z"
     },
     {
       "id": 3,
@@ -73,7 +73,7 @@
       "ratingText": "Нормально",
       "minScore": 20,
       "color": "bg-yellow-500",
-      "updatedAt": "2025-07-24T23:15:28.185Z"
+      "updatedAt": "2025-07-25T01:11:52.040Z"
     },
     {
       "id": 2,
@@ -81,7 +81,7 @@
       "ratingText": "Хорошо",
       "minScore": 35,
       "color": "bg-blue-500",
-      "updatedAt": "2025-07-24T23:15:28.042Z"
+      "updatedAt": "2025-07-25T01:11:52.024Z"
     },
     {
       "id": 1,
@@ -89,7 +89,7 @@
       "ratingText": "Великолепно",
       "minScore": 50,
       "color": "bg-green-500",
-      "updatedAt": "2025-07-24T23:15:27.898Z"
+      "updatedAt": "2025-07-25T01:11:52.005Z"
     }
   ],
   "globalRatingConfig": [
@@ -101,7 +101,7 @@
       "activityPointsTaskVerification": 5,
       "responseTimeGoodSeconds": 60,
       "responseTimePoorSeconds": 300,
-      "updatedAt": "2025-07-24T23:15:28.900Z"
+      "updatedAt": "2025-07-25T01:11:52.123Z"
     }
   ],
   "discordServers": [
@@ -170,7 +170,7 @@
       "isActive": true
     },
     {
-      "id": 17,
+      "id": 9,
       "serverId": "1369298072647106641",
       "name": "TEST",
       "roleTagId": "1369299977494466651",
@@ -180,7 +180,7 @@
   ],
   "curators": [
     {
-      "id": 3,
+      "id": 1,
       "discordId": "318071839329091584",
       "name": "Magic",
       "factions": [
@@ -192,13 +192,13 @@
       "curatorType": "government",
       "subdivision": null,
       "isActive": true,
-      "createdAt": "2025-07-24T23:30:36.412Z"
+      "createdAt": "2025-07-25T01:12:39.940Z"
     }
   ],
   "activities": [
     {
-      "id": 220,
-      "curatorId": 3,
+      "id": 39,
+      "curatorId": 1,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -211,8 +211,8 @@
       "timestamp": "2025-07-25T00:08:00.015Z"
     },
     {
-      "id": 219,
-      "curatorId": 3,
+      "id": 40,
+      "curatorId": 1,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -225,8 +225,8 @@
       "timestamp": "2025-07-25T00:07:59.553Z"
     },
     {
-      "id": 218,
-      "curatorId": 3,
+      "id": 41,
+      "curatorId": 1,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -239,8 +239,8 @@
       "timestamp": "2025-07-25T00:07:59.124Z"
     },
     {
-      "id": 217,
-      "curatorId": 3,
+      "id": 42,
+      "curatorId": 1,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -253,8 +253,8 @@
       "timestamp": "2025-07-25T00:07:58.532Z"
     },
     {
-      "id": 216,
-      "curatorId": 3,
+      "id": 43,
+      "curatorId": 1,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -267,9 +267,9 @@
       "timestamp": "2025-07-25T00:07:44.843Z"
     },
     {
-      "id": 183,
-      "curatorId": 3,
-      "serverId": 17,
+      "id": 44,
+      "curatorId": 1,
+      "serverId": 9,
       "type": "reply",
       "channelId": "1397712218228789289",
       "channelName": "⚡│completed-tasks",
@@ -281,9 +281,9 @@
       "timestamp": "2025-07-24T23:41:01.617Z"
     },
     {
-      "id": 184,
-      "curatorId": 3,
-      "serverId": 17,
+      "id": 45,
+      "curatorId": 1,
+      "serverId": 9,
       "type": "task_verification",
       "channelId": "1397712218228789289",
       "channelName": "⚡│completed-tasks",
@@ -295,9 +295,9 @@
       "timestamp": "2025-07-24T23:41:01.331Z"
     },
     {
-      "id": 185,
-      "curatorId": 3,
-      "serverId": 17,
+      "id": 46,
+      "curatorId": 1,
+      "serverId": 9,
       "type": "reaction",
       "channelId": "1397712218228789289",
       "channelName": "⚡│completed-tasks",
@@ -309,9 +309,9 @@
       "timestamp": "2025-07-24T23:40:11.017Z"
     },
     {
-      "id": 186,
-      "curatorId": 3,
-      "serverId": 17,
+      "id": 47,
+      "curatorId": 1,
+      "serverId": 9,
       "type": "message",
       "channelId": "1397712218228789289",
       "channelName": "⚡│completed-tasks",
@@ -323,8 +323,8 @@
       "timestamp": "2025-07-24T23:40:05.002Z"
     },
     {
-      "id": 187,
-      "curatorId": 3,
+      "id": 48,
+      "curatorId": 1,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -337,8 +337,8 @@
       "timestamp": "2025-07-24T23:01:44.003Z"
     },
     {
-      "id": 188,
-      "curatorId": 3,
+      "id": 49,
+      "curatorId": 1,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -351,8 +351,8 @@
       "timestamp": "2025-07-24T23:01:43.890Z"
     },
     {
-      "id": 189,
-      "curatorId": 3,
+      "id": 50,
+      "curatorId": 1,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -365,8 +365,8 @@
       "timestamp": "2025-07-24T23:01:43.778Z"
     },
     {
-      "id": 190,
-      "curatorId": 3,
+      "id": 51,
+      "curatorId": 1,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -379,8 +379,8 @@
       "timestamp": "2025-07-24T23:01:43.665Z"
     },
     {
-      "id": 191,
-      "curatorId": 3,
+      "id": 52,
+      "curatorId": 1,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -393,8 +393,8 @@
       "timestamp": "2025-07-24T23:01:43.552Z"
     },
     {
-      "id": 192,
-      "curatorId": 3,
+      "id": 53,
+      "curatorId": 1,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -407,8 +407,8 @@
       "timestamp": "2025-07-24T23:01:43.439Z"
     },
     {
-      "id": 193,
-      "curatorId": 3,
+      "id": 54,
+      "curatorId": 1,
       "serverId": 8,
       "type": "reaction",
       "channelId": "1250796228032200859",
@@ -421,8 +421,8 @@
       "timestamp": "2025-07-24T23:01:43.327Z"
     },
     {
-      "id": 194,
-      "curatorId": 3,
+      "id": 55,
+      "curatorId": 1,
       "serverId": 8,
       "type": "reaction",
       "channelId": "1250796228032200859",
@@ -435,8 +435,8 @@
       "timestamp": "2025-07-24T23:01:43.214Z"
     },
     {
-      "id": 195,
-      "curatorId": 3,
+      "id": 56,
+      "curatorId": 1,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -449,8 +449,8 @@
       "timestamp": "2025-07-24T23:01:43.099Z"
     },
     {
-      "id": 196,
-      "curatorId": 3,
+      "id": 57,
+      "curatorId": 1,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -463,8 +463,8 @@
       "timestamp": "2025-07-24T23:01:42.986Z"
     },
     {
-      "id": 197,
-      "curatorId": 3,
+      "id": 58,
+      "curatorId": 1,
       "serverId": 8,
       "type": "reaction",
       "channelId": "1250796228032200859",
@@ -477,8 +477,8 @@
       "timestamp": "2025-07-24T23:01:42.873Z"
     },
     {
-      "id": 198,
-      "curatorId": 3,
+      "id": 59,
+      "curatorId": 1,
       "serverId": 8,
       "type": "reaction",
       "channelId": "1250796228032200859",
@@ -491,9 +491,9 @@
       "timestamp": "2025-07-24T23:01:42.761Z"
     },
     {
-      "id": 200,
-      "curatorId": 3,
-      "serverId": 17,
+      "id": 60,
+      "curatorId": 1,
+      "serverId": 9,
       "type": "reaction",
       "channelId": "1397712218228789289",
       "channelName": "completed-tasks",
@@ -505,9 +505,9 @@
       "timestamp": "2025-07-24T21:57:33.785Z"
     },
     {
-      "id": 199,
-      "curatorId": 3,
-      "serverId": 17,
+      "id": 61,
+      "curatorId": 1,
+      "serverId": 9,
       "type": "reaction",
       "channelId": "1397712218228789289",
       "channelName": "completed-tasks",
@@ -519,9 +519,9 @@
       "timestamp": "2025-07-24T21:57:33.785Z"
     },
     {
-      "id": 201,
-      "curatorId": 3,
-      "serverId": 17,
+      "id": 62,
+      "curatorId": 1,
+      "serverId": 9,
       "type": "message",
       "channelId": "1397712218228789289",
       "channelName": "completed-tasks",
@@ -533,9 +533,9 @@
       "timestamp": "2025-07-24T21:57:31.026Z"
     },
     {
-      "id": 202,
-      "curatorId": 3,
-      "serverId": 17,
+      "id": 63,
+      "curatorId": 1,
+      "serverId": 9,
       "type": "task_verification",
       "channelId": "1397712218228789289",
       "channelName": "completed-tasks",
@@ -547,9 +547,9 @@
       "timestamp": "2025-07-24T21:56:55.992Z"
     },
     {
-      "id": 203,
-      "curatorId": 3,
-      "serverId": 17,
+      "id": 64,
+      "curatorId": 1,
+      "serverId": 9,
       "type": "task_verification",
       "channelId": "1397712218228789289",
       "channelName": "completed-tasks",
@@ -561,8 +561,8 @@
       "timestamp": "2025-07-24T21:31:48.372Z"
     },
     {
-      "id": 205,
-      "curatorId": 3,
+      "id": 66,
+      "curatorId": 1,
       "serverId": 8,
       "type": "reaction",
       "channelId": "1250796228032200859",
@@ -575,8 +575,8 @@
       "timestamp": "2025-07-24T21:15:29.749Z"
     },
     {
-      "id": 204,
-      "curatorId": 3,
+      "id": 65,
+      "curatorId": 1,
       "serverId": 8,
       "type": "reaction",
       "channelId": "1250796228032200859",
@@ -589,8 +589,8 @@
       "timestamp": "2025-07-24T21:15:29.749Z"
     },
     {
-      "id": 207,
-      "curatorId": 3,
+      "id": 68,
+      "curatorId": 1,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -603,8 +603,8 @@
       "timestamp": "2025-07-24T21:15:27.792Z"
     },
     {
-      "id": 206,
-      "curatorId": 3,
+      "id": 67,
+      "curatorId": 1,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -617,8 +617,8 @@
       "timestamp": "2025-07-24T21:15:27.792Z"
     },
     {
-      "id": 209,
-      "curatorId": 3,
+      "id": 69,
+      "curatorId": 1,
       "serverId": 8,
       "type": "reaction",
       "channelId": "1250796228032200859",
@@ -631,8 +631,8 @@
       "timestamp": "2025-07-24T21:14:45.751Z"
     },
     {
-      "id": 208,
-      "curatorId": 3,
+      "id": 70,
+      "curatorId": 1,
       "serverId": 8,
       "type": "reaction",
       "channelId": "1250796228032200859",
@@ -645,8 +645,8 @@
       "timestamp": "2025-07-24T21:14:45.751Z"
     },
     {
-      "id": 211,
-      "curatorId": 3,
+      "id": 72,
+      "curatorId": 1,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -659,8 +659,8 @@
       "timestamp": "2025-07-24T21:14:43.507Z"
     },
     {
-      "id": 210,
-      "curatorId": 3,
+      "id": 71,
+      "curatorId": 1,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -673,8 +673,8 @@
       "timestamp": "2025-07-24T21:14:43.507Z"
     },
     {
-      "id": 212,
-      "curatorId": 3,
+      "id": 74,
+      "curatorId": 1,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -687,8 +687,8 @@
       "timestamp": "2025-07-24T21:14:42.219Z"
     },
     {
-      "id": 213,
-      "curatorId": 3,
+      "id": 73,
+      "curatorId": 1,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -701,8 +701,8 @@
       "timestamp": "2025-07-24T21:14:42.219Z"
     },
     {
-      "id": 214,
-      "curatorId": 3,
+      "id": 76,
+      "curatorId": 1,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -715,8 +715,8 @@
       "timestamp": "2025-07-24T21:14:41.362Z"
     },
     {
-      "id": 215,
-      "curatorId": 3,
+      "id": 75,
+      "curatorId": 1,
       "serverId": 8,
       "type": "message",
       "channelId": "1250796228032200859",
@@ -731,9 +731,9 @@
   ],
   "responseTracking": [
     {
-      "id": 123,
-      "serverId": 17,
-      "curatorId": 3,
+      "id": 22,
+      "serverId": 9,
+      "curatorId": 1,
       "mentionMessageId": "1398087369596604496",
       "mentionTimestamp": "2025-07-24T23:40:04.119Z",
       "responseMessageId": "reaction_1398087369596604496_318071839329091584",
@@ -742,9 +742,9 @@
       "responseTimeSeconds": 7
     },
     {
-      "id": 124,
+      "id": 28,
       "serverId": 19,
-      "curatorId": 3,
+      "curatorId": 1,
       "mentionMessageId": "1398061381219123304",
       "mentionTimestamp": "2025-07-24T21:56:48.007Z",
       "responseMessageId": "reaction_1398061381219123304_318071839329091584",
@@ -753,9 +753,31 @@
       "responseTimeSeconds": 4
     },
     {
-      "id": 125,
-      "serverId": 17,
-      "curatorId": 3,
+      "id": 23,
+      "serverId": 19,
+      "curatorId": 1,
+      "mentionMessageId": "1398061381219123304",
+      "mentionTimestamp": "2025-07-24T21:56:48.007Z",
+      "responseMessageId": "reaction_1398061381219123304_318071839329091584",
+      "responseTimestamp": "2025-07-24T21:56:51.601Z",
+      "responseType": "reaction",
+      "responseTimeSeconds": 4
+    },
+    {
+      "id": 29,
+      "serverId": 19,
+      "curatorId": 1,
+      "mentionMessageId": "1398061381219123304",
+      "mentionTimestamp": "2025-07-24T21:56:48.007Z",
+      "responseMessageId": "reaction_1398061381219123304_318071839329091584",
+      "responseTimestamp": "2025-07-24T21:56:51.601Z",
+      "responseType": "reaction",
+      "responseTimeSeconds": 4
+    },
+    {
+      "id": 24,
+      "serverId": 9,
+      "curatorId": 1,
       "mentionMessageId": "1398061381219123304",
       "mentionTimestamp": "2025-07-24T21:56:48.007Z",
       "responseMessageId": "1398061564611371038",
@@ -764,9 +786,9 @@
       "responseTimeSeconds": 7
     },
     {
-      "id": 126,
+      "id": 25,
       "serverId": 19,
-      "curatorId": 3,
+      "curatorId": 1,
       "mentionMessageId": "1398061381219123304",
       "mentionTimestamp": "2025-07-24T21:56:48.007Z",
       "responseMessageId": "reaction_1398061381219123304_318071839329091584",
@@ -775,9 +797,9 @@
       "responseTimeSeconds": 4
     },
     {
-      "id": 127,
+      "id": 27,
       "serverId": 19,
-      "curatorId": 3,
+      "curatorId": 1,
       "mentionMessageId": "1398061381219123304",
       "mentionTimestamp": "2025-07-24T21:56:48.007Z",
       "responseMessageId": "reaction_1398061381219123304_318071839329091584",
@@ -786,9 +808,9 @@
       "responseTimeSeconds": 4
     },
     {
-      "id": 128,
+      "id": 26,
       "serverId": 19,
-      "curatorId": 3,
+      "curatorId": 1,
       "mentionMessageId": "1398061381219123304",
       "mentionTimestamp": "2025-07-24T21:56:48.007Z",
       "responseMessageId": "reaction_1398061381219123304_318071839329091584",
@@ -797,31 +819,9 @@
       "responseTimeSeconds": 4
     },
     {
-      "id": 129,
+      "id": 34,
       "serverId": 19,
-      "curatorId": 3,
-      "mentionMessageId": "1398061381219123304",
-      "mentionTimestamp": "2025-07-24T21:56:48.007Z",
-      "responseMessageId": "reaction_1398061381219123304_318071839329091584",
-      "responseTimestamp": "2025-07-24T21:56:51.601Z",
-      "responseType": "reaction",
-      "responseTimeSeconds": 4
-    },
-    {
-      "id": 130,
-      "serverId": 19,
-      "curatorId": 3,
-      "mentionMessageId": "1398061381219123304",
-      "mentionTimestamp": "2025-07-24T21:56:48.007Z",
-      "responseMessageId": "reaction_1398061381219123304_318071839329091584",
-      "responseTimestamp": "2025-07-24T21:56:51.601Z",
-      "responseType": "reaction",
-      "responseTimeSeconds": 4
-    },
-    {
-      "id": 131,
-      "serverId": 19,
-      "curatorId": 3,
+      "curatorId": 1,
       "mentionMessageId": "1398054939292598334",
       "mentionTimestamp": "2025-07-24T21:31:12.132Z",
       "responseMessageId": "reaction_1398054939292598334_318071839329091584",
@@ -830,9 +830,9 @@
       "responseTimeSeconds": 22
     },
     {
-      "id": 132,
+      "id": 30,
       "serverId": 19,
-      "curatorId": 3,
+      "curatorId": 1,
       "mentionMessageId": "1398054939292598334",
       "mentionTimestamp": "2025-07-24T21:31:12.132Z",
       "responseMessageId": "reaction_1398054939292598334_318071839329091584",
@@ -841,9 +841,9 @@
       "responseTimeSeconds": 22
     },
     {
-      "id": 133,
+      "id": 31,
       "serverId": 19,
-      "curatorId": 3,
+      "curatorId": 1,
       "mentionMessageId": "1398054939292598334",
       "mentionTimestamp": "2025-07-24T21:31:12.132Z",
       "responseMessageId": "reaction_1398054939292598334_318071839329091584",
@@ -852,9 +852,9 @@
       "responseTimeSeconds": 22
     },
     {
-      "id": 134,
+      "id": 32,
       "serverId": 19,
-      "curatorId": 3,
+      "curatorId": 1,
       "mentionMessageId": "1398054939292598334",
       "mentionTimestamp": "2025-07-24T21:31:12.132Z",
       "responseMessageId": "reaction_1398054939292598334_318071839329091584",
@@ -863,9 +863,9 @@
       "responseTimeSeconds": 22
     },
     {
-      "id": 135,
+      "id": 33,
       "serverId": 19,
-      "curatorId": 3,
+      "curatorId": 1,
       "mentionMessageId": "1398054939292598334",
       "mentionTimestamp": "2025-07-24T21:31:12.132Z",
       "responseMessageId": "reaction_1398054939292598334_318071839329091584",
@@ -874,9 +874,9 @@
       "responseTimeSeconds": 22
     },
     {
-      "id": 136,
+      "id": 35,
       "serverId": 19,
-      "curatorId": 3,
+      "curatorId": 1,
       "mentionMessageId": "1398054939292598334",
       "mentionTimestamp": "2025-07-24T21:31:12.132Z",
       "responseMessageId": "reaction_1398054939292598334_318071839329091584",
@@ -885,9 +885,9 @@
       "responseTimeSeconds": 22
     },
     {
-      "id": 137,
-      "serverId": 17,
-      "curatorId": 3,
+      "id": 36,
+      "serverId": 9,
+      "curatorId": 1,
       "mentionMessageId": "1398054939292598334",
       "mentionTimestamp": "2025-07-24T21:31:12.132Z",
       "responseMessageId": "1398054964693983324",
@@ -896,9 +896,9 @@
       "responseTimeSeconds": 36
     },
     {
-      "id": 138,
+      "id": 37,
       "serverId": 8,
-      "curatorId": 3,
+      "curatorId": 1,
       "mentionMessageId": "1398050975490506894",
       "mentionTimestamp": "2025-07-24T21:15:27.088Z",
       "responseMessageId": "reaction_1398050975490506894_318071839329091584",
@@ -907,9 +907,9 @@
       "responseTimeSeconds": 3
     },
     {
-      "id": 139,
+      "id": 42,
       "serverId": 8,
-      "curatorId": 3,
+      "curatorId": 1,
       "mentionMessageId": "1398050975490506894",
       "mentionTimestamp": "2025-07-24T21:15:27.088Z",
       "responseMessageId": "reaction_1398050975490506894_318071839329091584",
@@ -918,9 +918,9 @@
       "responseTimeSeconds": 3
     },
     {
-      "id": 140,
+      "id": 39,
       "serverId": 8,
-      "curatorId": 3,
+      "curatorId": 1,
       "mentionMessageId": "1398050975490506894",
       "mentionTimestamp": "2025-07-24T21:15:27.088Z",
       "responseMessageId": "reaction_1398050975490506894_318071839329091584",
@@ -929,9 +929,9 @@
       "responseTimeSeconds": 3
     },
     {
-      "id": 141,
+      "id": 40,
       "serverId": 8,
-      "curatorId": 3,
+      "curatorId": 1,
       "mentionMessageId": "1398050975490506894",
       "mentionTimestamp": "2025-07-24T21:15:27.088Z",
       "responseMessageId": "reaction_1398050975490506894_318071839329091584",
@@ -940,9 +940,9 @@
       "responseTimeSeconds": 3
     },
     {
-      "id": 142,
+      "id": 41,
       "serverId": 8,
-      "curatorId": 3,
+      "curatorId": 1,
       "mentionMessageId": "1398050975490506894",
       "mentionTimestamp": "2025-07-24T21:15:27.088Z",
       "responseMessageId": "reaction_1398050975490506894_318071839329091584",
@@ -951,9 +951,9 @@
       "responseTimeSeconds": 3
     },
     {
-      "id": 143,
+      "id": 38,
       "serverId": 8,
-      "curatorId": 3,
+      "curatorId": 1,
       "mentionMessageId": "1398050975490506894",
       "mentionTimestamp": "2025-07-24T21:15:27.088Z",
       "responseMessageId": "reaction_1398050975490506894_318071839329091584",
@@ -964,8 +964,8 @@
   ],
   "taskReports": [
     {
-      "id": 15,
-      "serverId": 17,
+      "id": 4,
+      "serverId": 9,
       "authorId": "318071839329091584",
       "authorName": "5_2hz",
       "messageId": "1398087369596604496",
@@ -973,7 +973,7 @@
       "content": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
       "taskCount": 1,
       "submittedAt": "2025-07-24T23:40:04.119Z",
-      "curatorId": 3,
+      "curatorId": 1,
       "curatorDiscordId": "318071839329091584",
       "curatorName": "Magic",
       "checkedAt": "2025-07-24T23:41:00.627Z",
@@ -982,8 +982,8 @@
       "weekStart": "2025-07-21T00:00:00.000Z"
     },
     {
-      "id": 16,
-      "serverId": 17,
+      "id": 5,
+      "serverId": 9,
       "authorId": "318071839329091584",
       "authorName": "5_2hz",
       "messageId": "1398061381219123304",
@@ -991,7 +991,7 @@
       "content": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
       "taskCount": 1,
       "submittedAt": "2025-07-24T21:56:48.007Z",
-      "curatorId": 3,
+      "curatorId": 1,
       "curatorDiscordId": "318071839329091584",
       "curatorName": "Magic",
       "checkedAt": "2025-07-24T21:56:55.992Z",
@@ -1000,8 +1000,8 @@
       "weekStart": "2025-07-21T00:00:00.000Z"
     },
     {
-      "id": 17,
-      "serverId": 17,
+      "id": 6,
+      "serverId": 9,
       "authorId": "318071839329091584",
       "authorName": "5_2hz",
       "messageId": "1398054939292598334",
@@ -1009,7 +1009,7 @@
       "content": "1. фывфыв +\n2. фывфыв + \n3. фывфыв + \n<@&1369299977494466651>",
       "taskCount": 1,
       "submittedAt": "2025-07-24T21:31:12.132Z",
-      "curatorId": 3,
+      "curatorId": 1,
       "curatorDiscordId": "318071839329091584",
       "curatorName": "Magic",
       "checkedAt": "2025-07-24T21:31:48.372Z",

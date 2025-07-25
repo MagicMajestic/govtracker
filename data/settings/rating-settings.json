@@ -5,7 +5,7 @@
     "ratingText": "Ужасно",
     "minScore": 0,
     "color": "bg-red-500",
-    "updatedAt": "2025-07-24T23:15:28.472Z"
+    "updatedAt": "2025-07-25T01:11:52.072Z"
   },
   {
     "id": 4,
@@ -13,7 +13,7 @@
     "ratingText": "Плохо",
     "minScore": 10,
     "color": "bg-orange-500",
-    "updatedAt": "2025-07-24T23:15:28.329Z"
+    "updatedAt": "2025-07-25T01:11:52.056Z"
   },
   {
     "id": 3,
@@ -21,7 +21,7 @@
     "ratingText": "Нормально",
     "minScore": 20,
     "color": "bg-yellow-500",
-    "updatedAt": "2025-07-24T23:15:28.185Z"
+    "updatedAt": "2025-07-25T01:11:52.040Z"
   },
   {
     "id": 2,
@@ -29,7 +29,7 @@
     "ratingText": "Хорошо",
     "minScore": 35,
     "color": "bg-blue-500",
-    "updatedAt": "2025-07-24T23:15:28.042Z"
+    "updatedAt": "2025-07-25T01:11:52.024Z"
   },
   {
     "id": 1,
@@ -37,6 +37,6 @@
     "ratingText": "Великолепно",
     "minScore": 50,
     "color": "bg-green-500",
-    "updatedAt": "2025-07-24T23:15:27.898Z"
+    "updatedAt": "2025-07-25T01:11:52.005Z"
   }
 ]

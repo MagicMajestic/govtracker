@@ -633,140 +633,148 @@ export class DatabaseStorage implements IStorage {
       this.getRecentActivities(1000),
       this.getDiscordServers()
     ]);
-    
-    // Filter activities by date range if provided
-    let filteredActivities = allActivities;
-    if (dateFrom || dateTo) {
-      filteredActivities = allActivities.filter(a => {
-        if (!a.timestamp) return false;
-        const activityDate = a.timestamp instanceof Date ? a.timestamp : new Date(a.timestamp);
-        
-        if (dateFrom && activityDate < dateFrom) return false;
-        if (dateTo && activityDate > dateTo) return false;
-        
-        return true;
-      });
-      console.log("Filtered activities:", filteredActivities.length, "from", allActivities.length);
+
+    // Определяем тип периода и создаем период сравнения
+    let currentPeriodStart: Date;
+    let currentPeriodEnd: Date;
+    let comparisonPeriodStart: Date;
+    let comparisonPeriodEnd: Date;
+    let periodType: string;
+    let periodLabel: string;
+    let comparisonLabel: string;
+
+    if (dateFrom && dateTo) {
+      // Пользовательский период - сравниваем с аналогичным периодом
+      currentPeriodStart = new Date(dateFrom);
+      currentPeriodEnd = new Date(dateTo);
+      
+      const periodDurationMs = dateTo.getTime() - dateFrom.getTime();
+      comparisonPeriodEnd = new Date(dateFrom.getTime());
+      comparisonPeriodStart = new Date(dateFrom.getTime() - periodDurationMs);
+      
+      periodType = 'custom';
+      periodLabel = 'за выбранный период';
+      comparisonLabel = 'чем за предыдущий аналогичный период';
     } else {
-      // Default to today's activities if no date range specified
-      const today = new Date().toISOString().split('T')[0];
-      filteredActivities = allActivities.filter(a => {
-        if (!a.timestamp) return false;
-        const activityDate = a.timestamp instanceof Date 
-          ? a.timestamp.toISOString().split('T')[0] 
-          : new Date(a.timestamp).toISOString().split('T')[0];
-        return activityDate === today;
-      });
-      console.log("Today:", today);
+      // Определяем период по умолчанию (сегодня)
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      
+      currentPeriodStart = today;
+      currentPeriodEnd = new Date(today.getTime() + 24 * 60 * 60 * 1000);
+      
+      const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+      comparisonPeriodStart = yesterday;
+      comparisonPeriodEnd = today;
+      
+      periodType = 'today';
+      periodLabel = 'сегодня';
+      comparisonLabel = 'чем вчера';
     }
-    
-    console.log("Total activities:", allActivities.length);
-    console.log("Period activities:", filteredActivities.length);
-    console.log("Total servers:", allServers.length);
-    
-    // Calculate average response time using response tracking table with date filter
-    console.log("Calculating average response time from response tracking...");
-    
-    let avgResponseTime = 0;
-    
-    // Build conditions for response tracking with date filter
-    const conditions = [
-      sql`${responseTracking.responseTimeSeconds} IS NOT NULL`,
-      sql`${responseTracking.curatorId} IS NOT NULL` // Only count responses that have actual curator assigned
-    ];
-    
-    if (dateFrom) {
-      conditions.push(sql`${responseTracking.responseTimestamp} >= ${dateFrom.toISOString()}`);
+
+    // Проверяем, если это предустановленные периоды
+    if (dateFrom && dateTo) {
+      const periodDurationDays = Math.round((dateTo.getTime() - dateFrom.getTime()) / (24 * 60 * 60 * 1000));
+      
+      if (periodDurationDays === 7) {
+        periodType = 'week';
+        periodLabel = 'за неделю';
+        comparisonLabel = 'чем за предыдущую неделю';
+      } else if (periodDurationDays === 30) {
+        periodType = 'month';
+        periodLabel = 'за месяц';
+        comparisonLabel = 'чем за предыдущий месяц';
+      } else if (periodDurationDays === 90) {
+        periodType = 'quarter';
+        periodLabel = 'за квартал';
+        comparisonLabel = 'чем за предыдущий квартал';
+      }
     }
-    if (dateTo) {
-      conditions.push(sql`${responseTracking.responseTimestamp} <= ${dateTo.toISOString()}`);
-    }
-    
-    const responseStats = await db
+
+    console.log(`Period type: ${periodType}, comparing ${currentPeriodStart.toISOString()} - ${currentPeriodEnd.toISOString()} with ${comparisonPeriodStart.toISOString()} - ${comparisonPeriodEnd.toISOString()}`);
+
+    // Фильтруем активности для текущего периода
+    const currentPeriodActivities = allActivities.filter(a => {
+      if (!a.timestamp) return false;
+      const activityDate = a.timestamp instanceof Date ? a.timestamp : new Date(a.timestamp);
+      return activityDate >= currentPeriodStart && activityDate < currentPeriodEnd;
+    });
+
+    // Фильтруем активности для периода сравнения
+    const comparisonPeriodActivities = allActivities.filter(a => {
+      if (!a.timestamp) return false;
+      const activityDate = a.timestamp instanceof Date ? a.timestamp : new Date(a.timestamp);
+      return activityDate >= comparisonPeriodStart && activityDate < comparisonPeriodEnd;
+    });
+
+    console.log(`Current period activities: ${currentPeriodActivities.length}, Comparison period: ${comparisonPeriodActivities.length}`);
+
+    // Статистика текущего периода
+    const currentMessages = currentPeriodActivities.filter(a => a.type === 'message').length;
+    const currentReactions = currentPeriodActivities.filter(a => a.type === 'reaction').length;
+    const currentReplies = currentPeriodActivities.filter(a => a.type === 'reply').length;
+
+    // Статистика периода сравнения
+    const comparisonMessages = comparisonPeriodActivities.filter(a => a.type === 'message').length;
+    const comparisonReactions = comparisonPeriodActivities.filter(a => a.type === 'reaction').length;
+    const comparisonReplies = comparisonPeriodActivities.filter(a => a.type === 'reply').length;
+
+    // Среднее время ответа для текущего периода
+    const currentResponseStats = await db
       .select({
         avgTime: sql<number>`AVG(${responseTracking.responseTimeSeconds})`
       })
       .from(responseTracking)
-      .where(and(...conditions));
-    
-    if (responseStats[0]?.avgTime) {
-      avgResponseTime = Math.round(responseStats[0].avgTime);
-      console.log(`Average response time for period: ${avgResponseTime}s`);
-    } else {
-      console.log("No response time data found in tracking table for the specified period");
-    }
+      .where(and(
+        sql`${responseTracking.responseTimeSeconds} IS NOT NULL`,
+        sql`${responseTracking.curatorId} IS NOT NULL`,
+        sql`${responseTracking.responseTimestamp} >= ${currentPeriodStart.toISOString()}`,
+        sql`${responseTracking.responseTimestamp} < ${currentPeriodEnd.toISOString()}`
+      ));
 
-    // Рассчитываем статистику для предыдущих периодов
-    const currentMessages = filteredActivities.filter(a => a.type === 'message').length;
-    const currentReactions = filteredActivities.filter(a => a.type === 'reaction').length;
-    
-    // Получаем вчерашние данные для сравнения
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayStr = yesterday.toISOString().split('T')[0];
-    
-    const yesterdayActivities = allActivities.filter(a => {
-      if (!a.timestamp) return false;
-      const activityDate = a.timestamp instanceof Date 
-        ? a.timestamp.toISOString().split('T')[0] 
-        : new Date(a.timestamp).toISOString().split('T')[0];
-      return activityDate === yesterdayStr;
-    });
-    
-    const yesterdayMessages = yesterdayActivities.filter(a => a.type === 'message').length;
-    const yesterdayReactions = yesterdayActivities.filter(a => a.type === 'reaction').length;
-    
-    // Получаем данные за прошлую неделю для сравнения
-    const weekAgo = new Date();
-    weekAgo.setDate(weekAgo.getDate() - 7);
-    
-    const weekAgoActivities = allActivities.filter(a => {
-      if (!a.timestamp) return false;
-      const activityDate = a.timestamp instanceof Date ? a.timestamp : new Date(a.timestamp);
-      return activityDate >= weekAgo && activityDate < yesterday;
-    });
-    
-    const weekAgoReactions = weekAgoActivities.filter(a => a.type === 'reaction').length;
-    
-    // Рассчитываем среднее время ответа за прошлую неделю
-    const weekAgoResponseTimes = await db
-      .select({ responseTime: responseTracking.responseTimeSeconds })
+    // Среднее время ответа для периода сравнения
+    const comparisonResponseStats = await db
+      .select({
+        avgTime: sql<number>`AVG(${responseTracking.responseTimeSeconds})`
+      })
       .from(responseTracking)
-      .where(
-        and(
-          sql`${responseTracking.responseTimeSeconds} IS NOT NULL`,
-          sql`${responseTracking.mentionTimestamp} >= ${weekAgo.toISOString()}`,
-          sql`${responseTracking.mentionTimestamp} < ${yesterday.toISOString()}`
-        )
-      );
-    
-    const weekAgoResponseTime = weekAgoResponseTimes.length > 0 
-      ? weekAgoResponseTimes.reduce((sum, rt) => sum + (rt.responseTime || 0), 0) / weekAgoResponseTimes.length
-      : 0;
-    
-    // Рассчитываем изменения
-    const messagesChange = yesterdayMessages > 0 
-      ? Math.round(((currentMessages - yesterdayMessages) / yesterdayMessages) * 100)
-      : currentMessages > 0 ? 100 : 0;
-      
-    const reactionsChange = weekAgoReactions > 0 
-      ? Math.round(((currentReactions - weekAgoReactions) / weekAgoReactions) * 100)
-      : currentReactions > 0 ? 100 : 0;
-      
-    const responseTimeChange = weekAgoResponseTime > 0 
-      ? Math.round((weekAgoResponseTime - avgResponseTime) * 10) / 10
-      : 0;
+      .where(and(
+        sql`${responseTracking.responseTimeSeconds} IS NOT NULL`,
+        sql`${responseTracking.curatorId} IS NOT NULL`,
+        sql`${responseTracking.responseTimestamp} >= ${comparisonPeriodStart.toISOString()}`,
+        sql`${responseTracking.responseTimestamp} < ${comparisonPeriodEnd.toISOString()}`
+      ));
+
+    const currentAvgResponseTime = Math.round(currentResponseStats[0]?.avgTime || 0);
+    const comparisonAvgResponseTime = Math.round(comparisonResponseStats[0]?.avgTime || 0);
+
+    // Вычисляем изменения в процентах
+    const calculateChange = (current: number, previous: number): number => {
+      if (previous === 0) return current > 0 ? 100 : 0;
+      return Math.round(((current - previous) / previous) * 100);
+    };
+
+    // Вычисляем изменение времени ответа (в секундах, положительное = медленнее)
+    const responseTimeChange = currentAvgResponseTime - comparisonAvgResponseTime;
+
+    const messagesChange = calculateChange(currentMessages, comparisonMessages);
+    const reactionsChange = calculateChange(currentReactions, comparisonReactions);
+    const repliesChange = calculateChange(currentReplies, comparisonReplies);
 
     const stats = {
       totalCurators: curators.filter(c => c.isActive).length,
       todayMessages: currentMessages.toString(),
       todayReactions: currentReactions.toString(),
-      todayReplies: filteredActivities.filter(a => a.type === 'reply').length.toString(),
-      avgResponseTime: avgResponseTime.toString(),
-      curatorsChange: 0, // Изменение кураторов за месяц (пока статичное)
+      todayReplies: currentReplies.toString(),
+      avgResponseTime: currentAvgResponseTime.toString(),
+      curatorsChange: 0, // Кураторы обычно не меняются часто
       messagesChange: messagesChange,
       reactionsChange: reactionsChange,
-      responseTimeChange: responseTimeChange
+      repliesChange: repliesChange,
+      responseTimeChange: responseTimeChange,
+      periodLabel: periodLabel,
+      comparisonLabel: comparisonLabel,
+      periodType: periodType
     };
     
     console.log("Final dashboard stats:", stats);
